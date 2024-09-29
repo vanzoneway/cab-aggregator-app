@@ -37,7 +37,38 @@ services:
     volumes:
       - rides_data:/var/lib/postgresql/data
 
+  keycloak_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: keycloak
+    ports:
+      - "5436:5432"
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+
+  kc:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak_db
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_PASSWORD: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_SCHEMA: public
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8890:8080"
+    depends_on:
+      - keycloak_db
+
+
 volumes:
   passengers_data:
   drivers_data:
   rides_data:
+  keycloak_data:
