@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  passengers-db:
+    image: postgres:latest
+    container_name: passengers_db
+    environment:
+      POSTGRES_DB: passengers
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - passengers_data:/var/lib/postgresql/data
+
+  drivers-db:
+    image: postgres:latest
+    container_name: drivers_db
+    environment:
+      POSTGRES_DB: drivers
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - drivers_data:/var/lib/postgresql/data
+
+  rides-db:
+    image: postgres:latest
+    container_name: rides_db
+    environment:
+      POSTGRES_DB: rides
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - rides_data:/var/lib/postgresql/data
+
+volumes:
+  passengers_data:
+  drivers_data:
+  rides_data:
