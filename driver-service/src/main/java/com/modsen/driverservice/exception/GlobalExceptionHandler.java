@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ApiExceptionDto handleDriverNotFoundException(Exception e) {
-        return new ApiExceptionDto(HttpStatus.NO_CONTENT, e.getMessage(), LocalDateTime.now());
+        return new ApiExceptionDto(HttpStatus.NOT_FOUND, e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler({DuplicateCarNumbersException.class, DuplicateDriverEmailPhoneException.class})
