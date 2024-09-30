@@ -7,7 +7,7 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
 
-    <changeSet id="1727622763004-4" author="vanz" context="dev">
+    <changeSet id="1727686241411-4" author="vanz" context="dev">
         <loadData
                 tableName="driver"
                 file="db/changelog/data/driver-mock-data.csv"
@@ -15,11 +15,22 @@
                 encoding="UTF-8"/>
     </changeSet>
 
-    <changeSet id="1727622763004-5" author="vanz" context="dev">
+    <changeSet id="1727686241411-5" author="vanz" context="dev">
         <loadData
                 tableName="car"
                 file="db/changelog/data/car-mock-data.csv"
                 separator=","
                 encoding="UTF-8"/>
+    </changeSet>
+    <changeSet id="1727686241411-6" author="vanz" context="dev">
+        <sql>
+            SELECT setval(pg_get_serial_sequence('car', 'id'), coalesce(max(id), 0) + 1, false) FROM car;
+        </sql>
+    </changeSet>
+
+    <changeSet id="1727686241411-7" author="vanz" context="dev">
+        <sql>
+            SELECT setval(pg_get_serial_sequence('driver', 'id'), coalesce(max(id), 0) + 1, false) FROM driver;
+        </sql>
     </changeSet>
 </databaseChangeLog>

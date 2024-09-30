@@ -5,7 +5,7 @@
                                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <changeSet id="1727622763004-1"
+    <changeSet id="1727686241411-1"
                author="vanz">
         <createTable tableName="car">
             <column autoIncrement="true"
@@ -25,11 +25,15 @@
                     type="VARCHAR(255)"/>
             <column name="year"
                     type="INT"/>
+            <column name="deleted"
+                    type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
             <column name="driver_id"
                     type="BIGINT"/>
         </createTable>
     </changeSet>
-    <changeSet id="1727622763004-2"
+    <changeSet id="1727686241411-2"
                author="vanz">
         <createTable tableName="driver">
             <column autoIncrement="true"
@@ -42,16 +46,30 @@
             <column name="name"
                     type="VARCHAR(255)"/>
             <column name="email"
-                    type="VARCHAR(255)"/>
+                    type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="phone"
-                    type="VARCHAR(255)"/>
+                    type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="age"
                     type="INT"/>
             <column name="gender"
                     type="VARCHAR(255)"/>
+            <column name="deleted"
+                    type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
-    <changeSet id="1727622763004-3"
+    <changeSet id="1727686241411-3"
+               author="vanz">
+        <addUniqueConstraint columnNames="number"
+                             constraintName="uc_car_number"
+                             tableName="car"/>
+    </changeSet>
+    <changeSet id="1727686241411-4"
                author="vanz">
         <addForeignKeyConstraint baseColumnNames="driver_id"
                                  baseTableName="car"

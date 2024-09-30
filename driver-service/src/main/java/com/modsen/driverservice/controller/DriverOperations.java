@@ -22,14 +22,14 @@ public interface DriverOperations {
 
     @PostMapping("/drivers")
     @Validated(Marker.OnCreate.class)
-    DriverDto createDriver(@RequestBody DriverDto driverDto);
+    DriverDto createDriver(@RequestBody @Valid DriverDto driverDto);
 
     @GetMapping("/drivers")
     Page<DriverDto> getPageDrivers(@RequestParam(defaultValue = "0") @Min(0) Integer offset,
                                    @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit);
 
     @DeleteMapping("/drivers/{driverId}")
-    ResponseEntity<String> deleteDriver(@PathVariable Long driverId);
+    ResponseEntity<String> safeDeleteDriver(@PathVariable Long driverId);
 
     @PutMapping("/drivers/{driverId}")
     DriverDto updateDriverById(@PathVariable Long driverId, @RequestBody @Valid DriverDto driverDto);

@@ -15,27 +15,7 @@ import lombok.Setter;
 import java.util.List;
 
 
-/**
- * Entity representing information about a driver.
- * <p>
- * This class contains information about the driver's name, email, phone number, age, and gender.
- * It also establishes a one-to-many relationship with the cars that the driver operates.
- * </p>
- *
- * <pre>
- * Example usage:
- * Driver driver = new Driver();
- * driver.setName("John Doe");
- * driver.setEmail("john.doe@example.com");
- * driver.setPhone("+1234567890");
- * driver.setAge(30);
- * driver.setGender("Male");
- * </pre>
- *
- * @see com.modsen.driverservice.model.Driver Driver
- * @see com.modsen.driverservice.dto.DriverDto DriverDto
- * @see com.modsen.driverservice.mapper.DriverMapper DriverMapper
- */
+
 @Entity
 @Getter
 @Setter
@@ -49,13 +29,18 @@ public class Driver {
 
     private String name;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false, unique = true)
     private String phone;
 
     private Integer age;
 
     private String gender;
+
+    @Column(nullable = false)
+    private Boolean deleted;
 
     @OneToMany(mappedBy = "driver",
             cascade = {

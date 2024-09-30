@@ -22,27 +22,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class DriverController implements DriverOperations {
 
     private final DriverService driverService;
-    private final CarService carService;
 
     @Override
-    public DriverDto createDriver(@RequestBody DriverDto driverDto) {
-        return null;
+    public DriverDto createDriver(@RequestBody @Valid DriverDto driverDto) {
+        return driverService.createDriver(driverDto);
     }
 
     @Override
     public Page<DriverDto> getPageDrivers(@RequestParam(defaultValue = "0") @Min(0) Integer offset,
                                           @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit) {
-        return null;
+        return driverService.getPageDrivers(offset, limit);
     }
 
     @Override
-    public ResponseEntity<String> deleteDriver(@PathVariable Long driverId) {
-        return null;
+    public ResponseEntity<String> safeDeleteDriver(@PathVariable Long driverId) {
+        return ResponseEntity.ok(driverService.safeDeleteDriverByDriverId(driverId));
     }
 
     @Override
     public DriverDto updateDriverById(@PathVariable Long driverId, @RequestBody @Valid DriverDto driverDto) {
-        return null;
+        return driverService.updateDriverById(driverId, driverDto);
     }
 
 }
