@@ -6,7 +6,7 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <changeSet id="1727686241411-1"
-               author="vanz">
+               author="vanzoneway">
         <createTable tableName="car">
             <column autoIncrement="true"
                     name="id"
@@ -34,7 +34,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1727686241411-2"
-               author="vanz">
+               author="vanzoneway">
         <createTable tableName="driver">
             <column autoIncrement="true"
                     name="id"
@@ -64,13 +64,13 @@
         </createTable>
     </changeSet>
     <changeSet id="1727686241411-3"
-               author="vanz">
+               author="vanzoneway">
         <addUniqueConstraint columnNames="number"
                              constraintName="uc_car_number"
                              tableName="car"/>
     </changeSet>
     <changeSet id="1727686241411-4"
-               author="vanz">
+               author="vanzoneway">
         <addForeignKeyConstraint baseColumnNames="driver_id"
                                  baseTableName="car"
                                  constraintName="FK_CAR_ON_DRIVER"

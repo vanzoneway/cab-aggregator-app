@@ -7,6 +7,12 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <include file="v1-create-driver-car-table-changelog.xml" relativeToChangelogFile="true"/>
+    <changeSet id="1727723399771-1" author="vanzoneway">
+        <tagDatabase tag="initial_setup"/>
+    </changeSet>
     <include file="v1-init-mock-data.xml" relativeToChangelogFile="true"/>
+    <changeSet id="1727723399771-2" author="vanzoneway">
+        <tagDatabase tag="init_mock_data"/>
+    </changeSet>
 
 </databaseChangeLog>

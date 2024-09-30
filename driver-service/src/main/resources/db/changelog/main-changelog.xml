@@ -7,5 +7,8 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <include file="v1/v1-accumulate-changelog.xml" relativeToChangelogFile="true"/>
+    <changeSet id="1727723644839-1" author="vanzoneway">
+        <tagDatabase tag="v1.0.0"/>
+    </changeSet>
 
 </databaseChangeLog>
