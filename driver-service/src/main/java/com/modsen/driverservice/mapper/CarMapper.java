@@ -10,8 +10,6 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-
-
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CarMapper {
@@ -21,10 +19,7 @@ public interface CarMapper {
 
     CarDto toDto(Car car);
 
-
-    @BeanMapping(
-            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-    )
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void partialUpdate(CarDto carDto, @MappingTarget Car car);
 
 }

@@ -12,9 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
-
-
 
 @Entity
 @Getter
@@ -50,6 +49,6 @@ public class Driver {
                     CascadeType.REMOVE},
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    List<Car> cars;
+    private List<Car> cars = new ArrayList<>();
 
 }

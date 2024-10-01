@@ -22,4 +22,5 @@ public class ApiExceptionDto {
 
     @Schema(description = "Timestamp when the error occurred", example = "2023-09-30T15:30:00")
     private LocalDateTime timestamp;
+
 }

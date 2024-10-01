@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 
-
 @OpenAPIDefinition(
         info = @Info(
                 title = "Driver Service API",
@@ -15,6 +14,5 @@ import io.swagger.v3.oas.annotations.info.Info;
                 )
         )
 )
-
 public class OpenApiConfig {
 }

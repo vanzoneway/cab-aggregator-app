@@ -13,29 +13,31 @@ import com.modsen.driverservice.repository.CarRepository;
 import com.modsen.driverservice.repository.DriverRepository;
 import com.modsen.driverservice.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-
 
 @Service
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
+    private final DriverRepository driverRepository;
     private final CarMapper carMapper;
     private final DriverMapper driverMapper;
-    private final DriverRepository driverRepository;
+    private final MessageSource messageSource;
 
     @Override
     public CarDto createCar(Long driverId, CarDto carDto) {
-
-        if(carRepository.existsByNumberAndDeletedIsFalse(carDto.number())) {
-            throw new DuplicateCarNumbersException("Car number " + carDto.number() + " already exists");
+        if (carRepository.existsByNumberAndDeletedIsFalse(carDto.number())) {
+            throw new DuplicateCarNumbersException(messageSource.getMessage(
+                    "car.number.duplicate",
+                    new Object[]{carDto.number()},
+                    LocaleContextHolder.getLocale()));
         }
         Car carEntity = carMapper.toEntity(carDto);
         carEntity.setDeleted(false);
-        Driver driverEntity = driverRepository.findById(driverId).orElseThrow(() -> new DriverNotFoundException(
-                String.format("Driver with id %s not found", driverId)
-        ));
+        Driver driverEntity = getDriverByIdAndDeletedIsFalse(driverId);
         driverEntity.setDeleted(false);
         carEntity.setDriver(driverEntity);
 
@@ -43,19 +45,14 @@ public class CarServiceImpl implements CarService {
         carRepository.save(carEntity);
 
         return carMapper.toDto(carEntity);
-
     }
 
     @Override
     public CarDto updateCarByCarIdAndDriverId(Long carId, Long driverId, CarDto carDto) {
-
-        Car carEntity = carRepository.findByIdAndDeletedIsFalse(carId)
-                .orElseThrow(() -> new CarNotFoundException(String.format("Car with id %s not found", carId)));
+        Car carEntity = getCarByIdAndDeletedIsFalse(carId);
         carMapper.partialUpdate(carDto, carEntity);
         carEntity.setId(carId);
-        Driver driverEntity = driverRepository.findById(driverId).orElseThrow(() -> new DriverNotFoundException(
-                String.format("Driver with id %s not found", driverId)
-        ));
+        Driver driverEntity = getDriverByIdAndDeletedIsFalse(driverId);
         carEntity.setDriver(driverEntity);
 
         driverRepository.save(driverEntity);
@@ -65,20 +62,37 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public String safeDeleteCarByCarId(Long carId) {
-        Car carEntity = carRepository.findByIdAndDeletedIsFalse(carId)
-                .orElseThrow(() -> new CarNotFoundException("Car with id " + carId + " not found"));
+    public void safeDeleteCarByCarId(Long carId) {
+        Car carEntity = getCarByIdAndDeletedIsFalse(carId);
         carEntity.setDeleted(true);
         carRepository.save(carEntity);
-        return String.format("Car with id %s soft deleted", carId);
     }
 
     @Override
     public DriverCarDto getDriverWithCars(Long driverId) {
         Driver driverEntity = driverRepository.findByIdAndDeletedIsFalse(driverId)
-                .orElseThrow(() -> new DriverNotFoundException(String.format("Driver with id %s not found", driverId)));
+                .orElseThrow(() -> new DriverNotFoundException(messageSource.getMessage(
+                        "driver.not.found",
+                        new Object[]{driverId},
+                        LocaleContextHolder.getLocale())));
 
         return driverMapper.toDriverCarDto(driverEntity);
+    }
+
+    private Car getCarByIdAndDeletedIsFalse(Long carId) {
+        return carRepository.findByIdAndDeletedIsFalse(carId)
+                .orElseThrow(() -> new CarNotFoundException(messageSource.getMessage(
+                        "car.not.found",
+                        new Object[]{carId},
+                        LocaleContextHolder.getLocale())));
+    }
+
+    private Driver getDriverByIdAndDeletedIsFalse(Long driverId) {
+        return driverRepository.findByIdAndDeletedIsFalse(driverId)
+                .orElseThrow(() -> new DriverNotFoundException(messageSource.getMessage(
+                        "driver.not.found",
+                        new Object[]{driverId},
+                        LocaleContextHolder.getLocale())));
     }
 
 }

@@ -11,8 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-
 @Entity
 @Getter
 @Setter
@@ -25,12 +23,14 @@ public class Car {
     private Long id;
 
     private String brand;
+
     private String color;
 
     @Column(unique = true)
     private String number;
 
     private String model;
+
     private Integer year;
 
     @Column(nullable = false)
@@ -38,5 +38,6 @@ public class Car {
 
     @ManyToOne
     @JoinColumn(name = "driver_id")
-    Driver driver;
+    private Driver driver;
+
 }

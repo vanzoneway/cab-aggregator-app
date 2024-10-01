@@ -9,38 +9,38 @@ import com.modsen.driverservice.exception.violation.Violation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({DriverNotFoundException.class, CarNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
     public ApiExceptionDto handleDriverNotFoundException(Exception e) {
         return new ApiExceptionDto(HttpStatus.NOT_FOUND, e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler({DuplicateCarNumbersException.class, DuplicateDriverEmailPhoneException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ResponseBody
     public ApiExceptionDto handleDuplicateCarNumbersException(Exception e) {
         return new ApiExceptionDto(HttpStatus.CONFLICT, e.getMessage(), LocalDateTime.now());
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiExceptionDto handleAnyException(Exception e) {
+        return new ApiExceptionDto(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), LocalDateTime.now());
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ValidationErrorResponse handleConstraintValidationException(
-            ConstraintViolationException e
-    ) {
+    public ValidationErrorResponse handleConstraintValidationException(ConstraintViolationException e) {
         final List<Violation> violations = e.getConstraintViolations().stream()
                 .map(
                         violation -> new Violation(
@@ -52,13 +52,9 @@ public class GlobalExceptionHandler {
         return new ValidationErrorResponse(violations);
     }
 
-
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ValidationErrorResponse handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException e
-    ) {
+    public ValidationErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         final List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());

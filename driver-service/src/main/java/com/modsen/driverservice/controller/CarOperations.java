@@ -9,15 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 
 @Validated
 @Tag(name = "Car controller", description = """
@@ -50,7 +44,6 @@ public interface CarOperations {
             @ApiResponse(responseCode = "409", description = "A conflict occurred. This happens when such a car " +
                     "number already exists.")
     })
-    @PostMapping("/cars/drivers/{driverId}")
     @Validated(Marker.OnCreate.class)
     CarDto createCar(
             @Parameter(description = "ID of the driver", required = true) @PathVariable Long driverId,
@@ -70,7 +63,6 @@ public interface CarOperations {
             @ApiResponse(responseCode = "409", description = "A conflict occurred. This happens when such a car" +
                     " number already exists.")
     })
-    @PutMapping("/cars/{carId}/drivers/{driverId}")
     @Validated(Marker.OnUpdate.class)
     CarDto updateCarByCarIdAndDriverId(
             @Parameter(description = "ID of the car", required = true) @PathVariable Long carId,
@@ -82,11 +74,10 @@ public interface CarOperations {
     @Operation(summary = "Soft delete a car by its ID",
             description = "Marks the specified car as deleted without removing it from the database.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Car deleted successfully"),
+            @ApiResponse(responseCode = "204", description = "Car deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Car not found")
     })
-    @DeleteMapping("/cars/{carId}")
-    ResponseEntity<String> safeDeleteCarById(
+    void safeDeleteCarById(
             @Parameter(description = "ID of the car", required = true) @PathVariable Long carId);
 
 
@@ -96,7 +87,7 @@ public interface CarOperations {
             @ApiResponse(responseCode = "200", description = "Driver and cars retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Driver not found")
     })
-    @GetMapping("/drivers/{driverId}/cars")
     DriverCarDto getDriverWithCars(
             @Parameter(description = "ID of the driver", required = true) @PathVariable Long driverId);
+
 }

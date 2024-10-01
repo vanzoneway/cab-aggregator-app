@@ -1,6 +1,7 @@
 package com.modsen.driverservice.controller;
 
 import com.modsen.driverservice.dto.DriverDto;
+import com.modsen.driverservice.dto.ListContainerResponseDto;
 import com.modsen.driverservice.dto.Marker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,18 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-
 
 @Validated
 @Tag(name = "Driver controller", description = """
@@ -53,7 +46,6 @@ public interface DriverOperations {
             @ApiResponse(responseCode = "409", description = "A conflict occurred. This happens when such a driver " +
                     "email or phone already exists")
     })
-    @PostMapping("/drivers")
     @Validated(Marker.OnCreate.class)
     DriverDto createDriver(
             @Parameter(description = "Driver details to be created", required = true)
@@ -66,8 +58,7 @@ public interface DriverOperations {
             @ApiResponse(responseCode = "200", description = "Drivers retrieved successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid pagination parameters")
     })
-    @GetMapping("/drivers")
-    Page<DriverDto> getPageDrivers(
+    ListContainerResponseDto<DriverDto> getPageDrivers(
             @Parameter(description = "Offset for pagination", example = "0")
             @RequestParam(defaultValue = "0") @Min(0) Integer offset,
             @Parameter(description = "Limit for pagination", example = "10")
@@ -77,11 +68,10 @@ public interface DriverOperations {
     @Operation(summary = "Soft delete a driver",
             description = "Marks the specified driver as deleted.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Driver deleted successfully"),
+            @ApiResponse(responseCode = "204", description = "Driver deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Driver not found")
     })
-    @DeleteMapping("/drivers/{driverId}")
-    ResponseEntity<String> safeDeleteDriver(
+    void safeDeleteDriver(
             @Parameter(description = "ID of the driver to be deleted", required = true)
             @PathVariable Long driverId);
 
@@ -95,7 +85,6 @@ public interface DriverOperations {
             @ApiResponse(responseCode = "409", description = "A conflict occurred. This happens when such a driver " +
                     "email or phone already exists")
     })
-    @PutMapping("/drivers/{driverId}")
     DriverDto updateDriverById(
             @Parameter(description = "ID of the driver to be updated", required = true)
             @PathVariable Long driverId,
@@ -103,5 +92,17 @@ public interface DriverOperations {
                     "sufficient to provide just a subset of them.",
                     required = true)
             @RequestBody @Valid DriverDto driverDto);
+
+
+    @Operation(summary = "Get driver by id",
+            description = "Getting information about driver in JSON format")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Driver got successfully"),
+            @ApiResponse(responseCode = "404", description = "Driver not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input provided"),
+
+    })
+    DriverDto getDriverById(@PathVariable Long driverId);
+
 }
 

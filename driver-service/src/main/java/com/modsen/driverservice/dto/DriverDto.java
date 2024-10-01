@@ -18,29 +18,31 @@ public record DriverDto(
         @Schema(description = "Unique identifier for the driver", example = "1")
         Long id,
 
-        @NotBlank(message = "Name cannot be empty", groups = Marker.OnCreate.class)
+        @NotBlank(message = "{name.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Name of the driver", example = "Jane Doe")
         String name,
 
-        @Email(message = "Invalid email form", groups = Marker.OnCreate.class)
+        @Email(message = "{email.invalid}", groups = Marker.OnCreate.class)
         @Schema(description = "Email address of the driver", example = "janedoe@example.com")
+        @NotBlank(message = "{email.empty}")
         String email,
 
-        @Pattern(message = "Invalid phone record format",
+        @Pattern(message = "{phone.invalid}",
                 regexp = "^\\+?[1-9][0-9]{7,14}$",
                 groups = Marker.OnCreate.class)
         @Schema(description = "Phone number of the driver", example = "+1234567890")
+        @NotBlank(message = "{phone.empty}")
         String phone,
 
-        @Min(message = "Age cannot be less than 21", value = 21, groups = Marker.OnCreate.class)
+        @Min(message = "{age.min}", value = 21, groups = Marker.OnCreate.class)
         @Schema(description = "Age of the driver", example = "30")
+        @NotNull(message = "{age.empty}")
         Integer age,
 
-        @NotBlank(message = "Gender cannot be empty", groups = Marker.OnCreate.class)
+        @NotBlank(message = "{gender.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Gender of the driver", example = "Female")
         String gender,
 
         @Schema(hidden = true)
-        Boolean deleted
-) implements Serializable {
+        Boolean deleted) implements Serializable {
 }

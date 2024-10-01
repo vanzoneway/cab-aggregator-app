@@ -16,31 +16,30 @@ public record CarDto(
         @Schema(description = "Unique identifier for the car", example = "1")
         Long id,
 
-        @NotBlank(message = "Brand cannot be empty", groups = Marker.OnCreate.class)
+        @NotBlank(message = "{brand.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Brand of the car", example = "Toyota")
         String brand,
 
-        @NotBlank(message = "Color cannot be empty", groups = Marker.OnCreate.class)
+        @NotBlank(message = "{color.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Color of the car", example = "Red")
         String color,
 
-        @Pattern(message = "Invalid car number",
+        @Pattern(message = "{number.invalid}",
                 regexp = "^[A-Z]{1,2}[0-9]{3}[A-Z]{2,3}$|^[A-Z]{1,2}-[0-9]{3}-[A-Z]{2,3}$|" +
                         "^[0-9]{3}-[A-Z]{1,2}-[0-9]{2}$|^[A-Z]{2}-[0-9]{3}-[A-Z]{1,2}$",
                 groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
-        @NotBlank(groups = Marker.OnCreate.class)
+        @NotBlank(groups = Marker.OnCreate.class, message = "{number.empty}")
         @Schema(description = "Car registration number", example = "AB123CD")
         String number,
 
-        @NotBlank(message = "Model cannot be empty", groups = Marker.OnCreate.class)
+        @NotBlank(message = "{model.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Model of the car", example = "Camry")
         String model,
 
-        @NotNull(message = "Year cannot be empty", groups = Marker.OnCreate.class)
+        @NotNull(message = "{year.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Year the car was manufactured", example = "2020")
         Integer year,
 
         @Schema(hidden = true)
-        Boolean deleted
-) implements Serializable {
+        Boolean deleted) implements Serializable {
 }

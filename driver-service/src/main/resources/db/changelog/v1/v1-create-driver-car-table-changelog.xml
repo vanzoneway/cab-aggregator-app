@@ -32,7 +32,11 @@
             <column name="driver_id"
                     type="BIGINT"/>
         </createTable>
+        <rollback>
+            <dropTable tableName="car"/>
+        </rollback>
     </changeSet>
+
     <changeSet id="1727686241411-2"
                author="vanzoneway">
         <createTable tableName="driver">
@@ -62,13 +66,21 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <rollback>
+            <dropTable tableName="driver"/>
+        </rollback>
     </changeSet>
+
     <changeSet id="1727686241411-3"
                author="vanzoneway">
         <addUniqueConstraint columnNames="number"
                              constraintName="uc_car_number"
                              tableName="car"/>
+        <rollback>
+            <dropUniqueConstraint constraintName="uc_car_number" tableName="car"/>
+        </rollback>
     </changeSet>
+
     <changeSet id="1727686241411-4"
                author="vanzoneway">
         <addForeignKeyConstraint baseColumnNames="driver_id"
@@ -76,6 +88,9 @@
                                  constraintName="FK_CAR_ON_DRIVER"
                                  referencedColumnNames="id"
                                  referencedTableName="driver"/>
+        <rollback>
+            <dropForeignKeyConstraint constraintName="FK_CAR_ON_DRIVER" baseTableName="car"/>
+        </rollback>
     </changeSet>
 
 </databaseChangeLog>

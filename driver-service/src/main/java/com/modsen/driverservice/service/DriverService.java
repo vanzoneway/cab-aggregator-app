@@ -1,18 +1,19 @@
 package com.modsen.driverservice.service;
 
 import com.modsen.driverservice.dto.DriverDto;
+import com.modsen.driverservice.dto.ListContainerResponseDto;
 import org.springframework.data.domain.Page;
-
-
 
 public interface DriverService {
 
     DriverDto createDriver(DriverDto driverDto);
 
-    Page<DriverDto> getPageDrivers(Integer offset, Integer limit);
+    ListContainerResponseDto<DriverDto> getPageDrivers(Integer offset, Integer limit);
 
-    String safeDeleteDriverByDriverId(Long driverId);
+    void safeDeleteDriverByDriverId(Long driverId);
 
     DriverDto updateDriverById(Long driverId, DriverDto driverDto);
+
+    DriverDto getDriverById(Long driverId);
 
 }
