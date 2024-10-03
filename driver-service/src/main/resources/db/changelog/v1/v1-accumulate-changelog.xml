@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <include file="v1-create-driver-car-table-changelog.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="5" author="vanz.evergarden0@gmail.com">
+        <tagDatabase tag="v1.0.0_initial_setup"/>
+    </changeSet>
+
+    <include file="v1-init-mock-data.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="8" author="vanz.evergarden0@gmail.com">
+        <tagDatabase tag="v1.0.0_init_mock_data"/>
+    </changeSet>
+
+</databaseChangeLog>
