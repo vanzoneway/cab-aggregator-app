@@ -101,16 +101,18 @@ public class DriverServiceImpl implements DriverService {
     }
 
     private void checkDriverRestoreOption(DriverDto driverDto) {
-        if (Objects.nonNull(driverDto.email()) && driverRepository.existsByEmailAndDeletedIsTrue(driverDto.email())) {
+        String driverEmail = driverDto.email();
+        String driverPhone = driverDto.phone();
+        if (Objects.nonNull(driverEmail) && driverRepository.existsByEmailAndDeletedIsTrue(driverEmail)) {
             throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
                     AppConstants.RESTORE_DRIVER_BY_EMAIL_MESSAGE_KEY,
-                    new Object[]{driverDto.email()},
+                    new Object[]{driverEmail},
                     LocaleContextHolder.getLocale()));
         }
-        if (Objects.nonNull(driverDto.phone()) && driverRepository.existsByPhoneAndDeletedIsTrue(driverDto.phone())) {
+        if (Objects.nonNull(driverPhone) && driverRepository.existsByPhoneAndDeletedIsTrue(driverPhone)) {
             throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
                     AppConstants.RESTORE_DRIVER_BY_PHONE_MESSAGE_KEY,
-                    new Object[]{driverDto.phone()},
+                    new Object[]{driverPhone},
                     LocaleContextHolder.getLocale()));
         }
     }
