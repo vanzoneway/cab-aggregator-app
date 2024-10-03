@@ -79,7 +79,7 @@ public class CarServiceImpl implements CarService {
         if (Objects.nonNull(carDto.number()) && carRepository.existsByNumberAndDeletedIsTrue(carDto.number())) {
             throw new DuplicateCarNumbersException(messageSource.getMessage(
                     AppConstants.RESTORE_CAR_MESSAGE_KEY,
-                    new Object[]{ carDto.number() },
+                    new Object[]{carDto.number()},
                     LocaleContextHolder.getLocale()));
         }
     }
@@ -88,7 +88,7 @@ public class CarServiceImpl implements CarService {
         if (carRepository.existsByNumberAndDeletedIsFalse(carDto.number())) {
             throw new DuplicateCarNumbersException(messageSource.getMessage(
                     AppConstants.CAR_NUMBER_DUPLICATE_MESSAGE_KEY,
-                    new Object[]{ carDto.number() },
+                    new Object[]{carDto.number()},
                     LocaleContextHolder.getLocale()));
         }
     }
@@ -97,7 +97,7 @@ public class CarServiceImpl implements CarService {
         return carRepository.findByIdAndDeletedIsFalse(carId)
                 .orElseThrow(() -> new CarNotFoundException(messageSource.getMessage(
                         AppConstants.CAR_NOT_FOUND_MESSAGE_KEY,
-                        new Object[]{ carId },
+                        new Object[]{carId},
                         LocaleContextHolder.getLocale())));
     }
 
@@ -105,7 +105,7 @@ public class CarServiceImpl implements CarService {
         return driverRepository.findByIdAndDeletedIsFalse(driverId)
                 .orElseThrow(() -> new DriverNotFoundException(messageSource.getMessage(
                         AppConstants.DRIVER_NOT_FOUND_MESSAGE_KEY,
-                        new Object[]{ driverId },
+                        new Object[]{driverId},
                         LocaleContextHolder.getLocale())));
     }
 
