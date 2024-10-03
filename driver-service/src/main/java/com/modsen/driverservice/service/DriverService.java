@@ -1,8 +1,8 @@
 package com.modsen.driverservice.service;
 
+import com.modsen.driverservice.dto.DriverCarDto;
 import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.dto.ListContainerResponseDto;
-import org.springframework.data.domain.Page;
 
 public interface DriverService {
 
@@ -15,5 +15,7 @@ public interface DriverService {
     DriverDto updateDriverById(Long driverId, DriverDto driverDto);
 
     DriverDto getDriverById(Long driverId);
+
+    DriverCarDto getDriverWithCars(Long driverId);
 
 }

@@ -1,5 +1,6 @@
 package com.modsen.driverservice.exception;
 
+import com.modsen.driverservice.constants.AppConstants;
 import com.modsen.driverservice.exception.car.CarNotFoundException;
 import com.modsen.driverservice.exception.car.DuplicateCarNumbersException;
 import com.modsen.driverservice.exception.driver.DriverNotFoundException;
@@ -35,7 +36,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiExceptionDto handleAnyException(Exception e) {
-        return new ApiExceptionDto(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), LocalDateTime.now());
+        return new ApiExceptionDto(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                AppConstants.INTERNAL_SERVER_ERROR,
+                LocalDateTime.now());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

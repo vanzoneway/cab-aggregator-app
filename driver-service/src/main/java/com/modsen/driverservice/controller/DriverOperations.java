@@ -1,5 +1,6 @@
 package com.modsen.driverservice.controller;
 
+import com.modsen.driverservice.dto.DriverCarDto;
 import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.dto.ListContainerResponseDto;
 import com.modsen.driverservice.dto.Marker;
@@ -51,7 +52,6 @@ public interface DriverOperations {
             @Parameter(description = "Driver details to be created", required = true)
             @RequestBody @Valid DriverDto driverDto);
 
-
     @Operation(summary = "Get paginated list of drivers",
             description = "Retrieves a paginated list of drivers.")
     @ApiResponses(value = {
@@ -64,7 +64,6 @@ public interface DriverOperations {
             @Parameter(description = "Limit for pagination", example = "10")
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit);
 
-
     @Operation(summary = "Soft delete a driver",
             description = "Marks the specified driver as deleted.")
     @ApiResponses(value = {
@@ -74,7 +73,6 @@ public interface DriverOperations {
     void safeDeleteDriver(
             @Parameter(description = "ID of the driver to be deleted", required = true)
             @PathVariable Long driverId);
-
 
     @Operation(summary = "Update driver information",
             description = "Updates the details of the specified driver.")
@@ -93,7 +91,6 @@ public interface DriverOperations {
                     required = true)
             @RequestBody @Valid DriverDto driverDto);
 
-
     @Operation(summary = "Get driver by id",
             description = "Getting information about driver in JSON format")
     @ApiResponses(value = {
@@ -103,6 +100,15 @@ public interface DriverOperations {
 
     })
     DriverDto getDriverById(@PathVariable Long driverId);
+
+    @Operation(summary = "Get driver with all associated cars",
+            description = "Retrieves the driver information along with all cars associated with them.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Driver and cars retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Driver not found")
+    })
+    DriverCarDto getDriverWithCars(
+            @Parameter(description = "ID of the driver", required = true) @PathVariable Long driverId);
 
 }
 

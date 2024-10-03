@@ -2,7 +2,6 @@ package com.modsen.driverservice.controller.impl;
 
 import com.modsen.driverservice.controller.CarOperations;
 import com.modsen.driverservice.dto.CarDto;
-import com.modsen.driverservice.dto.DriverCarDto;
 import com.modsen.driverservice.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +17,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/cars")
 @RequiredArgsConstructor
 public class CarController implements CarOperations {
 
     private final CarService carService;
 
     @Override
-    @PostMapping("/cars/drivers/{driverId}")
+    @PostMapping("/drivers/{driverId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CarDto createCar(@PathVariable Long driverId,
                             @RequestBody @Valid CarDto carDto) {
@@ -33,7 +32,7 @@ public class CarController implements CarOperations {
     }
 
     @Override
-    @PutMapping("/cars/{carId}/drivers/{driverId}")
+    @PutMapping("/{carId}/drivers/{driverId}")
     public CarDto updateCarByCarIdAndDriverId(@PathVariable Long carId,
                                               @PathVariable Long driverId,
                                               @RequestBody @Valid CarDto carDto) {
@@ -41,16 +40,16 @@ public class CarController implements CarOperations {
     }
 
     @Override
-    @DeleteMapping("/cars/{carId}")
+    @DeleteMapping("/{carId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void safeDeleteCarById(@PathVariable Long carId) {
         carService.safeDeleteCarByCarId(carId);
     }
 
     @Override
-    @GetMapping("/drivers/{driverId}/cars")
-    public DriverCarDto getDriverWithCars(@PathVariable Long driverId) {
-        return carService.getDriverWithCars(driverId);
+    @GetMapping("/{carId}")
+    public CarDto getCarById(@PathVariable Long carId) {
+        return carService.getCarById(carId);
     }
 
 }

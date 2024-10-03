@@ -25,8 +25,7 @@ public record CarDto(
         String color,
 
         @Pattern(message = "{number.invalid}",
-                regexp = "^[A-Z]{1,2}[0-9]{3}[A-Z]{2,3}$|^[A-Z]{1,2}-[0-9]{3}-[A-Z]{2,3}$|" +
-                        "^[0-9]{3}-[A-Z]{1,2}-[0-9]{2}$|^[A-Z]{2}-[0-9]{3}-[A-Z]{1,2}$",
+                regexp = "^[A-Z]{3}[0-9]{3}$",
                 groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
         @NotBlank(groups = Marker.OnCreate.class, message = "{number.empty}")
         @Schema(description = "Car registration number", example = "AB123CD")

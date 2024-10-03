@@ -1,7 +1,6 @@
 package com.modsen.driverservice.service;
 
 import com.modsen.driverservice.dto.CarDto;
-import com.modsen.driverservice.dto.DriverCarDto;
 
 public interface CarService {
 
@@ -11,6 +10,6 @@ public interface CarService {
 
     void safeDeleteCarByCarId(Long carId);
 
-    DriverCarDto getDriverWithCars(Long driverId);
+    CarDto getCarById(Long carId);
 
 }

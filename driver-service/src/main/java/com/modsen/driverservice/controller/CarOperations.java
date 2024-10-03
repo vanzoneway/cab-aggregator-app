@@ -51,7 +51,6 @@ public interface CarOperations {
                     required = true)
             @RequestBody @Valid CarDto carDto);
 
-
     @Operation(summary = "Update car information for a specific driver",
             description = "Updates the car details for the specified driver and car ID."
     + " It is not necessary to specify all parameters. It is sufficient to provide just a subset of them.")
@@ -70,24 +69,19 @@ public interface CarOperations {
             @Parameter(description = "CarDto or body for this PUT endpoint", required = true)
             @RequestBody @Valid CarDto carDto);
 
-
     @Operation(summary = "Soft delete a car by its ID",
             description = "Marks the specified car as deleted without removing it from the database.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Car deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Car not found")
     })
-    void safeDeleteCarById(
-            @Parameter(description = "ID of the car", required = true) @PathVariable Long carId);
+    void safeDeleteCarById(@Parameter(description = "ID of the car", required = true) @PathVariable Long carId);
 
-
-    @Operation(summary = "Get driver with all associated cars",
-            description = "Retrieves the driver information along with all cars associated with them.")
+    @Operation(summary = "Get a car by its ID",
+            description = "Retrieves the details of a specified car using its ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Driver and cars retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Driver not found")
+            @ApiResponse(responseCode = "200", description = "Car retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Car not found")
     })
-    DriverCarDto getDriverWithCars(
-            @Parameter(description = "ID of the driver", required = true) @PathVariable Long driverId);
-
+    CarDto getCarById(@Parameter(description = "ID of the car", required = true) @PathVariable Long carId);
 }

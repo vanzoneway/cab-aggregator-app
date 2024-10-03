@@ -1,5 +1,7 @@
 package com.modsen.driverservice.service.impl;
 
+import com.modsen.driverservice.constants.AppConstants;
+import com.modsen.driverservice.dto.DriverCarDto;
 import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.dto.ListContainerResponseDto;
 import com.modsen.driverservice.exception.driver.DriverNotFoundException;
@@ -15,6 +17,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -26,26 +31,14 @@ public class DriverServiceImpl implements DriverService {
     private final ListContainerMapper listContainerMapper;
 
     @Override
+    @Transactional
     public DriverDto createDriver(DriverDto driverDto) {
-        if (driverRepository.existsByPhoneAndDeletedIsFalse(driverDto.phone())) {
-            throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
-                    "driver.phone.duplicate",
-                    new Object[]{driverDto.phone()},
-                    LocaleContextHolder.getLocale()));
-        }
-
-        if (driverRepository.existsByEmailAndDeletedIsFalse(driverDto.email())) {
-            throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
-                    "driver.email.duplicate",
-                    new Object[]{driverDto.email()},
-                    LocaleContextHolder.getLocale()));
-        }
-
+        checkDriverRestoreOption(driverDto);
+        checkCarExistsByPhoneOrEmail(driverDto);
         Driver driverEntity = driverMapper.toEntity(driverDto);
         driverEntity.setDeleted(false);
-        driverEntity = driverRepository.save(driverEntity);
 
-        return driverMapper.toDto(driverEntity);
+        return driverMapper.toDto(driverRepository.save(driverEntity));
     }
 
     @Override
@@ -57,6 +50,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    @Transactional
     public void safeDeleteDriverByDriverId(Long driverId) {
         Driver driverEntity = getDriverByIdAndDeletedIsFalse(driverId);
         driverEntity.setDeleted(true);
@@ -64,7 +58,10 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    @Transactional
     public DriverDto updateDriverById(Long driverId, DriverDto driverDto) {
+        checkDriverRestoreOption(driverDto);
+        checkCarExistsByPhoneOrEmail(driverDto);
         Driver driverEntity = getDriverByIdAndDeletedIsFalse(driverId);
         driverMapper.partialUpdate(driverDto, driverEntity);
         driverRepository.save(driverEntity);
@@ -76,10 +73,52 @@ public class DriverServiceImpl implements DriverService {
         return driverMapper.toDto(getDriverByIdAndDeletedIsFalse(driverId));
     }
 
+    @Override
+    public DriverCarDto getDriverWithCars(Long driverId) {
+        Driver driverEntity = driverRepository.findByIdAndDeletedIsFalse(driverId)
+                .orElseThrow(() -> new DriverNotFoundException(messageSource.getMessage(
+                        AppConstants.DRIVER_NOT_FOUND_MESSAGE_KEY,
+                        new Object[]{driverId},
+                        LocaleContextHolder.getLocale())));
+
+        return driverMapper.toDriverCarDto(driverEntity);
+    }
+
+    private void checkCarExistsByPhoneOrEmail(DriverDto driverDto) {
+        if (driverRepository.existsByPhoneAndDeletedIsFalse(driverDto.phone())) {
+            throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
+                    AppConstants.DRIVER_PHONE_DUPLICATE_MESSAGE_KEY,
+                    new Object[]{driverDto.phone()},
+                    LocaleContextHolder.getLocale()));
+        }
+
+        if (driverRepository.existsByEmailAndDeletedIsFalse(driverDto.email())) {
+            throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
+                    AppConstants.DRIVER_EMAIL_DUPLICATE_MESSAGE_KEY,
+                    new Object[]{driverDto.email()},
+                    LocaleContextHolder.getLocale()));
+        }
+    }
+
+    private void checkDriverRestoreOption(DriverDto driverDto) {
+        if (Objects.nonNull(driverDto.email()) && driverRepository.existsByEmailAndDeletedIsTrue(driverDto.email())) {
+            throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
+                    AppConstants.RESTORE_DRIVER_BY_EMAIL_MESSAGE_KEY,
+                    new Object[]{driverDto.email()},
+                    LocaleContextHolder.getLocale()));
+        }
+        if (Objects.nonNull(driverDto.phone()) && driverRepository.existsByPhoneAndDeletedIsTrue(driverDto.phone())) {
+            throw new DuplicateDriverEmailPhoneException(messageSource.getMessage(
+                    AppConstants.RESTORE_DRIVER_BY_PHONE_MESSAGE_KEY,
+                    new Object[]{driverDto.phone()},
+                    LocaleContextHolder.getLocale()));
+        }
+    }
+
     private Driver getDriverByIdAndDeletedIsFalse(Long driverId) {
         return driverRepository.findByIdAndDeletedIsFalse(driverId)
                 .orElseThrow(() -> new DriverNotFoundException(messageSource.getMessage(
-                        "driver.not.found",
+                        AppConstants.DRIVER_NOT_FOUND_MESSAGE_KEY,
                         new Object[]{driverId},
                         LocaleContextHolder.getLocale())));
     }

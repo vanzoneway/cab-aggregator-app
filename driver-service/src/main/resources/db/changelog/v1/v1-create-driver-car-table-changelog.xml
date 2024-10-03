@@ -5,8 +5,8 @@
                                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <changeSet id="1727686241411-1"
-               author="vanzoneway">
+    <changeSet id="1"
+               author="vanz.evergarden0@gmail.com">
         <createTable tableName="car">
             <column autoIncrement="true"
                     name="id"
@@ -37,8 +37,8 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="1727686241411-2"
-               author="vanzoneway">
+    <changeSet id="2"
+               author="vanz.evergarden0@gmail.com">
         <createTable tableName="driver">
             <column autoIncrement="true"
                     name="id"
@@ -57,8 +57,6 @@
                     type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="age"
-                    type="INT"/>
             <column name="gender"
                     type="VARCHAR(255)"/>
             <column name="deleted"
@@ -71,8 +69,8 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="1727686241411-3"
-               author="vanzoneway">
+    <changeSet id="3"
+               author="vanz.evergarden0@gmail.com">
         <addUniqueConstraint columnNames="number"
                              constraintName="uc_car_number"
                              tableName="car"/>
@@ -81,8 +79,8 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="1727686241411-4"
-               author="vanzoneway">
+    <changeSet id="4"
+               author="vanz.evergarden0@gmail.com">
         <addForeignKeyConstraint baseColumnNames="driver_id"
                                  baseTableName="car"
                                  constraintName="FK_CAR_ON_DRIVER"

@@ -19,6 +19,10 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
 
     boolean existsByPhoneAndDeletedIsFalse(String phone);
 
+    boolean existsByEmailAndDeletedIsTrue(String email);
+
+    boolean existsByPhoneAndDeletedIsTrue(String phone);
+
     Page<Driver> findAllByDeletedIsFalse(Pageable pageable);
 
 }

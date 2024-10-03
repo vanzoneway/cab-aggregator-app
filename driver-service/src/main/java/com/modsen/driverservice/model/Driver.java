@@ -34,8 +34,6 @@ public class Driver {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    private Integer age;
-
     private String gender;
 
     @Column(nullable = false)

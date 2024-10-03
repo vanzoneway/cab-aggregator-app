@@ -2,7 +2,6 @@ package com.modsen.driverservice.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -33,11 +32,6 @@ public record DriverDto(
         @Schema(description = "Phone number of the driver", example = "+1234567890")
         @NotBlank(message = "{phone.empty}")
         String phone,
-
-        @Min(message = "{age.min}", value = 21, groups = Marker.OnCreate.class)
-        @Schema(description = "Age of the driver", example = "30")
-        @NotNull(message = "{age.empty}")
-        Integer age,
 
         @NotBlank(message = "{gender.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Gender of the driver", example = "Female")

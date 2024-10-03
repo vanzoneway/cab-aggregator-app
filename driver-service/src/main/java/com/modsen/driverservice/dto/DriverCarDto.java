@@ -24,9 +24,6 @@ public class DriverCarDto {
     @Schema(description = "Phone number of the driver", example = "+1234567890")
     private String phone;
 
-    @Schema(description = "Age of the driver", example = "30")
-    private Integer age;
-
     @Schema(description = "Gender of the driver", example = "Male")
     private String gender;
 
