@@ -83,6 +83,7 @@ public interface DriverOperations {
             @ApiResponse(responseCode = "409", description = "A conflict occurred. This happens when such a driver " +
                     "email or phone already exists")
     })
+    @Validated(Marker.OnUpdate.class)
     DriverDto updateDriverById(
             @Parameter(description = "ID of the driver to be updated", required = true)
             @PathVariable Long driverId,

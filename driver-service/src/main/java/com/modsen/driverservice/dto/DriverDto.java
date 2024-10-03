@@ -21,16 +21,16 @@ public record DriverDto(
         @Schema(description = "Name of the driver", example = "Jane Doe")
         String name,
 
-        @Email(message = "{email.invalid}", groups = Marker.OnCreate.class)
+        @Email(message = "{email.invalid}", groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
         @Schema(description = "Email address of the driver", example = "janedoe@example.com")
-        @NotBlank(message = "{email.empty}")
+        @NotBlank(message = "{email.empty}", groups = Marker.OnCreate.class)
         String email,
 
         @Pattern(message = "{phone.invalid}",
                 regexp = "^\\+?[1-9][0-9]{7,14}$",
-                groups = Marker.OnCreate.class)
+                groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
         @Schema(description = "Phone number of the driver", example = "+1234567890")
-        @NotBlank(message = "{phone.empty}")
+        @NotBlank(message = "{phone.empty}", groups = Marker.OnCreate.class)
         String phone,
 
         @NotBlank(message = "{gender.empty}", groups = Marker.OnCreate.class)
