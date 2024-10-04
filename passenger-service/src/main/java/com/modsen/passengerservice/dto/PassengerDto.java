@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 public record PassengerDto(
         @NotNull(groups = Marker.OnGet.class)
         @Schema(description = "Unique identifier for the passenger", example = "1")
+        @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, message = "{id.must.be.empty}")
         Long id,
 
         @NotBlank(message = "{name.empty}", groups = Marker.OnCreate.class)
@@ -33,5 +35,6 @@ public record PassengerDto(
         @NotBlank(message = "{phone.empty}", groups = Marker.OnCreate.class)
         String phone,
 
+        @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, message = "{deleted.must.be.null}")
         Boolean deleted) implements Serializable {
 }
