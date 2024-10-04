@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: passenger-service
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/passengers
+    username: postgres
+    password: postgres
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+
+server:
+  port: 8086
+

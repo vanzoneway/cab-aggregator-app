@@ -1,0 +1,26 @@
+package com.modsen.passengerservice.exception;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@Schema(description = "Data Transfer Object for API exceptions")
+public class ApiExceptionDto {
+
+    @Schema(description = "HTTP status of the error", example = "404")
+    private HttpStatus status;
+
+    @Schema(description = "Error message describing the issue", example = "Resource not found")
+    private String message;
+
+    @Schema(description = "Timestamp when the error occurred", example = "2023-09-30T15:30:00")
+    private LocalDateTime timestamp;
+
+}
