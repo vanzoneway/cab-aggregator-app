@@ -50,7 +50,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
-    public void safeDeletePassengerByPassengerId(Long passengerId) {
+    public void safeDeletePassengerById(Long passengerId) {
         Passenger passenger = getPassengerByIdAndDeletedIsFalse(passengerId);
         passenger.setDeleted(true);
         passengerRepository.save(passenger);
@@ -74,7 +74,6 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     private void checkPassengerExistsByPhoneOrEmail(PassengerDto passengerDto) {
-        String passengerPhone = passengerDto.phone();
         String passengerEmail = passengerDto.email();
         if (Objects.nonNull(passengerEmail) && passengerRepository.existsByEmailAndDeletedIsFalse(passengerEmail)) {
             throw new DuplicatePassengerPhoneOrEmailException(messageSource.getMessage(
@@ -83,6 +82,7 @@ public class PassengerServiceImpl implements PassengerService {
                     LocaleContextHolder.getLocale()
             ));
         }
+        String passengerPhone = passengerDto.phone();
         if (Objects.nonNull(passengerPhone) && passengerRepository.existsByPhoneAndDeletedIsFalse(passengerPhone)) {
             throw new DuplicatePassengerPhoneOrEmailException(messageSource.getMessage(
                     AppConstants.PASSENGER_PHONE_DUPLICATE_MESSAGE_KEY,
@@ -94,7 +94,6 @@ public class PassengerServiceImpl implements PassengerService {
 
     private void checkPassengerRestoreOption(PassengerDto passengerDto) {
         String passengerEmail = passengerDto.email();
-        String passengerPhone = passengerDto.phone();
         if (Objects.nonNull(passengerEmail) && passengerRepository.existsByEmailAndDeletedIsTrue(passengerEmail)) {
             throw new DuplicatePassengerPhoneOrEmailException(messageSource.getMessage(
                     AppConstants.RESTORE_PASSENGER_BY_EMAIL_MESSAGE_KEY,
@@ -102,6 +101,7 @@ public class PassengerServiceImpl implements PassengerService {
                     LocaleContextHolder.getLocale()
             ));
         }
+        String passengerPhone = passengerDto.phone();
         if (Objects.nonNull(passengerPhone) && passengerRepository.existsByPhoneAndDeletedIsTrue(passengerPhone)) {
             throw new DuplicatePassengerPhoneOrEmailException(messageSource.getMessage(
                     AppConstants.RESTORE_PASSENGER_BY_PHONE_MESSAGE_KEY,

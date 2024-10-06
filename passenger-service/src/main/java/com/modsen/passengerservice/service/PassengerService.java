@@ -9,7 +9,7 @@ public interface PassengerService {
 
     ListContainerResponseDto<PassengerDto> getPagePassengers(Integer offset, Integer limit);
 
-    void safeDeletePassengerByPassengerId(Long passengerId);
+    void safeDeletePassengerById(Long passengerId);
 
     PassengerDto updatePassengerById(Long passengerId, PassengerDto passengerDto);
 

@@ -15,13 +15,17 @@ import java.io.Serializable;
 @Schema(description = "Data Transfer Object for Passenger")
 public record PassengerDto(
         @NotNull(groups = Marker.OnGet.class)
-        @Schema(description = "Unique identifier for the passenger", example = "1")
         @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, message = "{id.must.be.empty}")
+        @Schema(hidden = true)
         Long id,
 
-        @NotBlank(message = "{name.empty}", groups = Marker.OnCreate.class)
-        @Schema(description = "Name of the passenger", example = "Jane Doe")
-        String name,
+        @NotBlank(message = "{firstname.empty}", groups = Marker.OnCreate.class)
+        @Schema(description = "First name of the passenger", example = "Jane")
+        String firstName,
+
+        @NotBlank(message = "{lastname.empty}", groups = Marker.OnCreate.class)
+        @Schema(description = "Last name of the passenger", example = "Doe")
+        String lastName,
 
         @Email(message = "{email.invalid}", groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
         @Schema(description = "Email address of the passenger", example = "janedoe@example.com")
@@ -36,5 +40,6 @@ public record PassengerDto(
         String phone,
 
         @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, message = "{deleted.must.be.null}")
+        @Schema(hidden = true)
         Boolean deleted) implements Serializable {
 }

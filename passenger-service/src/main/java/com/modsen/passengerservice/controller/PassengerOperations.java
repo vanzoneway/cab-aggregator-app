@@ -27,12 +27,14 @@ public interface PassengerOperations {
     @Operation(summary = "Create a new passenger",
             description = """
                     Required fields:\s
-                    - **name**: Name of the driver (non-empty string)
+                    - **firstName**: Name of the driver (non-empty string)
+                    - **lastName**: lastName of the driver (non-empty string)
                     - **email**: Valid email address
                     - **phone**: Phone number in valid format
                     Example:\s
                     {
-                      "name": "Jane Doe",
+                      "firstName": "Jane",
+                      "lastName": "Doe",
                       "email": "janedoe@example.com",
                       "phone": "+1234567890",
                     }""")
@@ -65,7 +67,7 @@ public interface PassengerOperations {
             @ApiResponse(responseCode = "204", description = "Passenger deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Passenger not found")
     })
-    void safeDeleteDriver(
+    void safeDeletePassenger(
             @Parameter(description = "ID of the passenger to be deleted", required = true)
             @PathVariable Long passengerId);
 

@@ -20,7 +20,9 @@ public class Passenger {
     @Column(nullable = false)
     private Long id;
 
-    private String name;
+    private String firstName;
+
+    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String email;

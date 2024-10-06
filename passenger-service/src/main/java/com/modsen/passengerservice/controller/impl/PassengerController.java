@@ -45,8 +45,8 @@ public class PassengerController implements PassengerOperations {
     @Override
     @DeleteMapping("/{passengerId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void safeDeleteDriver(@PathVariable Long passengerId) {
-        passengerService.safeDeletePassengerByPassengerId(passengerId);
+    public void safeDeletePassenger(@PathVariable Long passengerId) {
+        passengerService.safeDeletePassengerById(passengerId);
     }
 
     @Override
