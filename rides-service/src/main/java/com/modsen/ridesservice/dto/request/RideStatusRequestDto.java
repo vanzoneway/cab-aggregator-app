@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public record RideStatusRequestDto(
-        @NotNull(message = "{cost.empty}")
-        @EnumTypeSubset(enumClass = RideStatus.class, message = "{cost.positive.zero}")
+        @NotNull(message = "{ride.status.empty}")
+        @EnumTypeSubset(enumClass = RideStatus.class, message = "{ride.status.wrong.enum.type}")
         String rideStatus) implements Serializable {
 }

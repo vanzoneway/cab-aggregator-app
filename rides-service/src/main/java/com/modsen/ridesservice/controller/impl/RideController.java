@@ -58,8 +58,8 @@ public class RideController implements RideOperations {
     }
 
     @Override
-    @GetMapping("/rideId")
-    public RideResponseDto getRideById(Long rideId) {
+    @GetMapping("/{rideId}")
+    public RideResponseDto getRideById(@PathVariable Long rideId) {
         return rideService.getRideById(rideId);
     }
 
