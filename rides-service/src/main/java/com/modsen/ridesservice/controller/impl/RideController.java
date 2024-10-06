@@ -7,6 +7,8 @@ import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
 import com.modsen.ridesservice.service.RideService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +37,8 @@ public class RideController implements RideOperations {
 
     @Override
     @GetMapping
-    public ListContainerResponseDto<RideResponseDto> getPageRides(Integer offset, Integer limit) {
+    public ListContainerResponseDto<RideResponseDto> getPageRides(@Min(0) Integer offset,
+                                                                  @Min(1) @Max(100) Integer limit) {
         return rideService.getPageRides(offset, limit);
     }
 
