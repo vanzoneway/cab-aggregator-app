@@ -44,7 +44,7 @@ public class Ride {
     @Column(nullable = false)
     private LocalDateTime orderDateTime;
 
-    @Column(nullable = false, precision = 5, scale = 2)
+    @Column(nullable = false, precision = 7, scale = 2)
     private BigDecimal cost;
 
 }

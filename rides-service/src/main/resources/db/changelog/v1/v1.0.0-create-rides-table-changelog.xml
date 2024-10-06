@@ -38,7 +38,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="cost"
-                    type="DECIMAL(5, 2)">
+                    type="DECIMAL(7, 2)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
