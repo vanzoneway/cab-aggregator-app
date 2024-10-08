@@ -29,17 +29,39 @@ public class RideController implements RideOperations {
     private final RideService rideService;
 
     @Override
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public RideResponseDto createRide(@Valid @RequestBody RideRequestDto rideRequestDto) {
-        return rideService.createRide(rideRequestDto);
-    }
-
-    @Override
     @GetMapping
     public ListContainerResponseDto<RideResponseDto> getPageRides(@Min(0) Integer offset,
                                                                   @Min(1) @Max(100) Integer limit) {
         return rideService.getPageRides(offset, limit);
+    }
+
+    @Override
+    @GetMapping("/{rideId}")
+    public RideResponseDto getRideById(@PathVariable Long rideId) {
+        return rideService.getRideById(rideId);
+    }
+
+    @Override
+    @GetMapping("/drivers/{driverId}")
+    public ListContainerResponseDto<RideResponseDto> getPageRidesByDriverId(@PathVariable Long driverId,
+                                                                            @Min(0) Integer offset,
+                                                                            @Min(1) @Max(100) Integer limit) {
+        return rideService.getPageRidesByDriverId(driverId, offset, limit);
+    }
+
+    @Override
+    @GetMapping("/passengers/{passengerId}")
+    public ListContainerResponseDto<RideResponseDto> getPageRidesByPassengerId(@PathVariable Long passengerId,
+                                                                               @Min(0) Integer offset,
+                                                                               @Min(1) @Max(100) Integer limit) {
+        return rideService.getPageRidesByPassengerId(passengerId, offset, limit);
+    }
+
+    @Override
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public RideResponseDto createRide(@Valid @RequestBody RideRequestDto rideRequestDto) {
+        return rideService.createRide(rideRequestDto);
     }
 
     @Override
@@ -55,12 +77,6 @@ public class RideController implements RideOperations {
     public RideResponseDto updateRide(@PathVariable Long rideId,
                                       @RequestBody @Valid RideRequestDto rideRequestDto) {
         return rideService.updateRide(rideId, rideRequestDto);
-    }
-
-    @Override
-    @GetMapping("/{rideId}")
-    public RideResponseDto getRideById(@PathVariable Long rideId) {
-        return rideService.getRideById(rideId);
     }
 
 }

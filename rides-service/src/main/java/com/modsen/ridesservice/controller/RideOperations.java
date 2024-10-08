@@ -32,16 +32,12 @@ public interface RideOperations {
                     - **passengerId**: Id of the passenger from other service
                     - **departureAddress**: Departure address (non-empty string)
                     - **destinationAddress**: Destination address (non-empty string)
-                    - **cost**: Cost of the ride (positive number)
-                    - **rideStatus**: Initial status of the ride (must be one of CREATED, ACCEPTED, etc.)
                     Example:\s
                     {
                       "driverId": "1",
                       "passengerId": "2",
                       "departureAddress": "123 Main St",
                       "destinationAddress": "456 Elm St",
-                      "cost": 25.00,
-                      "rideStatus": "CREATED"
                     }""")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ride created successfully"),
@@ -102,5 +98,42 @@ public interface RideOperations {
     RideResponseDto getRideById(
             @Parameter(description = "ID of the ride", required = true) @PathVariable
             Long rideId);
+
+    @Operation(summary = "Get a paginated list of rides by driver ID",
+            description = "Retrieves a paginated list of rides for a specific driver based on offset and limit.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of rides retrieved successfully"),
+    })
+    ListContainerResponseDto<RideResponseDto> getPageRidesByDriverId(
+            @Parameter(description = "ID of the driver", example = "5")
+            @PathVariable
+            Long driverId,
+            @Parameter(description = "Pagination offset", example = "0")
+            @RequestParam(defaultValue = "0")
+            @Min(0)
+            Integer offset,
+            @Parameter(description = "Pagination limit", example = "10")
+            @RequestParam(defaultValue = "10")
+            @Min(1) @Max(100)
+            Integer limit);
+
+
+    @Operation(summary = "Get a paginated list of rides by passenger ID",
+            description = "Retrieves a paginated list of rides for a specific passenger based on offset and limit.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of rides retrieved successfully"),
+    })
+    ListContainerResponseDto<RideResponseDto> getPageRidesByPassengerId(
+            @Parameter(description = "ID of the passenger", example = "7")
+            @PathVariable
+            Long passengerId,
+            @Parameter(description = "Pagination offset", example = "0")
+            @RequestParam(defaultValue = "0")
+            @Min(0)
+            Integer offset,
+            @Parameter(description = "Pagination limit", example = "10")
+            @RequestParam(defaultValue = "10")
+            @Min(1) @Max(100)
+            Integer limit);
 
 }

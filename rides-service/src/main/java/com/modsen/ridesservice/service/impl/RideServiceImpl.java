@@ -9,8 +9,11 @@ import com.modsen.ridesservice.exception.ride.RideNotFoundException;
 import com.modsen.ridesservice.mapper.ListContainerMapper;
 import com.modsen.ridesservice.mapper.RideMapper;
 import com.modsen.ridesservice.model.Ride;
+import com.modsen.ridesservice.model.enums.RideStatus;
 import com.modsen.ridesservice.repository.RideRepository;
 import com.modsen.ridesservice.service.RideService;
+import com.modsen.ridesservice.service.component.RideServicePriceGenerator;
+import com.modsen.ridesservice.service.component.RideServiceValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -29,11 +32,15 @@ public class RideServiceImpl implements RideService {
     private final RideMapper rideMapper;
     private final ListContainerMapper listContainerMapper;
     private final MessageSource messageSource;
+    private final RideServicePriceGenerator priceGenerator;
+    private final RideServiceValidation rideServiceValidation;
 
     @Override
     @Transactional
     public RideResponseDto createRide(RideRequestDto rideRequestDto) {
         Ride ride = rideMapper.toEntity(rideRequestDto);
+        ride.setRideStatus(RideStatus.CREATED);
+        ride.setCost(priceGenerator.generateRandomCost());
         ride.setOrderDateTime(LocalDateTime.now());
         rideRepository.save(ride);
         return rideMapper.toDto(ride);
@@ -43,6 +50,7 @@ public class RideServiceImpl implements RideService {
     @Transactional
     public RideResponseDto changeRideStatus(Long rideId, RideStatusRequestDto rideStatusRequestDto) {
         Ride ride = getRide(rideId);
+        rideServiceValidation.validateChangingRideStatus(ride, rideStatusRequestDto);
         rideMapper.partialUpdate(rideStatusRequestDto, ride);
         rideRepository.save(ride);
         return rideMapper.toDto(ride);
@@ -67,6 +75,26 @@ public class RideServiceImpl implements RideService {
     public ListContainerResponseDto<RideResponseDto> getPageRides(Integer offset, Integer limit) {
         Page<RideResponseDto> rideResponsePageDto = rideRepository
                 .findAll(PageRequest.of(offset, limit))
+                .map(rideMapper::toDto);
+        return listContainerMapper.toDto(rideResponsePageDto);
+    }
+
+    @Override
+    public ListContainerResponseDto<RideResponseDto> getPageRidesByDriverId(Long driverId,
+                                                                            Integer offset,
+                                                                            Integer limit) {
+        Page<RideResponseDto> rideResponsePageDto = rideRepository
+                .findAllByDriverId(driverId ,PageRequest.of(offset, limit))
+                .map(rideMapper::toDto);
+        return listContainerMapper.toDto(rideResponsePageDto);
+    }
+
+    @Override
+    public ListContainerResponseDto<RideResponseDto> getPageRidesByPassengerId(Long passengerId,
+                                                                               Integer offset,
+                                                                               Integer limit) {
+        Page<RideResponseDto> rideResponsePageDto = rideRepository
+                .findAllByPassengerId(passengerId ,PageRequest.of(offset, limit))
                 .map(rideMapper::toDto);
         return listContainerMapper.toDto(rideResponsePageDto);
     }

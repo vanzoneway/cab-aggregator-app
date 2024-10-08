@@ -17,4 +17,8 @@ public interface RideService {
 
     ListContainerResponseDto<RideResponseDto> getPageRides(Integer offset, Integer limit);
 
+    ListContainerResponseDto<RideResponseDto> getPageRidesByDriverId(Long driverId, Integer offset, Integer limit);
+
+    ListContainerResponseDto<RideResponseDto> getPageRidesByPassengerId(Long passengerId, Integer offset, Integer limit);
+
 }

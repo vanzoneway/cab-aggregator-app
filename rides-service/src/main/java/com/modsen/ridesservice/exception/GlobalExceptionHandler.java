@@ -1,6 +1,7 @@
 package com.modsen.ridesservice.exception;
 
 import com.modsen.ridesservice.constants.AppConstants;
+import com.modsen.ridesservice.exception.ride.InvalidInputStatusException;
 import com.modsen.ridesservice.exception.ride.RideNotFoundException;
 import com.modsen.ridesservice.exception.violation.ValidationErrorResponse;
 import com.modsen.ridesservice.exception.violation.Violation;
@@ -21,28 +22,28 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RideNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiExceptionDto handleRideNotFoundException(RideNotFoundException e) {
+    public ApiExceptionDto handleRideNotFoundException(Exception e) {
         return new ApiExceptionDto(
                 HttpStatus.NOT_FOUND,
                 e.getMessage(),
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiExceptionDto handleAnyException(Exception e) {
-        return new ApiExceptionDto(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                AppConstants.INTERNAL_SERVER_ERROR,
-                LocalDateTime.now());
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ExceptionHandler({HttpMessageNotReadableException.class, InvalidInputStatusException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiExceptionDto handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public ApiExceptionDto handleHttpMessageNotReadableException(Exception e) {
         return new ApiExceptionDto(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiExceptionDto handleAnyException() {
+        return new ApiExceptionDto(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                AppConstants.INTERNAL_SERVER_ERROR,
                 LocalDateTime.now());
     }
 
