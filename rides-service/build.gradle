@@ -1,7 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.liquibase:liquibase-core:4.27.0'
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.liquibase.gradle' version '3.0.1'
 }
 
 group = 'com.modsen'
@@ -17,10 +27,59 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    springBootVersion = '3.3.4'
+    springDocVersion = '2.6.0'
+    mapstructVersion = '1.5.5.Final'
+    liquibaseVersion = '4.27.0'
+    liquibaseGroovyDslVersion = '3.0.2'
+    picocliVersion = '4.6.1'
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    }
+}
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+
+    implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
+    implementation "org.postgresql:postgresql"
+
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencies {
+    liquibaseRuntime "org.liquibase:liquibase-core:${liquibaseVersion}"
+    liquibaseRuntime "org.liquibase:liquibase-groovy-dsl:${liquibaseGroovyDslVersion}"
+    liquibaseRuntime "info.picocli:picocli:${picocliVersion}"
+    liquibaseRuntime "org.postgresql:postgresql"
+}
+
+liquibase {
+    activities {
+        main {
+            changelogFile "db/changelog/main-changelog.xml"
+            url System.getenv("LIQUIBASE_URL") ?: "jdbc:postgresql://localhost:5435/rides"
+            username System.getenv("LIQUIBASE_USERNAME") ?: "postgres"
+            password System.getenv("LIQUIBASE_PASSWORD") ?: "postgres"
+            classpath sourceSets.main.output.asPath
+        }
+    }
 }
 
 tasks.named('test') {
