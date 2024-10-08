@@ -1,5 +1,6 @@
-package com.modsen.ridesservice.exception.validation.constraints;
+package com.modsen.ridesservice.exception.validation.provider;
 
+import com.modsen.ridesservice.exception.validation.EnumTypeSubset;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

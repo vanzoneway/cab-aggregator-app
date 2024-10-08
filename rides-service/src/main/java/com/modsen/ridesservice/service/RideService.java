@@ -9,7 +9,7 @@ public interface RideService {
 
     RideResponseDto createRide(RideRequestDto rideRequestDto);
 
-    RideResponseDto changeStatusRide(Long rideId, RideStatusRequestDto rideStatusRequestDto);
+    RideResponseDto changeRideStatus(Long rideId, RideStatusRequestDto rideStatusRequestDto);
 
     RideResponseDto updateRide(Long rideId, RideRequestDto rideRequestDto);
 

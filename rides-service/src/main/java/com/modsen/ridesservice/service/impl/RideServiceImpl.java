@@ -41,7 +41,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
-    public RideResponseDto changeStatusRide(Long rideId, RideStatusRequestDto rideStatusRequestDto) {
+    public RideResponseDto changeRideStatus(Long rideId, RideStatusRequestDto rideStatusRequestDto) {
         Ride ride = getRide(rideId);
         rideMapper.partialUpdate(rideStatusRequestDto, ride);
         rideRepository.save(ride);

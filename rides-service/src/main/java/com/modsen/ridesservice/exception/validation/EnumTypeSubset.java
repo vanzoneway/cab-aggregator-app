@@ -1,5 +1,7 @@
-package com.modsen.ridesservice.exception.validation.constraints;
+package com.modsen.ridesservice.exception.validation;
 
+import com.modsen.ridesservice.constants.AppConstants;
+import com.modsen.ridesservice.exception.validation.provider.EnumTypeSubsetValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -22,7 +24,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface EnumTypeSubset {
     Class<? extends Enum<?>> enumClass();
 
-    String message() default "must be any of enum type";
+    String message() default AppConstants.ENUM_TYPE_INVALID_MESSAGE_KEY;
 
     Class<?>[] groups() default {};
 

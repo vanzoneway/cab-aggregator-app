@@ -1,6 +1,6 @@
 package com.modsen.ridesservice.dto.request;
 
-import com.modsen.ridesservice.exception.validation.constraints.EnumTypeSubset;
+import com.modsen.ridesservice.exception.validation.EnumTypeSubset;
 import com.modsen.ridesservice.model.enums.RideStatus;
 import jakarta.validation.constraints.NotNull;
 

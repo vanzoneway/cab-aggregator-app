@@ -47,7 +47,7 @@ public class RideController implements RideOperations {
     public RideResponseDto changeRideStatus(
             @PathVariable Long rideId,
             @RequestBody @Valid RideStatusRequestDto rideStatusRequestDto) {
-        return rideService.changeStatusRide(rideId, rideStatusRequestDto);
+        return rideService.changeRideStatus(rideId, rideStatusRequestDto);
     }
 
     @Override
