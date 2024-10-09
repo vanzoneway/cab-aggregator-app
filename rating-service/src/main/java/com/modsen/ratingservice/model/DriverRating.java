@@ -20,4 +20,14 @@ public class DriverRating {
     @Column(nullable = false)
     private Long id;
 
+    private String comment;
+
+    @Column(nullable = false)
+    private Integer rating;
+
+    @Column(unique = true, nullable = false)
+    private Long rideId;
+
+    Boolean deleted;
+
 }
