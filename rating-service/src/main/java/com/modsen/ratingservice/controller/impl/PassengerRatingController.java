@@ -1,10 +1,10 @@
 package com.modsen.ratingservice.controller.impl;
 
-import com.modsen.ratingservice.controller.PassengerRatingOperations;
+import com.modsen.ratingservice.controller.general.PassengerRatingOperations;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
-import com.modsen.ratingservice.service.RatingService;
+import com.modsen.ratingservice.service.impl.PassengerRatingService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PassengerRatingController implements PassengerRatingOperations {
 
-    private final RatingService passengerRatingService;
+    private final PassengerRatingService passengerRatingService;
 
     @Override
     @PostMapping

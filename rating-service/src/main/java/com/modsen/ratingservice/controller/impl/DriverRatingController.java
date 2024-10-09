@@ -1,6 +1,6 @@
 package com.modsen.ratingservice.controller.impl;
 
-import com.modsen.ratingservice.controller.DriverRatingOperations;
+import com.modsen.ratingservice.controller.general.DriverRatingOperations;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;

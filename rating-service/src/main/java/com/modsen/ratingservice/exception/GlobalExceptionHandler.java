@@ -1,9 +1,8 @@
 package com.modsen.ratingservice.exception;
 
 import com.modsen.ratingservice.constants.AppConstants;
-import com.modsen.ratingservice.exception.rating.DriverRatingNotFoundException;
+import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.exception.rating.DuplicateRideIdException;
-import com.modsen.ratingservice.exception.rating.PassengerRatingNotFoundException;
 import com.modsen.ratingservice.exception.violation.ValidationErrorResponse;
 import com.modsen.ratingservice.exception.violation.Violation;
 import jakarta.validation.ConstraintViolationException;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({DriverRatingNotFoundException.class, PassengerRatingNotFoundException.class})
+    @ExceptionHandler(RatingNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiExceptionDto handleNotFoundException(Exception e) {
         return new ApiExceptionDto(HttpStatus.NOT_FOUND, e.getMessage(), LocalDateTime.now());
@@ -32,14 +31,14 @@ public class GlobalExceptionHandler {
         return new ApiExceptionDto(HttpStatus.CONFLICT, e.getMessage(), LocalDateTime.now());
     }
 
-//    @ExceptionHandler(Exception.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ApiExceptionDto handleAnyException(Exception e) {
-//        return new ApiExceptionDto(
-//                HttpStatus.INTERNAL_SERVER_ERROR,
-//                AppConstants.INTERNAL_SERVER_ERROR,
-//                LocalDateTime.now());
-//    }
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiExceptionDto handleAnyException(Exception e) {
+        return new ApiExceptionDto(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                AppConstants.INTERNAL_SERVER_ERROR,
+                LocalDateTime.now());
+    }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

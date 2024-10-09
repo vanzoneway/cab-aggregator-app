@@ -1,33 +1,10 @@
 package com.modsen.ratingservice.model;
 
-import jakarta.persistence.Column;
+import com.modsen.ratingservice.model.general.Rating;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.io.Serializable;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-public class PassengerRating {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private Long id;
-
-    private String comment;
-
-    @Column(nullable = false)
-    private Integer rating;
-
-    @Column(unique = true, nullable = false)
-    private Long rideId;
-
-    Boolean deleted;
-
+public class PassengerRating extends Rating implements Serializable {
 }

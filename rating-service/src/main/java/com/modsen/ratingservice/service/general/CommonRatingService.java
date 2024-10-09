@@ -1,10 +1,11 @@
-package com.modsen.ratingservice.service;
+package com.modsen.ratingservice.service.general;
 
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
+import com.modsen.ratingservice.model.general.Rating;
 
-public interface RatingService {
+public interface CommonRatingService<T extends Rating> {
 
     RatingResponseDto createRating(RatingRequestDto ratingRequestDto);
 
