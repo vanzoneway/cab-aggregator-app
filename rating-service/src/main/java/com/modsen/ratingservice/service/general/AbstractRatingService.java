@@ -1,5 +1,6 @@
 package com.modsen.ratingservice.service.general;
 
+import com.modsen.ratingservice.client.RideFeignClient;
 import com.modsen.ratingservice.constants.AppConstants;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
@@ -29,13 +30,13 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     protected final BaseRatingMapper<T> ratingMapper;
     protected final ListContainerMapper listContainerMapper;
     protected final MessageSource messageSource;
-
+    protected final RideFeignClient rideFeignClient;
     private String userType;
 
-    //TODO create sync interaction with rides-service
     @Override
     @Transactional
     public RatingResponseDto createRating(RatingRequestDto ratingRequestDto) {
+        rideFeignClient.findRideById(ratingRequestDto.rideId());
         checkRatingExistsByRideId(ratingRequestDto);
         checkRatingRestoreOption(ratingRequestDto);
         T rating = ratingMapper.toRating(ratingRequestDto);

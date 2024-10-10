@@ -9,4 +9,5 @@ public class AppConstants {
 
     public static final String INTERNAL_SERVER_ERROR = "Internal Server Error. Please try again later.";
 
+
 }
