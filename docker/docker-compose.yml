@@ -49,7 +49,6 @@ services:
     volumes:
       - ratings_data:/var/lib/postgresql/data
 
-
   keycloak_db:
     image: postgres:latest
     environment:
@@ -84,5 +83,5 @@ volumes:
   passengers_data:
   drivers_data:
   rides_data:
-  keycloak_data:
   ratings_data:
+  keycloak_data:

@@ -28,6 +28,7 @@ repositories {
 }
 
 ext {
+    springCloudVersion = '2023.0.1'
     springBootVersion = '3.3.4'
     springBootValidationVersion = '3.3.1'
     springBootWebVersion = '3.3.0'
@@ -42,6 +43,7 @@ ext {
 dependencyManagement {
     imports {
         mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
 }
 
@@ -50,6 +52,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
 
     implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
     implementation "org.postgresql:postgresql"
@@ -75,7 +78,7 @@ dependencies {
 liquibase {
     activities {
         main {
-            changelogFile "db/changelog/main-changelog.xml"
+            changelogFile "db/db.changelog/main-db.changelog.xml"
             url System.getenv("LIQUIBASE_URL") ?: "jdbc:postgresql://localhost:5433/passengers"
             username System.getenv("LIQUIBASE_USERNAME") ?: "postgres"
             password System.getenv("LIQUIBASE_PASSWORD") ?: "postgres"
