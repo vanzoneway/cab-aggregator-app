@@ -6,10 +6,27 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <changeSet id="1"
-               author="vanz">
+               author="vanz.evergarden0@gmail.com">
+        <createSequence incrementBy="1"
+                        sequenceName="driver_rating_seq"
+                        startValue="1"/>
+        <rollback>
+            <dropSequence sequenceName="driver_rating_seq"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="2"
+               author="vanz.evergarden0@gmail.com">
+        <createSequence incrementBy="1"
+                        sequenceName="passenger_rating_seq"
+                        startValue="1"/>
+        <rollback>
+            <dropSequence sequenceName="passenger_rating_seq"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="3"
+               author="vanz.evergarden0@gmail.com">
         <createTable tableName="driver_rating">
-            <column autoIncrement="true"
-                    name="id"
+            <column name="id"
                     type="BIGINT">
                 <constraints nullable="false"
                              primaryKey="true"
@@ -28,12 +45,14 @@
             <column name="deleted"
                     type="BOOLEAN"/>
         </createTable>
+        <rollback>
+            <dropTable tableName="driver_rating"/>
+        </rollback>
     </changeSet>
-    <changeSet id="2"
-               author="vanz">
+    <changeSet id="4"
+               author="vanz.evergarden0@gmail.com">
         <createTable tableName="passenger_rating">
-            <column autoIncrement="true"
-                    name="id"
+            <column name="id"
                     type="BIGINT">
                 <constraints nullable="false"
                              primaryKey="true"
@@ -52,18 +71,26 @@
             <column name="deleted"
                     type="BOOLEAN"/>
         </createTable>
+        <rollback>
+            <dropTable tableName="passenger_rating"/>
+        </rollback>
     </changeSet>
-    <changeSet id="3"
-               author="vanz">
+    <changeSet id="5"
+               author="vanz.evergarden0@gmail.com">
         <addUniqueConstraint columnNames="ride_id"
                              constraintName="uc_driverrating_rideid"
                              tableName="driver_rating"/>
+        <dropUniqueConstraint constraintName="uc_driverrating_rideid" tableName="driver_rating"/>
     </changeSet>
-    <changeSet id="4"
-               author="vanz">
+    <changeSet id="6"
+               author="vanz.evergarden0@gmail.com">
         <addUniqueConstraint columnNames="ride_id"
                              constraintName="uc_passengerrating_rideid"
                              tableName="passenger_rating"/>
+        <rollback>
+            <dropUniqueConstraint constraintName="uc_passengerrating_rideid" tableName="passenger_rating"/>
+        </rollback>
     </changeSet>
+
 
 </databaseChangeLog>

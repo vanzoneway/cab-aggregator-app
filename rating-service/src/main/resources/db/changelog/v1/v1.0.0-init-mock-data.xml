@@ -6,24 +6,24 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <changeSet id="6" author="vanz.evergarden0@gmail.com">
+    <changeSet id="8" author="vanz.evergarden0@gmail.com">
         <sqlFile path="../data/driver-rating-mock-data.sql" relativeToChangelogFile="true"/>
         <rollback>
             <sql>
                 BEGIN;
                 DELETE FROM driver_rating;
-                ALTER SEQUENCE driverrating_id_seq RESTART WITH 1;
+                ALTER SEQUENCE driver_rating_seq RESTART WITH 1;
                 COMMIT;
             </sql>
         </rollback>
     </changeSet>
-    <changeSet id="7" author="vanz.evergarden0@gmail.com">
+    <changeSet id="9" author="vanz.evergarden0@gmail.com">
         <sqlFile path="../data/passenger-rating-mock-data.sql" relativeToChangelogFile="true"/>
         <rollback>
             <sql>
                 BEGIN;
                 DELETE FROM passenger_rating;
-                ALTER SEQUENCE passengerrating_id_seq RESTART WITH 1;
+                ALTER SEQUENCE passenger_rating_seq RESTART WITH 1;
                 COMMIT;
             </sql>
         </rollback>

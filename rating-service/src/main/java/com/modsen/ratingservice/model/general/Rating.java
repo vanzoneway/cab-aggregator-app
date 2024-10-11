@@ -15,10 +15,12 @@ import lombok.Setter;
 @MappedSuperclass
 public abstract class Rating {
 
+    public static final String SEQUENCE_GENERATOR = "seq";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_GENERATOR)
     @Column(nullable = false)
-    protected Long id;
+    private Long id;
 
     protected String comment;
 

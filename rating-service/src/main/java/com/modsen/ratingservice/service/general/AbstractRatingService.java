@@ -47,7 +47,7 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     public RatingResponseDto updateRatingById(Long id, RatingRequestDto ratingRequestDto) {
         checkRatingRestoreOption(ratingRequestDto);
         checkRatingExistsByRideId(ratingRequestDto);
-        T rating = getDriverRating(id);
+        T rating = getRatingWithHandlingException(id);
         ratingMapper.partialUpdate(ratingRequestDto, rating);
         repository.save(rating);
         return ratingMapper.toDto(rating, userType);
@@ -55,7 +55,7 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
 
     @Override
     public RatingResponseDto getRating(Long id) {
-        T rating = getDriverRating(id);
+        T rating = getRatingWithHandlingException(id);
         return ratingMapper.toDto(rating, userType);
     }
 
@@ -70,7 +70,7 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     @Override
     @Transactional
     public void safeDeleteRating(Long id) {
-        T rating = getDriverRating(id);
+        T rating = getRatingWithHandlingException(id);
         rating.setDeleted(true);
         repository.save(rating);
     }
@@ -97,7 +97,7 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
         }
     }
 
-    private T getDriverRating(Long id) {
+    private T getRatingWithHandlingException(Long id) {
         return repository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new RatingNotFoundException(messageSource.getMessage(
                         AppConstants.RATING_NOT_FOUND_MESSAGE_KEY,

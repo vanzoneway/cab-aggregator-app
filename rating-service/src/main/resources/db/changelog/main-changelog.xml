@@ -12,8 +12,8 @@
 
     <include file="v1/v1.0.0-accumulate-changelog.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="9" author="vanz.evergarden0@gmail.com">
-        <tagDatabase tag="v0.0.0"/>
+    <changeSet id="11" author="vanz.evergarden0@gmail.com">
+        <tagDatabase tag="v1.0.0"/>
     </changeSet>
 
 </databaseChangeLog>
