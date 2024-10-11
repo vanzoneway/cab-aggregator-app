@@ -10,8 +10,14 @@ spring:
 
   liquibase:
     change-log: db/changelog/main-changelog.xml
-    contexts: ${spring.profiles.active}
 
 server:
   port: 8088
+
+eureka:
+  client:
+    service-url:
+      defaultZone:
+        http://localhost:8761/eureka/
+
 
