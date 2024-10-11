@@ -8,13 +8,13 @@
 
     <include file="v1.0.0-create-rating-table-changelog.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="7" author="vanz.evergarden0@gmail.com">
+    <changeSet id="7" author="vanz.evergarden0@gmail.com" context="dev, prod">
         <tagDatabase tag="v1.0.0_initial_setup"/>
     </changeSet>
 
     <include file="v1.0.0-init-mock-data.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="10" author="vanz.evergarden0@gmail.com">
+    <changeSet id="10" author="vanz.evergarden0@gmail.com" context="dev">
         <tagDatabase tag="v1.0.0_init_mock_data"/>
     </changeSet>
 
