@@ -3,6 +3,7 @@ package com.modsen.ratingservice.controller.impl;
 import com.modsen.ratingservice.controller.general.PassengerRatingOperations;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
+import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import com.modsen.ratingservice.service.impl.PassengerRatingService;
 import jakarta.validation.Valid;
@@ -63,6 +64,12 @@ public class PassengerRatingController implements PassengerRatingOperations {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePassengerRating(@PathVariable Long id) {
         passengerRatingService.safeDeleteRating(id);
+    }
+
+    @Override
+    @GetMapping("/{refUserId}/average")
+    public AverageRatingResponseDto averagePassengerRating(@PathVariable Long refUserId) {
+        return passengerRatingService.getAverageRating(refUserId);
     }
 
 }

@@ -3,6 +3,7 @@ package com.modsen.ratingservice.controller.impl;
 import com.modsen.ratingservice.controller.general.DriverRatingOperations;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
+import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import com.modsen.ratingservice.service.impl.DriverRatingService;
 import jakarta.validation.Valid;
@@ -63,6 +64,12 @@ public class DriverRatingController implements DriverRatingOperations {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteDriverRating(@PathVariable Long id) {
         driverRatingService.safeDeleteRating(id);
+    }
+
+    @Override
+    @GetMapping("/{refUserId}/average/")
+    public AverageRatingResponseDto averageDriverRating(@PathVariable Long refUserId) {
+        return driverRatingService.getAverageRating(refUserId);
     }
 
 }

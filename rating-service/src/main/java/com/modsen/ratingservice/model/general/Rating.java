@@ -24,11 +24,12 @@ public abstract class Rating {
 
     protected String comment;
 
-    @Column(nullable = false)
     protected Integer rating;
 
     @Column(unique = true, nullable = false)
     protected Long rideId;
+
+    protected Long refUserId;
 
     protected Boolean deleted;
 

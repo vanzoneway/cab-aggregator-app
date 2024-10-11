@@ -3,6 +3,7 @@ package com.modsen.ratingservice.service.general;
 import com.modsen.ratingservice.constants.AppConstants;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
+import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.exception.rating.DuplicateRideIdException;
@@ -73,6 +74,11 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
         T rating = getRatingWithHandlingException(id);
         rating.setDeleted(true);
         repository.save(rating);
+    }
+
+    @Override
+    public AverageRatingResponseDto getAverageRating(Long refUserId) {
+        return new AverageRatingResponseDto(repository.getAverageRatingByRefUserId(refUserId));
     }
 
     private void checkRatingRestoreOption(RatingRequestDto ratingRequestDto) {
