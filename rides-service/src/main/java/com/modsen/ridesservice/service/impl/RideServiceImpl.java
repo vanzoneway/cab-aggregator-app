@@ -38,6 +38,7 @@ public class RideServiceImpl implements RideService {
     @Override
     @Transactional
     public RideResponseDto createRide(RideRequestDto rideRequestDto) {
+        rideServiceValidation.checkExistingPassengerOrRider(rideRequestDto);
         Ride ride = rideMapper.toEntity(rideRequestDto);
         ride.setRideStatus(RideStatus.CREATED);
         ride.setCost(priceGenerator.generateRandomCost());
@@ -59,6 +60,7 @@ public class RideServiceImpl implements RideService {
     @Override
     @Transactional
     public RideResponseDto updateRide(Long rideId, RideRequestDto rideRequestDto) {
+        rideServiceValidation.checkExistingPassengerOrRider(rideRequestDto);
         Ride ride = getRide(rideId);
         rideMapper.partialUpdate(rideRequestDto, ride);
         rideRepository.save(ride);

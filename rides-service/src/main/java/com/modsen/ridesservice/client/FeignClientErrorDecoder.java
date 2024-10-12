@@ -1,8 +1,8 @@
-package com.modsen.ratingservice.client;
+package com.modsen.ridesservice.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.modsen.ratingservice.exception.ApiExceptionDto;
+import com.modsen.ridesservice.exception.ApiExceptionDto;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.SneakyThrows;
@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @Component
-public class RideFeignClientErrorDecoder implements ErrorDecoder {
+public class FeignClientErrorDecoder implements ErrorDecoder {
 
     @Override
     @SneakyThrows
@@ -23,7 +23,7 @@ public class RideFeignClientErrorDecoder implements ErrorDecoder {
         objectMapper.registerModule(new JavaTimeModule());
         ApiExceptionDto apiExceptionDto;
         apiExceptionDto = objectMapper.readValue(readResponseBody(response), ApiExceptionDto.class);
-        return new RideFeignClientException(apiExceptionDto);
+        return new CustomFeignClientException(apiExceptionDto);
     }
 
     @SneakyThrows
