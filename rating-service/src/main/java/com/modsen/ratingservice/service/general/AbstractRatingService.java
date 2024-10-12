@@ -7,6 +7,7 @@ import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.exception.rating.DuplicateRideIdException;
+import com.modsen.ratingservice.exception.rating.RefUserIdNotFoundException;
 import com.modsen.ratingservice.mapper.general.BaseRatingMapper;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.model.general.Rating;
@@ -61,9 +62,11 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     }
 
     @Override
-    public ListContainerResponseDto<RatingResponseDto> getRatingsByRideId(Long rideId, Integer offset, Integer limit) {
+    public ListContainerResponseDto<RatingResponseDto> getRatingsByRefUserId(Long refUserId,
+                                                                             Integer offset,
+                                                                             Integer limit) {
         Page<RatingResponseDto> ratingsResponseDto = repository
-                .findAllByRideIdAndDeletedIsFalse(rideId, PageRequest.of(offset, limit))
+                .findAllByRefUserIdAndDeletedIsFalse(refUserId, PageRequest.of(offset, limit))
                 .map(rating -> ratingMapper.toDto(rating, userType));
         return listContainerMapper.toDto(ratingsResponseDto);
     }
@@ -78,7 +81,12 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
 
     @Override
     public AverageRatingResponseDto getAverageRating(Long refUserId) {
-        return new AverageRatingResponseDto(repository.getAverageRatingByRefUserId(refUserId));
+        return new AverageRatingResponseDto(repository.getAverageRatingByRefUserId(refUserId)
+                .orElseThrow(() -> new RefUserIdNotFoundException(messageSource.getMessage(
+                        AppConstants.REF_USER_ID_NOT_FOUND_MESSAGE_KEY,
+                        new Object[]{userType, refUserId},
+                        LocaleContextHolder.getLocale()
+                ))));
     }
 
     private void checkRatingRestoreOption(RatingRequestDto ratingRequestDto) {

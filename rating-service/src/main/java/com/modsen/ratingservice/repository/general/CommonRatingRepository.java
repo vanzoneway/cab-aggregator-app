@@ -4,9 +4,7 @@ import com.modsen.ratingservice.model.general.Rating;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -19,8 +17,8 @@ public interface CommonRatingRepository<T extends Rating> extends JpaRepository<
 
     Optional<T> findByIdAndDeletedIsFalse(Long id);
 
-    Page<T> findAllByRideIdAndDeletedIsFalse(Long rideId, Pageable pageable);
+    Page<T> findAllByRefUserIdAndDeletedIsFalse(Long refUserId, Pageable pageable);
 
-    Double getAverageRatingByRefUserId(Long refUserId);
+    Optional<Double> getAverageRatingByRefUserId(Long refUserId);
 
 }

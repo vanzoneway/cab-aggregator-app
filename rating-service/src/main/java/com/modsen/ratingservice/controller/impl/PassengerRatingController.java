@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/passenger-ratings")
+@RequestMapping("/api/v1/passengers-ratings")
 @RequiredArgsConstructor
 public class PassengerRatingController implements PassengerRatingOperations {
 
@@ -50,13 +50,13 @@ public class PassengerRatingController implements PassengerRatingOperations {
     }
 
     @Override
-    @GetMapping("/rides/{rideId}")
-    public ListContainerResponseDto<RatingResponseDto> getPassengerRatingsByRideId(@PathVariable Long rideId,
-                                                                                   @RequestParam(defaultValue = "0")
-                                                                                   @Min(0) Integer offset,
-                                                                                   @RequestParam(defaultValue = "10")
-                                                                                   @Min(1) @Max(100) Integer limit) {
-        return passengerRatingService.getRatingsByRideId(rideId, offset, limit);
+    @GetMapping("/users/{refUserId}")
+    public ListContainerResponseDto<RatingResponseDto> getPassengerRatingsByRefUserId(@PathVariable Long refUserId,
+                                                                                      @RequestParam(defaultValue = "0")
+                                                                                      @Min(0) Integer offset,
+                                                                                      @RequestParam(defaultValue = "10")
+                                                                                      @Min(1) @Max(100) Integer limit) {
+        return passengerRatingService.getRatingsByRefUserId(refUserId, offset, limit);
     }
 
     @Override

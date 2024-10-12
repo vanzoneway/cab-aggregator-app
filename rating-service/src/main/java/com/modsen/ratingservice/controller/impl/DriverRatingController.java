@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/driver-ratings")
+@RequestMapping("/api/v1/drivers-ratings")
 @RequiredArgsConstructor
 public class DriverRatingController implements DriverRatingOperations {
 
@@ -50,13 +50,13 @@ public class DriverRatingController implements DriverRatingOperations {
     }
 
     @Override
-    @GetMapping("/rides/{rideId}")
-    public ListContainerResponseDto<RatingResponseDto> getDriverRatingsByRideId(@PathVariable Long rideId,
-                                                                                @RequestParam(defaultValue = "0")
-                                                                                @Min(0) Integer offset,
-                                                                                @RequestParam(defaultValue = "10")
-                                                                                @Min(1) @Max(100) Integer limit) {
-        return driverRatingService.getRatingsByRideId(rideId, offset, limit);
+    @GetMapping("/users/{refUserId}")
+    public ListContainerResponseDto<RatingResponseDto> getDriverRatingsByRefUserId(@PathVariable Long refUserId,
+                                                                                   @RequestParam(defaultValue = "0")
+                                                                                   @Min(0) Integer offset,
+                                                                                   @RequestParam(defaultValue = "10")
+                                                                                   @Min(1) @Max(100) Integer limit) {
+        return driverRatingService.getRatingsByRefUserId(refUserId, offset, limit);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class DriverRatingController implements DriverRatingOperations {
     }
 
     @Override
-    @GetMapping("/{refUserId}/average/")
+    @GetMapping("/{refUserId}/average")
     public AverageRatingResponseDto averageDriverRating(@PathVariable Long refUserId) {
         return driverRatingService.getAverageRating(refUserId);
     }

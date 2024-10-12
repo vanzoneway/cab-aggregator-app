@@ -16,9 +16,9 @@ public class DriverRatingService extends AbstractRatingService<DriverRating, Dri
 
     @Autowired
     public DriverRatingService(DriverRatingRepository repository,
-                                  DriverRatingMapper ratingMapper,
-                                  ListContainerMapper listContainerMapper,
-                                  MessageSource messageSource) {
+                               DriverRatingMapper ratingMapper,
+                               ListContainerMapper listContainerMapper,
+                               MessageSource messageSource) {
         super(repository, ratingMapper, listContainerMapper, messageSource, String.valueOf(UserType.DRIVER));
     }
 }

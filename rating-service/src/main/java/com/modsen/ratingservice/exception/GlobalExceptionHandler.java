@@ -3,6 +3,7 @@ package com.modsen.ratingservice.exception;
 import com.modsen.ratingservice.constants.AppConstants;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.exception.rating.DuplicateRideIdException;
+import com.modsen.ratingservice.exception.rating.RefUserIdNotFoundException;
 import com.modsen.ratingservice.exception.violation.ValidationErrorResponse;
 import com.modsen.ratingservice.exception.violation.Violation;
 import jakarta.validation.ConstraintViolationException;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RatingNotFoundException.class)
+    @ExceptionHandler({RatingNotFoundException.class, RefUserIdNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiExceptionDto handleNotFoundException(Exception e) {
         return new ApiExceptionDto(HttpStatus.NOT_FOUND, e.getMessage(), LocalDateTime.now());

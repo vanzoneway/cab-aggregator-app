@@ -14,7 +14,7 @@ public interface CommonRatingService<T extends Rating> {
 
     RatingResponseDto getRating(Long id);
 
-    ListContainerResponseDto<RatingResponseDto> getRatingsByRideId(Long rideId, Integer offset, Integer limit);
+    ListContainerResponseDto<RatingResponseDto> getRatingsByRefUserId(Long refUserId, Integer offset, Integer limit);
 
     void safeDeleteRating(Long id);
 

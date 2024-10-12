@@ -10,10 +10,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 public interface BaseRatingMapper<T> {
 
-    T toRating (RatingRequestDto ratingRequestDto);
+    T toRating(RatingRequestDto ratingRequestDto);
 
     @Mapping(target = "userType", defaultExpression = "java(userType)")
-    RatingResponseDto toDto (T rating, String userType);
+    RatingResponseDto toDto(T rating, String userType);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void partialUpdate(RatingRequestDto ratingRequestDto, @MappingTarget T rating);
