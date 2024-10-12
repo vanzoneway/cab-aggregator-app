@@ -19,10 +19,6 @@ public record RatingRequestDto(
         @Max(value = 5, groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, message = "{rating.size}")
         Integer rating,
 
-        @NotNull(groups = Marker.OnCreate.class, message = "{ref.user.id.null}")
-        @Null(groups = Marker.OnUpdate.class, message = "{ref.user.id.not.null}")
-        Long refUserId,
-
         @NotNull(groups = Marker.OnCreate.class, message = "{ride.id.null}")
         @Null(groups = Marker.OnUpdate.class, message = "{ride.id.not.null}")
         Long rideId) implements Serializable {

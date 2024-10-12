@@ -1,8 +1,10 @@
 package com.modsen.ratingservice.service.general;
 
 import com.modsen.ratingservice.client.RideFeignClient;
+import com.modsen.ratingservice.client.RideResponseDto;
 import com.modsen.ratingservice.constants.AppConstants;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
+import com.modsen.ratingservice.dto.UserType;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
@@ -36,10 +38,12 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     @Override
     @Transactional
     public RatingResponseDto createRating(RatingRequestDto ratingRequestDto) {
-        rideFeignClient.findRideById(ratingRequestDto.rideId());
+        RideResponseDto rideResponseDto = rideFeignClient
+                .findRideById(ratingRequestDto.rideId(), LocaleContextHolder.getLocale().toLanguageTag());
         checkRatingExistsByRideId(ratingRequestDto);
         checkRatingRestoreOption(ratingRequestDto);
         T rating = ratingMapper.toRating(ratingRequestDto);
+        setRefUserIdBasedOnUserType(rating, rideResponseDto);
         rating.setDeleted(false);
         repository.save(rating);
         return ratingMapper.toDto(rating, userType);
@@ -110,6 +114,14 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
                     LocaleContextHolder.getLocale()
             ));
         }
+    }
+
+    private void setRefUserIdBasedOnUserType(T rating, RideResponseDto rideResponseDto) {
+        rating.setRefUserId(
+                Objects.equals(userType, String.valueOf(UserType.PASSENGER))
+                        ? rideResponseDto.passengerId()
+                        : rideResponseDto.driverId()
+        );
     }
 
     private T getRatingWithHandlingException(Long id) {

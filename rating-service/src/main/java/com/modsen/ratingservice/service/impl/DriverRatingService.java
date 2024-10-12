@@ -1,5 +1,6 @@
 package com.modsen.ratingservice.service.impl;
 
+import com.modsen.ratingservice.client.RideFeignClient;
 import com.modsen.ratingservice.dto.UserType;
 import com.modsen.ratingservice.mapper.impl.DriverRatingMapper;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
@@ -18,7 +19,9 @@ public class DriverRatingService extends AbstractRatingService<DriverRating, Dri
     public DriverRatingService(DriverRatingRepository repository,
                                DriverRatingMapper ratingMapper,
                                ListContainerMapper listContainerMapper,
-                               MessageSource messageSource) {
-        super(repository, ratingMapper, listContainerMapper, messageSource, String.valueOf(UserType.DRIVER));
+                               MessageSource messageSource,
+                               RideFeignClient rideFeignClient) {
+        super(repository, ratingMapper, listContainerMapper,
+                messageSource,rideFeignClient, String.valueOf(UserType.DRIVER));
     }
 }
