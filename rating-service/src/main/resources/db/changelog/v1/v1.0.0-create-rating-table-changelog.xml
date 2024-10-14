@@ -1,0 +1,96 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="1"
+               author="vanz.evergarden0@gmail.com" context="dev, prod">
+        <createSequence incrementBy="1"
+                        sequenceName="driver_rating_seq"
+                        startValue="1"/>
+        <rollback>
+            <dropSequence sequenceName="driver_rating_seq"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="2"
+               author="vanz.evergarden0@gmail.com" context="dev, prod">
+        <createSequence incrementBy="1"
+                        sequenceName="passenger_rating_seq"
+                        startValue="1"/>
+        <rollback>
+            <dropSequence sequenceName="passenger_rating_seq"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="3"
+               author="vanz.evergarden0@gmail.com" context="dev, prod">
+        <createTable tableName="driver_rating">
+            <column name="id"
+                    type="BIGINT">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_driverrating"/>
+            </column>
+            <column name="comment"
+                    type="VARCHAR(255)"/>
+            <column name="rating"
+                    type="INT"/>
+            <column name="ride_id"
+                    type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ref_user_id"
+                    type="BIGINT"/>
+            <column name="deleted"
+                    type="BOOLEAN"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="driver_rating"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="4"
+               author="vanz.evergarden0@gmail.com" context="dev, prod">
+        <createTable tableName="passenger_rating">
+            <column name="id"
+                    type="BIGINT">
+                <constraints nullable="false"
+                             primaryKey="true"
+                             primaryKeyName="pk_passengerrating"/>
+            </column>
+            <column name="comment"
+                    type="VARCHAR(255)"/>
+            <column name="rating"
+                    type="INT"/>
+            <column name="ride_id"
+                    type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ref_user_id"
+                    type="BIGINT"/>
+            <column name="deleted"
+                    type="BOOLEAN"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="passenger_rating"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="5"
+               author="vanz.evergarden0@gmail.com" context="dev, prod">
+        <addUniqueConstraint columnNames="ride_id"
+                             constraintName="uc_driverrating_rideid"
+                             tableName="driver_rating"/>
+        <dropUniqueConstraint constraintName="uc_driverrating_rideid" tableName="driver_rating"/>
+    </changeSet>
+    <changeSet id="6"
+               author="vanz.evergarden0@gmail.com" context="dev, prod">
+        <addUniqueConstraint columnNames="ride_id"
+                             constraintName="uc_passengerrating_rideid"
+                             tableName="passenger_rating"/>
+        <rollback>
+            <dropUniqueConstraint constraintName="uc_passengerrating_rideid" tableName="passenger_rating"/>
+        </rollback>
+    </changeSet>
+
+
+</databaseChangeLog>

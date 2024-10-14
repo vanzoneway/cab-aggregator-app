@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="8" author="vanz.evergarden0@gmail.com" context="dev">
+        <sqlFile path="../data/driver-rating-mock-data.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>
+                BEGIN;
+                DELETE FROM driver_rating;
+                ALTER SEQUENCE driver_rating_seq RESTART WITH 1;
+                COMMIT;
+            </sql>
+        </rollback>
+    </changeSet>
+    <changeSet id="9" author="vanz.evergarden0@gmail.com" context="dev">
+        <sqlFile path="../data/passenger-rating-mock-data.sql" relativeToChangelogFile="true"/>
+        <rollback>
+            <sql>
+                BEGIN;
+                DELETE FROM passenger_rating;
+                ALTER SEQUENCE passenger_rating_seq RESTART WITH 1;
+                COMMIT;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
