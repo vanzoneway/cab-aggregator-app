@@ -31,11 +31,20 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, InvalidInputStatusException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiExceptionDto handleHttpMessageNotReadableException(Exception e) {
         return new ApiExceptionDto(
                 HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler({InvalidInputStatusException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiExceptionDto handleInvalidInputStatusException(Exception e) {
+        return new ApiExceptionDto(
+                HttpStatus.CONFLICT,
                 e.getMessage(),
                 LocalDateTime.now());
     }
