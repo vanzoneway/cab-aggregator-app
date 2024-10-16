@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.modsen.ridesservice.exception.ApiExceptionDto;
 import feign.Response;
 import feign.codec.ErrorDecoder;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +30,10 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
     @SneakyThrows
     private String readResponseBody(Response response) {
         if (Objects.nonNull(response.body())) {
+            @Cleanup InputStreamReader inputStreamReader = new InputStreamReader(response.body()
+                    .asInputStream(), StandardCharsets.UTF_8);
             StringBuilder builder = new StringBuilder();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(response.body().asInputStream(), StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(inputStreamReader);
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);

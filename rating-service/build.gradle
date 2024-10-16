@@ -37,6 +37,7 @@ ext {
     liquibaseVersion = '4.27.0'
     liquibaseGroovyDslVersion = '3.0.2'
     picocliVersion = '4.6.1'
+    jacksonDatatypeVersion = '2.15.0'
 
 }
 
@@ -61,7 +62,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
 
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0'
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatatypeVersion}"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"

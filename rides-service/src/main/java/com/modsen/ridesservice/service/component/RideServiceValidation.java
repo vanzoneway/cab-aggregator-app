@@ -43,7 +43,7 @@ public class RideServiceValidation {
         }
     }
 
-    public void checkExistingPassengerOrRider(RideRequestDto rideRequestDto) {
+    public void checkExistingPassengerOrDriver(RideRequestDto rideRequestDto) {
         if (Objects.nonNull(rideRequestDto.passengerId())) {
             passengerFeignClient
                     .findPassengerById(rideRequestDto.passengerId(), LocaleContextHolder.getLocale().toLanguageTag());
