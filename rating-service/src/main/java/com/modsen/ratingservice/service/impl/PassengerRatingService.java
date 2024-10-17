@@ -1,5 +1,6 @@
 package com.modsen.ratingservice.service.impl;
 
+import com.modsen.ratingservice.client.RideFeignClient;
 import com.modsen.ratingservice.dto.UserType;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.mapper.impl.PassengerRatingMapper;
@@ -17,8 +18,10 @@ public class PassengerRatingService extends AbstractRatingService<PassengerRatin
     public PassengerRatingService(PassengerRatingRepository repository,
                                   PassengerRatingMapper ratingMapper,
                                   ListContainerMapper listContainerMapper,
-                                  MessageSource messageSource) {
-        super(repository, ratingMapper, listContainerMapper, messageSource, String.valueOf(UserType.PASSENGER));
+                                  MessageSource messageSource,
+                                  RideFeignClient rideFeignClient) {
+        super(repository, ratingMapper, listContainerMapper,
+                messageSource, rideFeignClient, String.valueOf(UserType.PASSENGER));
     }
 
 }

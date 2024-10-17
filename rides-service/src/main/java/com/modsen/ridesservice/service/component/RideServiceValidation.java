@@ -1,6 +1,9 @@
 package com.modsen.ridesservice.service.component;
 
+import com.modsen.ridesservice.client.driver.DriverFeignClient;
+import com.modsen.ridesservice.client.passenger.PassengerFeignClient;
 import com.modsen.ridesservice.constants.AppConstants;
+import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.exception.ride.InvalidInputStatusException;
 import com.modsen.ridesservice.model.Ride;
@@ -10,11 +13,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
 public class RideServiceValidation {
 
     private final MessageSource messageSource;
+    private final PassengerFeignClient passengerFeignClient;
+    private final DriverFeignClient driverFeignClient;
 
     public void validateChangingRideStatus(Ride ride, RideStatusRequestDto rideStatusRequestDto) {
         RideStatus currentStatus = ride.getRideStatus();
@@ -33,6 +40,17 @@ public class RideServiceValidation {
             case ON_THE_WAY_TO_DESTINATION:
                 logicCheckStatus(currentStatus, newStatus, RideStatus.COMPLETED);
                 break;
+        }
+    }
+
+    public void checkExistingPassengerOrDriver(RideRequestDto rideRequestDto) {
+        if (Objects.nonNull(rideRequestDto.passengerId())) {
+            passengerFeignClient
+                    .findPassengerById(rideRequestDto.passengerId(), LocaleContextHolder.getLocale().toLanguageTag());
+        }
+        if (Objects.nonNull(rideRequestDto.driverId())) {
+            driverFeignClient
+                    .findDriverById(rideRequestDto.driverId(), LocaleContextHolder.getLocale().toLanguageTag());
         }
     }
 

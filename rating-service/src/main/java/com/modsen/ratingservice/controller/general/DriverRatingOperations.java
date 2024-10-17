@@ -31,7 +31,6 @@ public interface DriverRatingOperations {
                     Required fields:\s
                     - **comment**: Comment about the rating (non-empty string)
                     - **rating**: Rating score (integer from 1 to 5)
-                    - **refUserId**: ID of the user who is giving the rating
                     - **rideId**: ID of the ride associated with the rating
                     Example:\s
                     {
