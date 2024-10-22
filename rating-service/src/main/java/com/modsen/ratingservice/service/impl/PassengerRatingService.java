@@ -2,6 +2,7 @@ package com.modsen.ratingservice.service.impl;
 
 import com.modsen.ratingservice.client.RideFeignClient;
 import com.modsen.ratingservice.dto.UserType;
+import com.modsen.ratingservice.kafka.KafkaProducerSender;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.mapper.impl.PassengerRatingMapper;
 import com.modsen.ratingservice.model.PassengerRating;
@@ -19,9 +20,10 @@ public class PassengerRatingService extends AbstractRatingService<PassengerRatin
                                   PassengerRatingMapper ratingMapper,
                                   ListContainerMapper listContainerMapper,
                                   MessageSource messageSource,
-                                  RideFeignClient rideFeignClient) {
+                                  RideFeignClient rideFeignClient,
+                                  KafkaProducerSender kafkaProducerSender) {
         super(repository, ratingMapper, listContainerMapper,
-                messageSource, rideFeignClient, String.valueOf(UserType.PASSENGER));
+                messageSource, rideFeignClient, kafkaProducerSender, String.valueOf(UserType.PASSENGER));
     }
 
 }

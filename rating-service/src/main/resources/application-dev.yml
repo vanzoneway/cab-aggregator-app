@@ -11,6 +11,15 @@ spring:
   liquibase:
     change-log: db/changelog/main-changelog.xml
 
+  kafka:
+    producer:
+      bootstrap-servers: >
+        localhost:29092,
+        localhost:29093,
+        localhost:29094
+      client-id: "average-rating-producer"
+
+
 server:
   port: 8088
 
@@ -19,5 +28,3 @@ eureka:
     service-url:
       defaultZone:
         ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
-
-

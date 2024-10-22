@@ -39,6 +39,8 @@ public class Driver {
     @Column(nullable = false)
     private Boolean deleted;
 
+    private Double averageRating;
+
     @OneToMany(mappedBy = "driver",
             cascade = {
                     CascadeType.PERSIST,

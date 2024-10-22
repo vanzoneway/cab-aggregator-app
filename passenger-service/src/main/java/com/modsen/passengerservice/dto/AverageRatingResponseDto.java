@@ -1,4 +1,4 @@
-package com.modsen.ratingservice.dto.response;
+package com.modsen.passengerservice.dto;
 
 public record AverageRatingResponseDto(
         Long refUserId,
