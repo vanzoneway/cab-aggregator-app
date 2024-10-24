@@ -13,10 +13,16 @@ spring:
 
   cloud:
     openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 10000
+            read-timeout: 90000
       circuitbreaker:
         enabled: true
         alphanumeric-ids:
           enabled: true
+
 
 resilience4j:
   circuitbreaker:
@@ -48,6 +54,9 @@ management:
   health:
     circuitbreakers:
       enabled: true
+  endpoint:
+    health:
+      show-details: always
 
 server:
   port: 8087
