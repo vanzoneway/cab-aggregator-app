@@ -100,10 +100,10 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     }
 
     private void sendAverageRatingToConsumers(AverageRatingResponseDto averageRatingResponseDto) {
-        if (userType.equals(String.valueOf(UserType.DRIVER))) {
+        if (userType.equals(UserType.DRIVER.toString())) {
             kafkaProducerSender.sendAverageRatingToDriver(averageRatingResponseDto);
         }
-        if(userType.equals(String.valueOf(UserType.PASSENGER))) {
+        if(userType.equals(UserType.PASSENGER.toString())) {
             kafkaProducerSender.sendAverageRatingToPassenger(averageRatingResponseDto);
         }
     }

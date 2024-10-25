@@ -22,6 +22,10 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    private static final int AMOUNT_OF_REPLICAS = 3;
+    private static final int AMOUNT_OF_PARTITIONS = 2;
+
+
     @Value(KafkaConstants.BOOTSTRAP_ADDRESS_FROM_YAML)
     private List<String> bootstrapAddress;
 
@@ -55,16 +59,16 @@ public class KafkaProducerConfig {
     @Bean
     public NewTopic driverAverageRatingTopic() {
         return TopicBuilder.name(KafkaConstants.DRIVER_TOPIC_NAME)
-                .replicas(3)
-                .partitions(2)
+                .replicas(AMOUNT_OF_REPLICAS)
+                .partitions(AMOUNT_OF_PARTITIONS)
                 .build();
     }
 
     @Bean
     public NewTopic passengerAverageRatingTopic() {
         return TopicBuilder.name(KafkaConstants.PASSENGER_TOPIC_NAME)
-                .replicas(3)
-                .partitions(2)
+                .replicas(AMOUNT_OF_REPLICAS)
+                .partitions(AMOUNT_OF_PARTITIONS)
                 .build();
     }
 

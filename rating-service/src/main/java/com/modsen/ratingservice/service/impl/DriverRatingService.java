@@ -24,6 +24,6 @@ public class DriverRatingService extends AbstractRatingService<DriverRating, Dri
                                RideFeignClient rideFeignClient,
                                KafkaProducerSender kafkaProducerSender) {
         super(repository, ratingMapper, listContainerMapper,
-                messageSource,rideFeignClient, kafkaProducerSender, String.valueOf(UserType.DRIVER));
+                messageSource,rideFeignClient, kafkaProducerSender, UserType.DRIVER.toString());
     }
 }

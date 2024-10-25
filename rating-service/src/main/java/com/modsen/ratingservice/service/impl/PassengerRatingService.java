@@ -23,7 +23,7 @@ public class PassengerRatingService extends AbstractRatingService<PassengerRatin
                                   RideFeignClient rideFeignClient,
                                   KafkaProducerSender kafkaProducerSender) {
         super(repository, ratingMapper, listContainerMapper,
-                messageSource, rideFeignClient, kafkaProducerSender, String.valueOf(UserType.PASSENGER));
+                messageSource, rideFeignClient, kafkaProducerSender, UserType.PASSENGER.toString());
     }
 
 }
