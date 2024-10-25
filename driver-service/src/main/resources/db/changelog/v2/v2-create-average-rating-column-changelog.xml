@@ -1,0 +1,18 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="10"
+               author="vanz.evergarden0@gmail.com">
+        <addColumn tableName="driver">
+            <column name="average_rating" type="DOUBLE"/>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="driver" columnName="average_rating"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

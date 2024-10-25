@@ -11,6 +11,15 @@ spring:
   liquibase:
     change-log: db/changelog/main-changelog.xml
 
+  kafka:
+    consumer:
+      bootstrap-servers: >
+        localhost:29092,
+        localhost:29093,
+        localhost:29094
+      client-id: "passenger-average-rating-consumer"
+      auto-offset-reset: earliest
+
 server:
   port: 8086
 
