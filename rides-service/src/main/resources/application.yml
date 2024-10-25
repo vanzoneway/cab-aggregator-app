@@ -11,6 +11,48 @@ spring:
   liquibase:
     change-log: db/changelog/main-changelog.xml
 
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
+
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 51
+        eventConsumerBufferSize: 10
+    instances:
+      PassengerFeignClientfindPassengerByIdLongString:
+        register-health-indicator: true
+        base-config: default
+      DriverFeignClientfindDriverByIdLongString:
+        register-health-indicator: true
+        base-config: default
+  timelimiter:
+    instances:
+      PassengerFeignClientfindPassengerByIdLongString:
+        timeout-duration: 4s
+      DriverFeignClientfindDriverByIdLongString:
+        timeout-duration: 4s
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+
 server:
   port: 8087
 
