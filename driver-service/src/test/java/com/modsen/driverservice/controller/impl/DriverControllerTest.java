@@ -36,7 +36,7 @@ class DriverControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
     private DriverService driverService;
@@ -163,7 +163,7 @@ class DriverControllerTest {
                 "Gender",
                 10.0d,
                 false);
-        when(driverService.getDriverById(Mockito.<Long>any()))
+        when(driverService.getDriverById(Mockito.any()))
                 .thenReturn(driverDto);
 
         // Act and Assert
