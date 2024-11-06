@@ -1,5 +1,7 @@
 package com.modsen.driverservice.service.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -11,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
+import com.modsen.driverservice.AppTestUtil;
 import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.dto.ListContainerResponseDto;
 import com.modsen.driverservice.exception.driver.DriverNotFoundException;
@@ -20,7 +23,6 @@ import com.modsen.driverservice.mapper.ListContainerMapper;
 import com.modsen.driverservice.model.Driver;
 import com.modsen.driverservice.repository.DriverRepository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,33 +57,6 @@ class DriverServiceImplTest {
     @InjectMocks
     private DriverServiceImpl driverServiceImpl;
 
-
-    private Driver driver;
-    private DriverDto driverDto;
-
-    @BeforeEach
-    void setup() {
-        driver = new Driver();
-        driver.setId(1L);
-        driver.setName("Jane Doe");
-        driver.setEmail("janedoe@example.com");
-        driver.setPhone("+1234567890");
-        driver.setGender("Female");
-        driver.setDeleted(false);
-        driver.setAverageRating(4.5);
-
-        // Создание экземпляра DriverDto
-        driverDto = new DriverDto(
-                driver.getId(),
-                driver.getName(),
-                driver.getEmail(),
-                driver.getPhone(),
-                driver.getGender(),
-                driver.getAverageRating(),
-                driver.getDeleted()
-        );
-    }
-
     @Test
     @DisplayName("Test createDriver(DriverDto); " +
             "then calls checkDriverRestoreOption and throws DuplicateDriverEmailPhoneException")
@@ -90,10 +65,11 @@ class DriverServiceImplTest {
         when(driverRepository.existsByEmailAndDeletedIsTrue(anyString()))
                 .thenReturn(true);
         when(messageSource.getMessage(any(), any(Object[].class), any(Locale.class)))
-                .thenReturn("An error occurred");
+                .thenReturn("");
 
         //Act and Assert
-        assertThrows(DuplicateDriverEmailPhoneException.class, () -> driverServiceImpl.createDriver(driverDto));
+        assertThatThrownBy(() -> driverServiceImpl.createDriver(AppTestUtil.driverDto))
+                .isInstanceOf(DuplicateDriverEmailPhoneException.class);
         verify(driverRepository).existsByEmailAndDeletedIsTrue(anyString());
     }
 
@@ -102,14 +78,15 @@ class DriverServiceImplTest {
             " then calls checkCarExistsByPhoneOrEmail and throws DuplicateDriverEmailPhoneException")
     void testCreateDriver_thenCallCheckCarExistsByPhoneOrEmailAndThrowDuplicateDriverEmailPhoneException() {
         when(driverRepository.existsByEmailAndDeletedIsTrue(anyString()))
-            .thenReturn(false);
+                .thenReturn(false);
         when(driverRepository.existsByPhoneAndDeletedIsFalse(anyString()))
                 .thenReturn(true);
         when(messageSource.getMessage(any(), any(Object[].class), any(Locale.class)))
-                .thenReturn("An error occurred");
+                .thenReturn("");
 
         //Act and Assert
-        assertThrows(DuplicateDriverEmailPhoneException.class, () -> driverServiceImpl.createDriver(driverDto));
+        assertThatThrownBy(() -> driverServiceImpl.createDriver(AppTestUtil.driverDto))
+                .isInstanceOf(DuplicateDriverEmailPhoneException.class);
         verify(driverRepository).existsByPhoneAndDeletedIsFalse(anyString());
     }
 
@@ -121,16 +98,17 @@ class DriverServiceImplTest {
                 .thenReturn(false);
         when(driverRepository.existsByPhoneAndDeletedIsFalse(anyString()))
                 .thenReturn(false);
-        when(driverMapper.toEntity(any(DriverDto.class))).thenReturn(driver);
-        when(driverMapper.toDto(any(Driver.class))).thenReturn(driverDto);
-        when(driverRepository.save(any(Driver.class))).thenReturn(driver);
+        when(driverMapper.toEntity(any(DriverDto.class))).thenReturn(AppTestUtil.driverEntity);
+        when(driverMapper.toDto(any(Driver.class))).thenReturn(AppTestUtil.driverDto);
+        when(driverRepository.save(any(Driver.class))).thenReturn(AppTestUtil.driverEntity);
 
         //Act
-        DriverDto driverDtoResponse = driverServiceImpl.createDriver(driverDto);
+        DriverDto actual = driverServiceImpl.createDriver(AppTestUtil.driverDto);
 
         //Assert
-        assertNotNull(driverDtoResponse);
-        assertSame(driverDto, driverDtoResponse);
+        assertThat(actual)
+                .isNotNull()
+                .isSameAs(AppTestUtil.driverDto);
         verify(driverRepository).existsByEmailAndDeletedIsTrue(anyString());
         verify(driverRepository).existsByPhoneAndDeletedIsFalse(anyString());
 
@@ -145,24 +123,25 @@ class DriverServiceImplTest {
         ListContainerResponseDto<DriverDto> expectedResponse = ListContainerResponseDto.<DriverDto>builder()
                 .withTotalElements(1)
                 .withTotalPages(1)
-                .withValues(Collections.singletonList(driverDto))
+                .withValues(Collections.singletonList(AppTestUtil.driverDto))
                 .build();
 
-        List<Driver> drivers = Collections.singletonList(driver);
+        List<Driver> drivers = Collections.singletonList(AppTestUtil.driverEntity);
         Page<Driver> driverPage = new PageImpl<>(drivers);
 
         when(driverRepository.findAllByDeletedIsFalse(PageRequest.of(offset, limit))).thenReturn(driverPage);
-        when(driverMapper.toDto(driver)).thenReturn(driverDto);
+        when(driverMapper.toDto(AppTestUtil.driverEntity)).thenReturn(AppTestUtil.driverDto);
         when(listContainerMapper.toDto(any(Page.class))).thenReturn(expectedResponse);
 
         // Act
-        ListContainerResponseDto<DriverDto> response = driverServiceImpl.getPageDrivers(offset, limit);
+        ListContainerResponseDto<DriverDto> actual = driverServiceImpl.getPageDrivers(offset, limit);
 
         // Assert
-        assertNotNull(response);
-        assertEquals(1, response.totalElements());
-        assertEquals(1, response.totalPages());
-        assertEquals(driverDto, response.values().getFirst());
+        assertThat(actual)
+                .isNotNull()
+                .extracting(ListContainerResponseDto::totalElements, ListContainerResponseDto::totalPages,
+                        r -> r.values().getFirst())
+                .containsExactly(1L, 1, AppTestUtil.driverDto);
         verify(driverRepository).findAllByDeletedIsFalse(PageRequest.of(offset, limit));
         verify(driverMapper).toDto(any(Driver.class));
     }
@@ -177,7 +156,8 @@ class DriverServiceImplTest {
                 .thenThrow(DriverNotFoundException.class);
 
         //Act and assert
-        assertThrows(DriverNotFoundException.class, () -> driverServiceImpl.safeDeleteDriverByDriverId(driverId));
+        assertThatThrownBy(() -> driverServiceImpl.safeDeleteDriverByDriverId(driverId))
+                .isInstanceOf(DriverNotFoundException.class);
     }
 
     @Test
@@ -186,38 +166,41 @@ class DriverServiceImplTest {
         //Arrange
         Long driverId = 1L;
         when(driverRepository.findByIdAndDeletedIsFalse(driverId))
-                .thenReturn(Optional.ofNullable(driver));
-        when(driverRepository.save(any(Driver.class))).thenReturn(driver);
+                .thenReturn(Optional.of(AppTestUtil.driverEntity));
+        when(driverRepository.save(any(Driver.class))).thenReturn(AppTestUtil.driverEntity);
 
         //Act
         driverServiceImpl.safeDeleteDriverByDriverId(driverId);
 
         //Assert
         verify(driverRepository).findByIdAndDeletedIsFalse(driverId);
-        verify(driverRepository).save(driver);
+        verify(driverRepository).save(AppTestUtil.driverEntity);
 
     }
 
     @Test
-    @DisplayName("Test updateDriverById ; then success")
+    @DisplayName("Test updateDriverById; then success")
     void testUpdateDriverById_thenSuccess() {
-        //Arrange
+        // Arrange
         Long driverId = 1L;
         when(driverRepository.existsByEmailAndDeletedIsTrue(anyString()))
                 .thenReturn(false);
         when(driverRepository.existsByPhoneAndDeletedIsFalse(anyString()))
                 .thenReturn(false);
-        when(driverRepository.findByIdAndDeletedIsFalse(driverId)).thenReturn(Optional.ofNullable(driver));
+        when(driverRepository.findByIdAndDeletedIsFalse(driverId)).thenReturn(Optional.of(AppTestUtil.driverEntity));
         doNothing().when(driverMapper).partialUpdate(any(DriverDto.class), any(Driver.class));
-        when(driverRepository.save(any(Driver.class))).thenReturn(driver);
-        when(driverMapper.toDto(any(Driver.class))).thenReturn(driverDto);
+        when(driverRepository.save(any(Driver.class))).thenReturn(AppTestUtil.driverEntity);
+        when(driverMapper.toDto(any(Driver.class))).thenReturn(AppTestUtil.driverDto);
 
-        //Act
-        DriverDto driverDtoResponse = driverServiceImpl.updateDriverById(driverId, driverDto);
-        assertNotNull(driverDtoResponse);
-        assertSame(driverDto, driverDtoResponse);
+        // Act
+        DriverDto actual = driverServiceImpl.updateDriverById(driverId, AppTestUtil.driverDto);
+
+        // Assert
         verify(driverRepository).findByIdAndDeletedIsFalse(driverId);
-        verify(driverRepository).save(driver);
+        verify(driverRepository).save(AppTestUtil.driverEntity);
+        assertThat(actual)
+                .isNotNull()
+                .isEqualTo(AppTestUtil.driverDto);
     }
 
 }

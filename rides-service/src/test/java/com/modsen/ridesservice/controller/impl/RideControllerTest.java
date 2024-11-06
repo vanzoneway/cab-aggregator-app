@@ -1,7 +1,6 @@
 package com.modsen.ridesservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.ridesservice.client.driver.DriverResponseDto;
 import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
@@ -184,7 +183,7 @@ class RideControllerTest {
     }
 
     @Test
-    @DisplayName("Test updateRide(Long. RideRequestDto")
+    @DisplayName("Test updateRide(Long, RideRequestDto")
     void testUpdateRide() throws Exception {
         //Arrange
         RideRequestDto rideRequestDto = new RideRequestDto(
