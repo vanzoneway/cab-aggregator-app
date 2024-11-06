@@ -1,7 +1,7 @@
 package com.modsen.ratingservice.service.impl;
 
+import com.modsen.ratingservice.AppTestUtil;
 import com.modsen.ratingservice.client.RideFeignClient;
-import com.modsen.ratingservice.client.RideResponseDto;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
@@ -11,27 +11,23 @@ import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.mapper.impl.DriverRatingMapper;
 import com.modsen.ratingservice.model.DriverRating;
 import com.modsen.ratingservice.repository.DriverRatingRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -50,9 +46,6 @@ class DriverRatingServiceTest {
     private ListContainerMapper listContainerMapper;
 
     @Mock
-    private MessageSource messageSource;
-
-    @Mock
     private RideFeignClient rideFeignClient;
 
     @Mock
@@ -61,165 +54,140 @@ class DriverRatingServiceTest {
     @InjectMocks
     private DriverRatingService driverRatingService;
 
-    private DriverRating driverRating;
-
-    private RatingRequestDto ratingRequestDto;
-    private AverageRatingResponseDto averageRatingResponseDto;
-    private RatingResponseDto ratingResponseDto;
-    private RideResponseDto rideResponseDto;
-
-    @BeforeEach
-    void setup() {
-        driverRating = new DriverRating();
-        driverRating.setComment("Excellent ride!");
-        driverRating.setRating(3);
-        driverRating.setRideId(1L);
-        driverRating.setRefUserId(1L);
-        driverRating.setDeleted(false);
-
-        ratingRequestDto = new RatingRequestDto("Great experience!", 5, 1L);
-
-        averageRatingResponseDto = new AverageRatingResponseDto(1L, 4.5);
-
-        ratingResponseDto = new RatingResponseDto(
-                1L,
-                "Excellent ride!",
-                "DRIVER",
-                1,
-                5,
-                1L
-        );
-        rideResponseDto = new RideResponseDto(
-                1L,
-                101L,
-                202L,
-                "123 Main St",
-                "456 Elm St",
-                "COMPLETED",
-                LocalDateTime.parse("2023-10-01T10:15:30"),
-                BigDecimal.valueOf(15.75)
-        );
-    }
 
     @Test
     @DisplayName("Test createRating(RatingRequestDto); then success")
     void testCreateRating_thenSuccess() {
-        when(rideFeignClient.findRideById(any(Long.class), any(String.class)))
-                .thenReturn(rideResponseDto);
-        when(repository.existsByRideIdAndDeletedIsFalse(any(Long.class))).thenReturn(false);
-        when(repository.existsByRideIdAndDeletedIsTrue(any(Long.class))).thenReturn(false);
-        when(ratingMapper.toRating(any(RatingRequestDto.class))).thenReturn(driverRating);
-        when(repository.save(any(DriverRating.class))).thenReturn(driverRating);
-        when(ratingMapper.toDto(any(DriverRating.class), anyString())).thenReturn(ratingResponseDto);
+        when(rideFeignClient.findRideById(anyLong(), anyString()))
+                .thenReturn(AppTestUtil.rideResponseDto);
+        when(repository.existsByRideIdAndDeletedIsFalse(anyLong()))
+                .thenReturn(false);
+        when(repository.existsByRideIdAndDeletedIsTrue(anyLong()))
+                .thenReturn(false);
+        when(ratingMapper.toRating(any(RatingRequestDto.class)))
+                .thenReturn(AppTestUtil.driverRating);
+        when(repository.save(any(DriverRating.class)))
+                .thenReturn(AppTestUtil.driverRating);
+        when(ratingMapper.toDto(any(DriverRating.class), anyString()))
+                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
 
-        //Act
-        RatingResponseDto result = driverRatingService.createRating(ratingRequestDto);
+        // Act
+        RatingResponseDto actual = driverRatingService.createRating(AppTestUtil.ratingRequestDto);
 
-        //Assert
-        assertSame(result, ratingResponseDto);
+        // Assert
+        assertThat(actual).isEqualTo(AppTestUtil.ratingResponseInServiceDto);
         verify(repository).save(any(DriverRating.class));
-        verify(repository).existsByRideIdAndDeletedIsFalse(any(Long.class));
-        verify(repository).existsByRideIdAndDeletedIsTrue(any(Long.class));
+        verify(repository).existsByRideIdAndDeletedIsFalse(anyLong());
+        verify(repository).existsByRideIdAndDeletedIsTrue(anyLong());
         verify(ratingMapper).toDto(any(DriverRating.class), anyString());
     }
 
     @Test
     @DisplayName("Test updateRatingById(Long, RatingRequestDto); then success")
     void testUpdateRatingById_thenSuccess() {
-        //Arrange
-        when(repository.existsByRideIdAndDeletedIsFalse(any(Long.class))).thenReturn(false);
-        when(repository.existsByRideIdAndDeletedIsTrue(any(Long.class))).thenReturn(false);
-        when(repository.findByIdAndDeletedIsFalse(any(Long.class))).thenReturn(Optional.ofNullable(driverRating));
+        // Arrange
+        when(repository.existsByRideIdAndDeletedIsFalse(anyLong()))
+                .thenReturn(false);
+        when(repository.existsByRideIdAndDeletedIsTrue(anyLong()))
+                .thenReturn(false);
+        when(repository.findByIdAndDeletedIsFalse(anyLong()))
+                .thenReturn(Optional.of(AppTestUtil.driverRating));
         doNothing().when(ratingMapper).partialUpdate(any(RatingRequestDto.class), any(DriverRating.class));
-        when(repository.save(any(DriverRating.class))).thenReturn(driverRating);
-        when(ratingMapper.toDto(any(DriverRating.class), anyString())).thenReturn(ratingResponseDto);
+        when(repository.save(any(DriverRating.class)))
+                .thenReturn(AppTestUtil.driverRating);
+        when(ratingMapper.toDto(any(DriverRating.class), anyString()))
+                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
 
-        //Act
-        RatingResponseDto result = driverRatingService.updateRatingById(1L, ratingRequestDto);
+        // Act
+        RatingResponseDto result = driverRatingService.updateRatingById(1L, AppTestUtil.ratingRequestDto);
 
-        //Assert
-        assertSame(result, ratingResponseDto);
-        verify(repository).existsByRideIdAndDeletedIsFalse(any(Long.class));
-        verify(repository).existsByRideIdAndDeletedIsTrue(any(Long.class));
+        // Assert
+        assertThat(result).isEqualTo(AppTestUtil.ratingResponseInServiceDto);
+        verify(repository).existsByRideIdAndDeletedIsFalse(anyLong());
+        verify(repository).existsByRideIdAndDeletedIsTrue(anyLong());
         verify(ratingMapper).toDto(any(DriverRating.class), anyString());
-
     }
 
     @Test
     @DisplayName("Test getRating(Long); then success")
     void testGetRating_thenSuccess() {
-        //Arrange
-        when(repository.findByIdAndDeletedIsFalse(any(Long.class))).thenReturn(Optional.ofNullable(driverRating));
-        when(ratingMapper.toDto(any(DriverRating.class), anyString())).thenReturn(ratingResponseDto);
+        // Arrange
+        when(repository.findByIdAndDeletedIsFalse(anyLong())).thenReturn(Optional.of(AppTestUtil.driverRating));
+        when(ratingMapper.toDto(any(DriverRating.class), anyString()))
+                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
 
-        //Act
-        RatingResponseDto result = driverRatingService.getRating(1L);
+        // Act
+        RatingResponseDto actual = driverRatingService.getRating(1L);
 
-        //Assert
-        assertSame(result, ratingResponseDto);
-        verify(repository).findByIdAndDeletedIsFalse(any(Long.class));
+        // Assert
+        assertThat(actual).isEqualTo(AppTestUtil.ratingResponseInServiceDto);
+        verify(repository).findByIdAndDeletedIsFalse(anyLong());
         verify(ratingMapper).toDto(any(DriverRating.class), anyString());
     }
 
     @Test
     @DisplayName("Test getRatingsByRefUserId(Long, Integer, Integer); then success")
     void testGetRatingsByRefUserId_thenSuccess() {
-        //Arrange
+        // Arrange
         int offset = 1;
         int limit = 10;
         ListContainerResponseDto<RatingResponseDto> expectedResponse = ListContainerResponseDto
                 .<RatingResponseDto>builder()
                 .withTotalElements(1)
                 .withTotalPages(1)
-                .withValues(Collections.singletonList(ratingResponseDto))
+                .withValues(Collections.singletonList(AppTestUtil.ratingResponseInServiceDto))
                 .build();
-        List<DriverRating> ratings = Collections.singletonList(driverRating);
+        List<DriverRating> ratings = Collections.singletonList(AppTestUtil.driverRating);
         Page<DriverRating> passengerPage = new PageImpl<>(ratings);
-        when(repository.findAllByRefUserIdAndDeletedIsFalse(any(Long.class), any(Pageable.class))).thenReturn(passengerPage);
-        when(ratingMapper.toDto(any(DriverRating.class), anyString())).thenReturn(ratingResponseDto);
-        when(listContainerMapper.toDto(any(Page.class))).thenReturn(expectedResponse);
+        when(repository.findAllByRefUserIdAndDeletedIsFalse(anyLong(), any(Pageable.class)))
+                .thenReturn(passengerPage);
+        when(ratingMapper.toDto(any(DriverRating.class), anyString()))
+                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
+        when(listContainerMapper.toDto(any(Page.class)))
+                .thenReturn(expectedResponse);
 
-        //Act
+        // Act
         ListContainerResponseDto<RatingResponseDto> result = driverRatingService
                 .getRatingsByRefUserId(1L, offset, limit);
 
-        //Assert
-        assertSame(result, expectedResponse);
-        verify(repository).findAllByRefUserIdAndDeletedIsFalse(any(Long.class), any(Pageable.class));
+        // Assert
+        assertThat(result).isEqualTo(expectedResponse);
+        verify(repository).findAllByRefUserIdAndDeletedIsFalse(anyLong(), any(Pageable.class));
         verify(ratingMapper).toDto(any(DriverRating.class), anyString());
     }
 
     @Test
     @DisplayName("Test safeDeleteRating(Long); then success")
     void testSafeDeleteRating_thenSuccess() {
-        //Arrange
-        when(repository.findByIdAndDeletedIsFalse(any(Long.class))).thenReturn(Optional.ofNullable(driverRating));
-        when(repository.save(any(DriverRating.class))).thenReturn(driverRating);
+        // Arrange
+        when(repository.findByIdAndDeletedIsFalse(anyLong()))
+                .thenReturn(Optional.of(AppTestUtil.driverRating));
+        when(repository.save(any(DriverRating.class)))
+                .thenReturn(AppTestUtil.driverRating);
 
-        //Act
+        // Act
         driverRatingService.safeDeleteRating(1L);
 
-        //Assert
-        verify(repository).findByIdAndDeletedIsFalse(any(Long.class));
+        // Assert
+        verify(repository).findByIdAndDeletedIsFalse(anyLong());
         verify(repository).save(any(DriverRating.class));
     }
 
     @Test
     @DisplayName("Test getAverageRating(Long); then success")
     void testGetAverageRating_thenSuccess() {
-        //Arrange
-        when(repository.getAverageRatingByRefUserId(any(Long.class))).thenReturn(Optional.of(4.5));
+        // Arrange
+        when(repository.getAverageRatingByRefUserId(anyLong()))
+                .thenReturn(Optional.of(4.5));
         doNothing().when(kafkaProducerSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
 
-        //Act
+        // Act
         AverageRatingResponseDto result = driverRatingService.getAverageRating(1L);
 
-        //Assert
-        assertEquals(result.averageRating(), averageRatingResponseDto.averageRating());
-        verify(repository).getAverageRatingByRefUserId(any(Long.class));
+        // Assert
+        assertThat(result.averageRating()).isEqualTo(AppTestUtil.averageRatingResponseDto.averageRating());
+        verify(repository).getAverageRatingByRefUserId(anyLong());
         verify(kafkaProducerSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
-
     }
-
 
 }
