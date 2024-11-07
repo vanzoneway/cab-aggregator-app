@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.assertj.core.api.Assertions.assertThat;
 
 class RideServicePriceGeneratorTest {
 
@@ -17,8 +15,9 @@ class RideServicePriceGeneratorTest {
     void testGenerateRandomCostIsWithinRange() {
         for (int i = 0; i < 100; i++) {
             BigDecimal cost = generator.generateRandomCost();
-            assertTrue(cost.compareTo(BigDecimal.ZERO) >= 0, "Cost should be non-negative");
-            assertTrue(cost.compareTo(new BigDecimal("99999.99")) <= 0, "Cost should not exceed 99999.99");
+            assertThat(cost)
+                    .isGreaterThanOrEqualTo(BigDecimal.ZERO)
+                    .isLessThanOrEqualTo(new BigDecimal("99999.99"));
         }
     }
 
@@ -26,10 +25,8 @@ class RideServicePriceGeneratorTest {
     void testGenerateRandomCostHasCorrectScale() {
         for (int i = 0; i < 100; i++) {
             BigDecimal cost = generator.generateRandomCost();
-            assertEquals(2, cost.scale(),
-                    "Cost should have a scale of 2");
-            assertEquals(cost, cost.setScale(2, RoundingMode.HALF_UP),
-                    "Cost should be rounded correctly");
+            assertThat(cost.scale()).isEqualTo(2);
+            assertThat(cost).isEqualTo(cost.setScale(2, RoundingMode.HALF_UP));
         }
     }
 
@@ -38,8 +35,7 @@ class RideServicePriceGeneratorTest {
         for (int i = 0; i < 100; i++) {
             BigDecimal cost = generator.generateRandomCost();
             String costAsString = cost.toString();
-            assertTrue(costAsString.matches("\\d{1,5}\\.\\d{2}"),
-                    "Cost should be in the format 'xxxxx.xx'");
+            assertThat(costAsString).matches("\\d{1,5}\\.\\d{2}");
         }
     }
 
