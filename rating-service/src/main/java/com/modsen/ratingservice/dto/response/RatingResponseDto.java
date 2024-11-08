@@ -6,7 +6,7 @@ public record RatingResponseDto(
         Long id,
         String comment,
         String userType,
-        Integer refUserId,
+        Long refUserId,
         Integer rating,
         Long rideId) implements Serializable {
 }

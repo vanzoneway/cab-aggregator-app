@@ -55,7 +55,7 @@ public class AppIntegrationTestUtil {
             ALTER SEQUENCE driver_id_seq RESTART WITH 1;
             """;
 
-    public static final String SQL_INSERT_CAR = """
+    public static final String SQL_INSERT_CAR_DRIVER = """
             INSERT INTO driver (name, email, phone, gender, deleted)
             VALUES ('John Doe', 'johndoe@example.com', '+1234567890', 'Male', false);
             

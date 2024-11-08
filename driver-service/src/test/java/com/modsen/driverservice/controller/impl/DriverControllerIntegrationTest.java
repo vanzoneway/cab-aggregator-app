@@ -21,7 +21,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import static com.modsen.driverservice.AppIntegrationTestUtil.ID;
 import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_DELETE_ALL_DATA;
-import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_INSERT_CAR;
+import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_INSERT_CAR_DRIVER;
 import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_RESTART_SEQUENCES;
 import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_CAR_RESPONSE_DTO;
 import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_CREATE_REQUEST_DTO;
@@ -38,7 +38,7 @@ import static org.hamcrest.Matchers.equalTo;
 @Sql(statements = {
         SQL_DELETE_ALL_DATA,
         SQL_RESTART_SEQUENCES,
-        SQL_INSERT_CAR
+        SQL_INSERT_CAR_DRIVER
 }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class DriverControllerIntegrationTest {
 
