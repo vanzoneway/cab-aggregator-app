@@ -10,9 +10,10 @@ import com.modsen.driverservice.model.Driver;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class AppTestUtil {
+public final class AppTestUtil {
 
-    // For controllers tests
+    private AppTestUtil() {}
+
     public static final Long DRIVER_ID = 1L;
     public static final Long CAR_ID = 1L;
 
@@ -27,7 +28,7 @@ public class AppTestUtil {
     public static final String DRIVER_GET_ENDPOINT = "/api/v1/drivers/{driverId}";
     public static final String DRIVER_CARS_ENDPOINT = "/api/v1/drivers/{driverId}/cars";
 
-    public static final CarDto carResponseDto = new CarDto(
+    public static final CarDto CAR_RESPONSE_DTO = new CarDto(
             CAR_ID,
             "Brand",
             "Color",
@@ -36,7 +37,7 @@ public class AppTestUtil {
             2020,
             false);
 
-    public static final CarDto carRequestDto = new CarDto(
+    public static final CarDto CAR_REQUEST_DTO = new CarDto(
             null,
             "Brand",
             "Color",
@@ -45,7 +46,7 @@ public class AppTestUtil {
             2020,
             null);
 
-    public static final CarDto invalidCarRequestDto = new CarDto(
+    public static final CarDto INVALID_CAR_REQUEST_DTO = new CarDto(
             null,
             "Brand",
             "Color",
@@ -55,7 +56,7 @@ public class AppTestUtil {
             true
     );
 
-    public static final DriverDto driverResponseDto = new DriverDto(
+    public static final DriverDto DRIVER_RESPONSE_DTO = new DriverDto(
             DRIVER_ID,
             "Name",
             "jane.doe@example.org",
@@ -64,7 +65,7 @@ public class AppTestUtil {
             5.0d,
             false);
 
-    public static final DriverDto driverRequestDto = new DriverDto(
+    public static final DriverDto DRIVER_REQUEST_DTO = new DriverDto(
             null,
             "Name",
             "jane.doe@example.org",
@@ -74,7 +75,7 @@ public class AppTestUtil {
             false
     );
 
-    public static final DriverDto invalidDriverRequestDto = new DriverDto(
+    public static final DriverDto INVALID_DRIVER_REQUEST_DTO = new DriverDto(
             null,
             "Name",
             "",
@@ -84,51 +85,63 @@ public class AppTestUtil {
             true
     );
 
-    public static final DriverCarDto driverCarResponseDto = new DriverCarDto(
+    public static final DriverCarDto DRIVER_CAR_RESPONSE_DTO = new DriverCarDto(
             1L,
             "Name",
             "jane.doe@example.org",
             "6625550144",
             "Gender",
             5.0d,
-            Collections.singletonList(carResponseDto));
+            Collections.singletonList(CAR_RESPONSE_DTO));
 
-    public static final ListContainerResponseDto<DriverDto> pageDriverResponseDto = new ListContainerResponseDto<>(
+    public static final ListContainerResponseDto<DriverDto> PAGE_DRIVER_RESPONSE_DTO = new ListContainerResponseDto<>(
             1, 1, 1, 1L,
             "Sort", new ArrayList<>());
 
-    // For services tests
-    public static final Driver driverEntity;
-    public static final Car carEntity;
-    public static final CarDto carDto;
-    public static final DriverDto driverDto;
+    public static final Driver DRIVER_ENTITY;
+
+    public static final Car CAR_ENTITY;
+
+    public static final CarDto CAR_DTO = new CarDto(
+            1L,
+            "Brand",
+            "Color",
+            "42",
+            "Model",
+            1,
+            true);
+
+    public static final DriverDto DRIVER_DTO = new DriverDto(
+            1L,
+            "Name",
+            "jane.doe@example.org",
+            "6625550144",
+            "Gender",
+            10.0d,
+            true);
 
     static {
-        Long anyId = 1L;
 
-        driverEntity = new Driver();
-        driverEntity.setAverageRating(10.0d);
-        driverEntity.setCars(new ArrayList<>());
-        driverEntity.setDeleted(true);
-        driverEntity.setEmail("jane.doe@example.org");
-        driverEntity.setGender("Gender");
-        driverEntity.setId(anyId);
-        driverEntity.setName("Name");
-        driverEntity.setPhone("6625550144");
+        DRIVER_ENTITY = new Driver();
+        DRIVER_ENTITY.setAverageRating(10.0d);
+        DRIVER_ENTITY.setCars(new ArrayList<>());
+        DRIVER_ENTITY.setDeleted(true);
+        DRIVER_ENTITY.setEmail("jane.doe@example.org");
+        DRIVER_ENTITY.setGender("Gender");
+        DRIVER_ENTITY.setId(1L);
+        DRIVER_ENTITY.setName("Name");
+        DRIVER_ENTITY.setPhone("6625550144");
 
-        carEntity = new Car();
-        carEntity.setBrand("Brand");
-        carEntity.setColor("Color");
-        carEntity.setDeleted(true);
-        carEntity.setDriver(driverEntity);
-        carEntity.setId(anyId);
-        carEntity.setModel("Model");
-        carEntity.setNumber("42");
-        carEntity.setYear(1);
+        CAR_ENTITY = new Car();
+        CAR_ENTITY.setBrand("Brand");
+        CAR_ENTITY.setColor("Color");
+        CAR_ENTITY.setDeleted(true);
+        CAR_ENTITY.setDriver(DRIVER_ENTITY);
+        CAR_ENTITY.setId(1L);
+        CAR_ENTITY.setModel("Model");
+        CAR_ENTITY.setNumber("42");
+        CAR_ENTITY.setYear(1);
 
-        carDto = new CarDto(anyId, "Brand", "Color", "42", "Model", 1, true);
-        driverDto = new DriverDto(anyId, "Name", "jane.doe@example.org",
-                "6625550144", "Gender", 10.0d, true);
     }
 
 }

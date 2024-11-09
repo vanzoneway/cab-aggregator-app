@@ -9,14 +9,15 @@ import com.modsen.ratingservice.model.DriverRating;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class AppTestUtil {
+public final class AppTestUtil {
 
-    //For controllers tests
+    private AppTestUtil() {}
+
     public static final String DRIVER_RATING_ENDPOINT = "/api/v1/drivers-ratings";
     public static final String DRIVER_RATING_UPDATE_DELETE_ENDPOINT = "/api/v1/drivers-ratings/{id}";
     public static final String DRIVER_RATING_AVERAGE_ENDPOINT = "/api/v1/drivers-ratings/{refUserId}/average";
 
-    public static final RatingResponseDto ratingResponseDto = new RatingResponseDto(
+    public static final RatingResponseDto RATING_RESPONSE_DTO = new RatingResponseDto(
             1L,
             "Great ride!",
             "DRIVER",
@@ -24,64 +25,60 @@ public class AppTestUtil {
             5,
             1001L);
 
-    public static final RatingRequestDto ratingUpdateRequestDto = new RatingRequestDto(
+    public static final RatingRequestDto RATING_UPDATE_REQUEST_DTO = new RatingRequestDto(
             "Great ride!",
             5,
             null);
 
-    public static final RatingRequestDto invalidRatingUpdateRequestDto = new RatingRequestDto(
+    public static final RatingRequestDto INVALID_RATING_UPDATE_REQUEST_DTO = new RatingRequestDto(
             "Great ride!",
             10,
             null);
 
-    public static final RatingRequestDto ratingCreateRequestDto = new RatingRequestDto(
+    public static final RatingRequestDto RATING_CREATE_REQUEST_DTO = new RatingRequestDto(
             "Great ride!",
             5,
             1001L);
-    public static final RatingRequestDto invalidRatingCreateRequestDto = new RatingRequestDto(
+    public static final RatingRequestDto INVALID_RATING_CREATE_REQUEST_DTO = new RatingRequestDto(
             "",
             null,
             null);
 
+    public static final RatingRequestDto RATING_REQUEST_DTO = new RatingRequestDto(
+            "Great experience!", 5, 1L);
 
-    //For services tests
-    public static final DriverRating driverRating;
+    public static final AverageRatingResponseDto AVERAGE_RATING_RESPONSE_DTO = new AverageRatingResponseDto(
+            1L, 4.5);
 
-    public static final RatingRequestDto ratingRequestDto;
-    public static final AverageRatingResponseDto averageRatingResponseDto;
-    public static final RatingResponseDto ratingResponseInServiceDto;
-    public static final RideResponseDto rideResponseDto;
+    public static final RatingResponseDto RATING_RESPONSE_IN_SERVICE_DTO = new RatingResponseDto(
+            1L,
+            "Excellent ride!",
+            "DRIVER",
+            1,
+            5,
+            1L
+    );
+
+    public static final RideResponseDto  RIDE_RESPONSE_DTO = new RideResponseDto(
+            1L,
+            101L,
+            202L,
+            "123 Main St",
+            "456 Elm St",
+            "COMPLETED",
+            LocalDateTime.parse("2023-10-01T10:15:30"),
+            BigDecimal.valueOf(15.75)
+    );
+
+    public static final DriverRating DRIVER_RATING;
 
     static {
-        driverRating = new DriverRating();
-        driverRating.setComment("Excellent ride!");
-        driverRating.setRating(3);
-        driverRating.setRideId(1L);
-        driverRating.setRefUserId(1L);
-        driverRating.setDeleted(false);
-
-        ratingRequestDto = new RatingRequestDto("Great experience!", 5, 1L);
-
-        averageRatingResponseDto = new AverageRatingResponseDto(1L, 4.5);
-
-        ratingResponseInServiceDto = new RatingResponseDto(
-                1L,
-                "Excellent ride!",
-                "DRIVER",
-                1,
-                5,
-                1L
-        );
-        rideResponseDto = new RideResponseDto(
-                1L,
-                101L,
-                202L,
-                "123 Main St",
-                "456 Elm St",
-                "COMPLETED",
-                LocalDateTime.parse("2023-10-01T10:15:30"),
-                BigDecimal.valueOf(15.75)
-        );
+        DRIVER_RATING = new DriverRating();
+        DRIVER_RATING.setComment("Excellent ride!");
+        DRIVER_RATING.setRating(3);
+        DRIVER_RATING.setRideId(1L);
+        DRIVER_RATING.setRefUserId(1L);
+        DRIVER_RATING.setDeleted(false);
     }
 
 }

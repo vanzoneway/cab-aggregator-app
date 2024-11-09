@@ -12,7 +12,7 @@ class RideServicePriceGeneratorTest {
     private final RideServicePriceGenerator generator = new RideServicePriceGenerator();
 
     @Test
-    void testGenerateRandomCostIsWithinRange() {
+    void generateRandomCost_ReturnsGeneratedPrice_IsWithinRange() {
         for (int i = 0; i < 100; i++) {
             BigDecimal cost = generator.generateRandomCost();
             assertThat(cost)
@@ -22,7 +22,7 @@ class RideServicePriceGeneratorTest {
     }
 
     @Test
-    void testGenerateRandomCostHasCorrectScale() {
+    void generateRandomCost_ReturnsGeneratedPrice_HasCorrectScale() {
         for (int i = 0; i < 100; i++) {
             BigDecimal cost = generator.generateRandomCost();
             assertThat(cost.scale()).isEqualTo(2);
@@ -31,7 +31,7 @@ class RideServicePriceGeneratorTest {
     }
 
     @Test
-    void testGenerateRandomCostFormat() {
+    void generateRandomCost_ReturnsGeneratedPrice_FormatMatches() {
         for (int i = 0; i < 100; i++) {
             BigDecimal cost = generator.generateRandomCost();
             String costAsString = cost.toString();

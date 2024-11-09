@@ -17,20 +17,16 @@ import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.exception.driver.DriverNotFoundException;
 import com.modsen.driverservice.service.DriverService;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(DriverController.class)
-@ExtendWith(SpringExtension.class)
 class DriverControllerTest {
 
     @Autowired
@@ -43,35 +39,33 @@ class DriverControllerTest {
     private DriverService driverService;
 
     @Test
-    @DisplayName("Test createDriver(DriverDto); then success")
-    void testCreateDriver_thenSuccess() throws Exception {
+    void createDriver_ReturnsCreatedDriverDto_AllMandatoryFieldsInRequestBody() throws Exception {
         // Arrange
         when(driverService.createDriver(any()))
-                .thenReturn(AppTestUtil.driverResponseDto);
+                .thenReturn(AppTestUtil.DRIVER_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AppTestUtil.DRIVER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.driverRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.DRIVER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.driverResponseDto)));
+                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.DRIVER_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test createDriver(DriverDto); with invalid parameters")
-    void testCreateDriver_ShouldReturnValidationError_withInvalidParameters() throws Exception {
+    void createDriver_ReturnsValidationError_BlankPhoneAndEmailFields() throws Exception {
         // Arrange
         when(driverService.createDriver(any()))
-                .thenReturn(AppTestUtil.driverResponseDto);
+                .thenReturn(AppTestUtil.DRIVER_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AppTestUtil.DRIVER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.invalidDriverRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_DRIVER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -80,11 +74,10 @@ class DriverControllerTest {
     }
 
     @Test
-    @DisplayName("Test getPageDrivers(Integer, Integer); then success")
-    void testGetPageDrivers_thenSuccess() throws Exception {
+    void getPageDrivers_ReturnsPageDriverDto_ValidRequest() throws Exception {
         // Arrange
         when(driverService.getPageDrivers(anyInt(), anyInt()))
-                .thenReturn(AppTestUtil.pageDriverResponseDto);
+                .thenReturn(AppTestUtil.PAGE_DRIVER_RESPONSE_DTO);
 
         // Act and Assert
         mockMvc.perform(get(AppTestUtil.DRIVER_ENDPOINT)
@@ -92,39 +85,37 @@ class DriverControllerTest {
                         .param("offset", String.valueOf(1)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.pageDriverResponseDto)));
+                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.PAGE_DRIVER_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test updateDriverById(Long, DriverDto); then success")
-    void testUpdateDriverById_thenSuccess() throws Exception {
+    void updateDriverById_ReturnsUpdatedDriverDto_AllFieldsUpdated() throws Exception {
         // Arrange
         when(driverService.updateDriverById(anyLong(), any(DriverDto.class)))
-                .thenReturn(AppTestUtil.driverResponseDto);
+                .thenReturn(AppTestUtil.DRIVER_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(AppTestUtil.DRIVER_UPDATE_ENDPOINT, AppTestUtil.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.driverRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.DRIVER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.driverResponseDto)));
+                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.DRIVER_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test updateDriverById((Long, DriverDto); with invalid parameters")
-    void testUpdateDriverById_ShouldReturnValidationError_withInvalidParameters() throws Exception {
+    void updateDriverById_ReturnValidationError_BlankEmailPhoneFields() throws Exception {
         // Arrange
         when(driverService.updateDriverById(anyLong(), any(DriverDto.class)))
-                .thenReturn(AppTestUtil.driverResponseDto);
+                .thenReturn(AppTestUtil.DRIVER_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(AppTestUtil.DRIVER_UPDATE_ENDPOINT, AppTestUtil.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.invalidDriverRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_DRIVER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -133,8 +124,7 @@ class DriverControllerTest {
     }
 
     @Test
-    @DisplayName("Test safeDeleteDriver(Long); then success")
-    void testSafeDeleteDriver_thenSuccess() throws Exception {
+    void safeDeleteDriver_ReturnsNoContentStatusCode_ValidRequest() throws Exception {
         // Arrange
         doNothing().when(driverService).safeDeleteDriverByDriverId(anyLong());
 
@@ -144,10 +134,10 @@ class DriverControllerTest {
     }
 
     @Test
-    @DisplayName("Test safeDeleteDriver(Long); then returns NOT_FOUND status code")
-    void testSafeDeleteDriver_thenReturnsNotFoundStatusCode_whenSuchDriverDoesntExists() throws Exception {
+    void safeDeleteDriver_ReturnsNotFoundStatusCode_SuchDriverDoesntExists() throws Exception {
         //Arrange
-        doThrow(new DriverNotFoundException("")).when(driverService).safeDeleteDriverByDriverId(anyLong());
+        doThrow(DriverNotFoundException.class)
+                .when(driverService).safeDeleteDriverByDriverId(anyLong());
 
         //Act and Assert
         mockMvc.perform(delete(AppTestUtil.DRIVER_DELETE_ENDPOINT, AppTestUtil.DRIVER_ID))
@@ -155,22 +145,20 @@ class DriverControllerTest {
     }
 
     @Test
-    @DisplayName("Test getDriverById(Long); then success")
-    void testGetDriverById_thenSuccess() throws Exception {
+    void getDriverById_ReturnsDriverDto_ValidRequest() throws Exception {
         // Arrange
         when(driverService.getDriverById(any()))
-                .thenReturn(AppTestUtil.driverResponseDto);
+                .thenReturn(AppTestUtil.DRIVER_RESPONSE_DTO);
 
         // Act and Assert
         mockMvc.perform(get(AppTestUtil.DRIVER_GET_ENDPOINT, AppTestUtil.DRIVER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.driverResponseDto)));
+                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.DRIVER_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test getDriverById(Long); then returns NOT_FOUND status code")
-    void testGetDriverById_thenReturnsNotFoundStatusCode_whenDriverDoesntExists() throws Exception {
+    void getDriverById_ReturnsNotFoundStatusCode_SuchDriverDoesntExists() throws Exception {
         //Arrange
         doThrow(new DriverNotFoundException("")).when(driverService).getDriverById(anyLong());
 
@@ -181,23 +169,22 @@ class DriverControllerTest {
     }
 
     @Test
-    @DisplayName("Test getDriverWithCars(Long); then success")
-    void testGetDriverWithCars_thenSuccess() throws Exception {
+    void getDriverWithCars_ReturnsDriverCarDto_ValidRequest() throws Exception {
         // Arrange
-        when(driverService.getDriverWithCars(anyLong())).thenReturn(AppTestUtil.driverCarResponseDto);
+        when(driverService.getDriverWithCars(anyLong())).thenReturn(AppTestUtil.DRIVER_CAR_RESPONSE_DTO);
 
         // Act and Assert
         mockMvc.perform(get(AppTestUtil.DRIVER_CARS_ENDPOINT, AppTestUtil.DRIVER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.driverCarResponseDto)));
+                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.DRIVER_CAR_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test getDriverWithCars(Long); then returns NOT_FOUND status code")
-    void testGetDriverWithCars_thenReturnsNotFoundStatusCode_whenDriverDoesntExists() throws Exception {
+    void getDriverWithCars_ReturnsNotFoundStatusCode_SuchDriverDoesntExists() throws Exception {
         //Arrange
-        doThrow(new DriverNotFoundException("")).when(driverService).getDriverWithCars(anyLong());
+        doThrow(DriverNotFoundException.class)
+                .when(driverService).getDriverWithCars(anyLong());
 
         // Act and Assert
         mockMvc.perform(get(AppTestUtil.DRIVER_CARS_ENDPOINT, AppTestUtil.DRIVER_ID))

@@ -8,7 +8,6 @@ import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.exception.ApiExceptionDto;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.service.impl.DriverRatingService;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,90 +39,84 @@ class DriverRatingControllerTest {
     private DriverRatingService driverRatingService;
 
     @Test
-    @DisplayName("Test createDriverRating(RatingRequestDto); then success")
-    void testCreateDriverRating_thenSuccess() throws Exception {
+    void createDriverRating_ReturnsDriverRatingDto_ValidRequest() throws Exception {
         // Arrange
         when(driverRatingService.createRating(any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
+                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
         mockMvc.perform(MockMvcRequestBuilders.post(AppTestUtil.DRIVER_RATING_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.ratingCreateRequestDto)))
+                        .content(objectMapper.writeValueAsString(AppTestUtil.RATING_CREATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.ratingResponseInServiceDto)));
+                        AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO)));
     }
 
     @Test
-    @DisplayName("Test createDriverRating(RatingRequestDto); then returns BAD_REQUEST status code")
-    void testCreateDriverRating_shouldReturnBadRequestStatusCode_withInvalidParameters() throws Exception {
+    void createDriverRating_ReturnsBadRequestStatusCode_BlankCommentField() throws Exception {
         // Arrange
         when(driverRatingService.createRating(any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
+                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
         mockMvc.perform(MockMvcRequestBuilders.post(AppTestUtil.DRIVER_RATING_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.invalidRatingCreateRequestDto)))
+                        .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_RATING_CREATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    @DisplayName("Test updateDriverRating(Long, RatingRequestDto); then success")
-    void testUpdateDriverRating_thenSuccess() throws Exception {
+    void updateDriverRating_ReturnsUpdatedDriverRating_ValidRequest() throws Exception {
         // Arrange
         Long ratingId = 1L;
         when(driverRatingService.updateRatingById(eq(ratingId), any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
+                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
         mockMvc.perform(MockMvcRequestBuilders.put(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.ratingUpdateRequestDto)))
+                        .content(objectMapper.writeValueAsString(AppTestUtil.RATING_UPDATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.ratingResponseInServiceDto)));
+                        AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO)));
     }
 
     @Test
-    @DisplayName("Test updateDriverRating(Long, RatingRequestDto); then returns BAD_REQUEST status code")
-    void testUpdateDriverRating_shouldReturnBadRequestStatusCode_withInvalidParameters() throws Exception {
+    void updateDriverRating_ReturnsBadRequestStatusCode_NullRideId() throws Exception {
         // Arrange
         Long ratingId = 1L;
         when(driverRatingService.updateRatingById(eq(ratingId), any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
+                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
         mockMvc.perform(MockMvcRequestBuilders.put(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.invalidRatingUpdateRequestDto)))
+                        .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_RATING_UPDATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    @DisplayName("Test getDriverRating(Long); then success")
-    void testGetDriverRating_thenSuccess() throws Exception {
+    void getDriverRating_ReturnsDriverRatingDto_ValidRequest() throws Exception {
         // Arrange
         Long ratingId = 1L;
         when(driverRatingService.getRating(ratingId))
-                .thenReturn(AppTestUtil.ratingResponseInServiceDto);
+                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
         mockMvc.perform(MockMvcRequestBuilders.get(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.ratingResponseInServiceDto)));
+                        AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO)));
     }
 
     @Test
-    @DisplayName("Test getDriverRating(Long); then returns NOT_FOUND status code")
-    void testGetDriverRating_shouldReturnNotFoundStatusCode_whenSuchRatingDoesntExists() throws Exception {
+    void getDriverRating_ReturnsNotFoundStatusCode_SuchRatingDoesntExists() throws Exception {
         // Arrange
         Long ratingId = 1L;
         when(driverRatingService.getRating(ratingId))
@@ -135,8 +128,7 @@ class DriverRatingControllerTest {
     }
 
     @Test
-    @DisplayName("Test deleteDriverRating(Long); then success")
-    void testDeleteDriverRating_thenSuccess() throws Exception {
+    void deleteDriverRating_ReturnsNoContentStatusCode_ValidRequest() throws Exception {
         // Arrange
         doNothing().when(driverRatingService).safeDeleteRating(any(Long.class));
 
@@ -146,10 +138,10 @@ class DriverRatingControllerTest {
     }
 
     @Test
-    @DisplayName("Test deleteDriverRating(Long); then returns NOT_FOUND status code")
-    void testDeleteDriverRating_shouldReturnNotFoundStatusCode_whenSuchRatingDoesntExists() throws Exception {
+    void deleteDriverRating_ReturnsNotFoundStatusCode_SuchRatingDoesntExists() throws Exception {
         // Arrange
-        doThrow(new RatingNotFoundException("")).when(driverRatingService).safeDeleteRating(any(Long.class));
+        doThrow(RatingNotFoundException.class)
+                .when(driverRatingService).safeDeleteRating(any(Long.class));
 
         // Act and Assert
         mockMvc.perform(MockMvcRequestBuilders.delete(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, 1L))
@@ -157,8 +149,7 @@ class DriverRatingControllerTest {
     }
 
     @Test
-    @DisplayName("Test averageDriverRating(Long); then success")
-    void testAverageDriverRating_thenSuccess() throws Exception {
+    void averageDriverRating_ReturnsAverageRatingDto_ValidRequest() throws Exception {
         // Arrange
         Long refUserId = 1L;
         AverageRatingResponseDto averageRatingResponseDto = new AverageRatingResponseDto(refUserId, 4.5);
@@ -173,8 +164,7 @@ class DriverRatingControllerTest {
     }
 
     @Test
-    @DisplayName("Test averageDriverRating(Long); then success")
-    void testAverageDriverRating_shouldReturnNotFoundStatusCode_whenSuchDriverDoesntExists() throws Exception {
+    void averageDriverRating_ReturnNotFoundStatusCode_SuchDriverDoesntExists() throws Exception {
         // Arrange
         Long refUserId = 1L;
         when(driverRatingService.getAverageRating(refUserId))

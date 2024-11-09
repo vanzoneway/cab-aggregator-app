@@ -13,7 +13,6 @@ import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.exception.passenger.PassengerNotFoundException;
 import com.modsen.passengerservice.service.PassengerService;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,32 +37,30 @@ class PassengerControllerTest {
     private PassengerService passengerService;
 
     @Test
-    @DisplayName("Test createPassenger(PassengerDto); then success")
-    void testCreatePassenger_thenSuccess() throws Exception {
+    void createPassenger_ReturnsCreatedPassengerDto_AllMandatoryFieldsInRequestBody() throws Exception {
         // Arrange
         when(passengerService.createPassenger(any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.passengerResponseDto);
+                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(AppTestUtil.PASSENGER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.passengerRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.passengerResponseDto)));
+                        AppTestUtil.PASSENGER_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test createPassenger(PassengerDto); then returns BAD_REQUEST status code")
-    void testCreatePassenger_thenReturnsBadRequestStatusCode_withInvalidParameters() throws Exception {
+    void createPassenger_ReturnsValidationError_AllMandatoryFieldsAreBlank() throws Exception {
         // Arrange
         when(passengerService.createPassenger(any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.passengerResponseDto);
+                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(AppTestUtil.PASSENGER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.invalidPassengerRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -72,11 +69,10 @@ class PassengerControllerTest {
     }
 
     @Test
-    @DisplayName("Test getPagePassengers(Integer, Integer); then success")
-    void testGetPagePassengers_thenSuccess() throws Exception {
+    void getPagePassengers_ReturnsPagePassengersDto_ValidRequest() throws Exception {
         // Arrange
         when(passengerService.getPagePassengers(anyInt(), anyInt()))
-                .thenReturn(AppTestUtil.passengerPageResponseDto);
+                .thenReturn(AppTestUtil.PASSENGER_PAGE_RESPONSE_DTO);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(AppTestUtil.PASSENGER_ENDPOINT)
                 .param("limit", String.valueOf(1))
@@ -87,38 +83,36 @@ class PassengerControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.passengerPageResponseDto)));
+                        AppTestUtil.PASSENGER_PAGE_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test updatePassengerById(Long, PassengerDto); then success")
-    void testUpdatePassengerById_thenSuccess() throws Exception {
+    void updatePassengerById_ReturnsUpdatedPassengerDto_ValidRequest() throws Exception {
         // Arrange
         when(passengerService.updatePassengerById(any(Long.class), Mockito.any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.passengerResponseDto);
+                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.passengerRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.passengerResponseDto)));
+                        AppTestUtil.PASSENGER_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test updatePassengerById(Long, PassengerDto); then returns BAD_REQUEST status code")
-    void testUpdatePassengerById_thenReturnsBadRequestStatusCode_withInvalidParameters() throws Exception {
+    void updatePassengerById_ReturnsValidationError_AllMandatoryFieldsAreBlank() throws Exception {
         // Arrange
         when(passengerService.updatePassengerById(any(Long.class), Mockito.any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.passengerResponseDto);
+                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.invalidPassengerRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -127,8 +121,7 @@ class PassengerControllerTest {
     }
 
     @Test
-    @DisplayName("Test safeDeletePassenger(Long); then success")
-    void testSafeDeletePassenger_thenSuccess() throws Exception {
+    void safeDeletePassenger_ReturnsNoContentStatusCode_ValidRequest() throws Exception {
         // Arrange
         doNothing().when(passengerService).safeDeletePassengerById(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -140,10 +133,10 @@ class PassengerControllerTest {
     }
 
     @Test
-    @DisplayName("Test safeDeletePassenger(Long); then returns NOT_FOUND status code")
-    void testSafeDeletePassenger_thenReturnsNotFoundStatusCode_withValidParameters() throws Exception {
+    void safeDeletePassenger_ReturnsNotFoundStatusCode_SuchPassengerDoesntExists() throws Exception {
         // Arrange
-        doThrow(new PassengerNotFoundException("")).when(passengerService).safeDeletePassengerById(anyLong());
+        doThrow(PassengerNotFoundException.class)
+                .when(passengerService).safeDeletePassengerById(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .delete(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
 
@@ -153,11 +146,10 @@ class PassengerControllerTest {
     }
 
     @Test
-    @DisplayName("Test getPassengerById(Long); then success")
-    void testGetPassengerById_thenSuccess() throws Exception {
+    void getPassengerById_ReturnsPassengerDto_ValidRequest() throws Exception {
         // Arrange
         when(passengerService.getPassengerById(anyLong()))
-                .thenReturn(AppTestUtil.passengerResponseDto);
+                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
 
@@ -167,12 +159,11 @@ class PassengerControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content()
                         .string(objectMapper.writeValueAsString(
-                                AppTestUtil.passengerResponseDto)));
+                                AppTestUtil.PASSENGER_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test getPassengerById(Long); then returns NOT_FOUND status code")
-    void testGetPassengerById_thenReturnsNotFoundStatusCode_withValidParameters() throws Exception {
+    void getPassengerById_ReturnsNotFoundStatusCode_SuchPassengerDoesntExists() throws Exception {
         // Arrange
         when(passengerService.getPassengerById(anyLong()))
                 .thenThrow(new PassengerNotFoundException(""));

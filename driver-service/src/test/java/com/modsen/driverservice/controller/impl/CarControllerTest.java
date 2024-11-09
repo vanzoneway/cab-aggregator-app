@@ -11,7 +11,6 @@ import com.modsen.driverservice.AppTestUtil;
 import com.modsen.driverservice.dto.CarDto;
 import com.modsen.driverservice.exception.car.CarNotFoundException;
 import com.modsen.driverservice.service.CarService;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,36 +34,34 @@ class CarControllerTest {
     private CarService carService;
 
     @Test
-    @DisplayName("Test createCar(Long, CarDto); then success")
-    void testCreateCar_thenSuccess() throws Exception {
+    void createCar_ReturnsCreatedCarDto_AllMandatoryFieldsInRequestBody() throws Exception {
         // Arrange
         when(carService.createCar(anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.carResponseDto);
+                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AppTestUtil.CAR_ENDPOINT, AppTestUtil.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.carRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.CAR_REQUEST_DTO));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(
-                        objectMapper.writeValueAsString(AppTestUtil.carResponseDto)));
+                        objectMapper.writeValueAsString(AppTestUtil.CAR_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test createCar(Long, CarDto); with invalid parameters")
-    void testCreateCar_ShouldReturnValidationError_withInvalidParameters() throws Exception {
+    void createCar_ReturnsValidationError_InvalidCarNumberFormatAndNotNullDeletedField() throws Exception {
         //Arrange
         when(carService.createCar(anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.carResponseDto);
+                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(AppTestUtil.CAR_ENDPOINT, AppTestUtil.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.invalidCarRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_CAR_REQUEST_DTO));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -72,38 +69,36 @@ class CarControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
-
     @Test
-    @DisplayName("Test updateCarByCarIdAndDriverId(Long, Long, CarDto); then success")
-    void testUpdateCarByCarIdAndDriverId_thenSuccess() throws Exception {
+    void updateCarByCarIdAndDriverId_ReturnsUpdatedCarDto_AllFieldsUpdated() throws Exception {
         // Arrange
         when(carService.updateCarByCarIdAndDriverId(anyLong(), anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.carResponseDto);
+                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(AppTestUtil.CAR_UPDATE_ENDPOINT, AppTestUtil.CAR_ID, AppTestUtil.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.carRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.CAR_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(
-                        objectMapper.writeValueAsString(AppTestUtil.carResponseDto)));
+                        objectMapper.writeValueAsString(AppTestUtil.CAR_RESPONSE_DTO)));
     }
 
     @Test
-    @DisplayName("Test updateCarByCarIdAndDriverId(Long, Long, CarDto); with invalid parameters")
-    void testUpdateCarByCarIdAndDriverId_ShouldReturnValidationError_withInvalidParameters() throws Exception {
+    void updateCarByCarIdAndDriverId_ReturnsValidationError_InvalidCarNumberFormat()
+            throws Exception {
         //Arrange
         when(carService.updateCarByCarIdAndDriverId(anyLong(), anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.carResponseDto);
+                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(AppTestUtil.CAR_UPDATE_ENDPOINT, AppTestUtil.CAR_ID, AppTestUtil.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.invalidCarRequestDto));
+                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_CAR_REQUEST_DTO));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -113,8 +108,7 @@ class CarControllerTest {
     }
 
     @Test
-    @DisplayName("Test safeDeleteCarById(Long); then success")
-    void testSafeDeleteCarById_thenSuccess() throws Exception {
+    void safeDeleteCarById_ReturnsNoContentStatusCode_ValidRequest() throws Exception {
         // Arrange
         doNothing().when(carService).safeDeleteCarByCarId(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -126,10 +120,10 @@ class CarControllerTest {
     }
 
     @Test
-    @DisplayName("Test safeDeleteCarById(Long); then returns NOT_FOUND status code")
-    void testSafeDeleteCarById_thenReturnsNotFoundStatusCode_whenSuchCarDoesntExists() throws Exception {
+    void safeDeleteCarById_ReturnsNotFoundStatusCode_SuchCarDoesntExists() throws Exception {
         //Arrange
-        doThrow(new CarNotFoundException("")).when(carService).safeDeleteCarByCarId(anyLong());
+        doThrow(CarNotFoundException.class)
+                .when(carService).safeDeleteCarByCarId(anyLong());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .delete(AppTestUtil.CAR_DELETE_ENDPOINT, AppTestUtil.CAR_ID);
@@ -140,11 +134,10 @@ class CarControllerTest {
     }
 
     @Test
-    @DisplayName("Test getCarById(Long); then success")
-    void testGetCarById_thenSuccess() throws Exception {
+    void getCarById_ReturnsCarDto_ValidRequest() throws Exception {
         // Arrange
         when(carService.getCarById(anyLong()))
-                .thenReturn(AppTestUtil.carResponseDto);
+                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(AppTestUtil.CAR_GET_ENDPOINT, AppTestUtil.CAR_ID);
@@ -154,15 +147,15 @@ class CarControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(
-                        objectMapper.writeValueAsString(AppTestUtil.carResponseDto)
+                        objectMapper.writeValueAsString(AppTestUtil.CAR_RESPONSE_DTO)
                 ));
     }
 
     @Test
-    @DisplayName("Test getCarById(Long); then returns NOT_FOUND status code")
-    void testGetCarById_thenReturnsNotFoundStatusCode_whenSuchCarDoesntExists() throws Exception {
+    void getCarById_ReturnsNotFoundStatusCode_SuchCarDoesntExists() throws Exception {
         //Arrange
-        doThrow(new CarNotFoundException("")).when(carService).getCarById(anyLong());
+        doThrow(CarNotFoundException.class)
+                .when(carService).getCarById(anyLong());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(AppTestUtil.CAR_GET_ENDPOINT, AppTestUtil.CAR_ID);

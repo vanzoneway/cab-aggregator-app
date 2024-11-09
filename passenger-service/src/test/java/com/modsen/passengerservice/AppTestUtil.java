@@ -6,12 +6,15 @@ import com.modsen.passengerservice.model.Passenger;
 
 import java.util.ArrayList;
 
-public class AppTestUtil {
+public final class AppTestUtil {
+
+    private AppTestUtil() {
+    }
 
     public static final String PASSENGER_ENDPOINT = "/api/v1/passengers";
     public static final String PASSENGER_UPDATE_DELETE_ENDPOINT = "/api/v1/passengers/{passengerId}";
 
-    public static final PassengerDto passengerRequestDto = new PassengerDto(
+    public static final PassengerDto PASSENGER_REQUEST_DTO = new PassengerDto(
             null,
             "Jane",
             "Doe",
@@ -20,7 +23,7 @@ public class AppTestUtil {
             null,
             null);
 
-    public static final PassengerDto invalidPassengerRequestDto = new PassengerDto(
+    public static final PassengerDto INVALID_PASSENGER_REQUEST_DTO = new PassengerDto(
             1L,
             "",
             "",
@@ -29,7 +32,7 @@ public class AppTestUtil {
             5.0d,
             true);
 
-    public static final PassengerDto passengerResponseDto = new PassengerDto(
+    public static final PassengerDto PASSENGER_RESPONSE_DTO = new PassengerDto(
             1L,
             "Jane",
             "Doe",
@@ -38,7 +41,7 @@ public class AppTestUtil {
             5d,
             false);
 
-    public static final ListContainerResponseDto<PassengerDto> passengerPageResponseDto =
+    public static final ListContainerResponseDto<PassengerDto> PASSENGER_PAGE_RESPONSE_DTO =
             new ListContainerResponseDto<>(1,
                     1,
                     1,
@@ -47,26 +50,26 @@ public class AppTestUtil {
                     new ArrayList<>());
 
 
-    public static final Passenger passenger;
-    public static final PassengerDto passengerDto;
+    public static final Passenger PASSENGER;
+    public static final PassengerDto PASSENGER_DTO;
 
     static {
-        passenger = new Passenger();
-        passenger.setId(1L);
-        passenger.setEmail("some.email@gmail.com");
-        passenger.setFirstName("John");
-        passenger.setLastName("Lock");
-        passenger.setAverageRating(5.0);
-        passenger.setPhone("+123456789");
-        passenger.setDeleted(false);
-        passengerDto = new PassengerDto(
-                passenger.getId(),
-                passenger.getFirstName(),
-                passenger.getLastName(),
-                passenger.getEmail(),
-                passenger.getPhone(),
-                passenger.getAverageRating(),
-                passenger.getDeleted());
+        PASSENGER = new Passenger();
+        PASSENGER.setId(1L);
+        PASSENGER.setEmail("some.email@gmail.com");
+        PASSENGER.setFirstName("John");
+        PASSENGER.setLastName("Lock");
+        PASSENGER.setAverageRating(5.0);
+        PASSENGER.setPhone("+123456789");
+        PASSENGER.setDeleted(false);
+        PASSENGER_DTO = new PassengerDto(
+                PASSENGER.getId(),
+                PASSENGER.getFirstName(),
+                PASSENGER.getLastName(),
+                PASSENGER.getEmail(),
+                PASSENGER.getPhone(),
+                PASSENGER.getAverageRating(),
+                PASSENGER.getDeleted());
     }
 
 }

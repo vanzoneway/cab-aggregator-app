@@ -39,7 +39,7 @@ class RideServiceValidationTest {
     private RideServiceValidation rideServiceValidation;
 
     @Test
-    void testValidateChangingRideStatusFromCreatedToAccepted() {
+    void validateChangingRideStatus_ChangesRideStatus_FromCreatedToAccepted() {
         Ride ride = new Ride();
         ride.setRideStatus(RideStatus.CREATED);
         RideStatusRequestDto requestDto = new RideStatusRequestDto(RideStatus.ACCEPTED.name());
@@ -49,7 +49,7 @@ class RideServiceValidationTest {
     }
 
     @Test
-    void testValidateChangingRideStatusFromAcceptedToOnTheWayToPassenger() {
+    void validateChangingRideStatus_ChangesRideStatus_FromAcceptedToOnTheWayToPassenger() {
         Ride ride = new Ride();
         ride.setRideStatus(RideStatus.ACCEPTED);
         RideStatusRequestDto requestDto = new RideStatusRequestDto(RideStatus.ON_THE_WAY_TO_PASSENGER.name());
@@ -59,7 +59,7 @@ class RideServiceValidationTest {
     }
 
     @Test
-    void testValidateChangingRideStatusFromOnTheWayToPassengerToOnTheWayToDestination() {
+    void validateChangingRideStatus_ChangesRideStatus_FromOnTheWayToPassengerToOnTheWayToDestination_Success() {
         Ride ride = new Ride();
         ride.setRideStatus(RideStatus.ON_THE_WAY_TO_PASSENGER);
         RideStatusRequestDto requestDto = new RideStatusRequestDto(RideStatus.ON_THE_WAY_TO_DESTINATION.name());
@@ -69,7 +69,7 @@ class RideServiceValidationTest {
     }
 
     @Test
-    void testValidateChangingRideStatusFromOnTheWayToDestinationToCompleted() {
+    void validateChangingRideStatus_ChangesRideStatus_FromOnTheWayToDestinationToCompleted() {
         Ride ride = new Ride();
         ride.setRideStatus(RideStatus.ON_THE_WAY_TO_DESTINATION);
         RideStatusRequestDto requestDto = new RideStatusRequestDto(RideStatus.COMPLETED.name());
@@ -79,7 +79,7 @@ class RideServiceValidationTest {
     }
 
     @Test
-    void testValidateChangingRideStatusInvalidTransition() {
+    void validateChangingRideStatus_ChangesRideStatus_InvalidTransition() {
         Ride ride = new Ride();
         ride.setRideStatus(RideStatus.CREATED);
         RideStatusRequestDto requestDto = new RideStatusRequestDto(RideStatus.ON_THE_WAY_TO_PASSENGER.name());
@@ -89,7 +89,7 @@ class RideServiceValidationTest {
     }
 
     @Test
-    void testValidateChangingRideStatusCanceled() {
+    void validateChangingRideStatus_ChangesRideStatus_Canceled() {
         Ride ride = new Ride();
         ride.setRideStatus(RideStatus.CANCELED);
         RideStatusRequestDto requestDto = new RideStatusRequestDto(RideStatus.ACCEPTED.name());
@@ -100,7 +100,7 @@ class RideServiceValidationTest {
     }
 
     @Test
-    void testCheckExistingPassengerOrDriver() {
+    void checkExistingPassengerOrDriver_AllMethodsAreCalled_ValidInputArguments() {
         RideRequestDto requestDto = new RideRequestDto(1L,
                 1L,
                 "Vilnius",
