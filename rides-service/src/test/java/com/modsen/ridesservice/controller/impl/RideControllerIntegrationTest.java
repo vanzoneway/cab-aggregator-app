@@ -24,22 +24,22 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static com.modsen.ridesservice.AppIntegrationTestUtil.IGNORING_FIELD_ONE;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.IGNORING_FIELD_TWO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.INNER_IGNORING_FIELD_ONE;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.INNER_IGNORING_FIELD_TWO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.PAGE_RIDE_RESPONSE_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_ID;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_REQUEST_CREATE_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_REQUEST_UPDATE_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_RESPONSE_AFTER_CHANGE_STATUS_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_RESPONSE_CREATE_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_RESPONSE_GET_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_RESPONSE_UPDATE_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.RIDE_STATUS_CHANGE_REQUEST_DTO;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.SQL_DELETE_ALL_DATA;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.SQL_INSERT_DATA;
-import static com.modsen.ridesservice.AppIntegrationTestUtil.SQL_RESTART_SEQUENCES;
+import static com.modsen.ridesservice.IntegrationTestData.IGNORING_FIELD_ONE;
+import static com.modsen.ridesservice.IntegrationTestData.IGNORING_FIELD_TWO;
+import static com.modsen.ridesservice.IntegrationTestData.INNER_IGNORING_FIELD_ONE;
+import static com.modsen.ridesservice.IntegrationTestData.INNER_IGNORING_FIELD_TWO;
+import static com.modsen.ridesservice.IntegrationTestData.PAGE_RIDE_RESPONSE_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_ID;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_REQUEST_CREATE_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_REQUEST_UPDATE_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_RESPONSE_AFTER_CHANGE_STATUS_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_RESPONSE_CREATE_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_RESPONSE_GET_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_RESPONSE_UPDATE_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.RIDE_STATUS_CHANGE_REQUEST_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.SQL_DELETE_ALL_DATA;
+import static com.modsen.ridesservice.IntegrationTestData.SQL_INSERT_DATA;
+import static com.modsen.ridesservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
 import static com.modsen.ridesservice.WireMockStubs.stubForGettingDriverPassengerResponseDto;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,7 +77,7 @@ class RideControllerIntegrationTest {
     }
 
     @Test
-    void getRideById_withValidParams_thenSuccess() throws Exception {
+    void getRideById_ReturnsRideDto_DatabaseContainsSuchRideId() throws Exception {
         Response response = given()
                 .when()
                     .get(AppTestUtil.RIDE_GET_ENDPOINT)
@@ -94,7 +94,7 @@ class RideControllerIntegrationTest {
     }
 
     @Test
-    void createRide_withValidParams_thenSuccess() throws Exception {
+    void createRide_ReturnsCreatedRideDto_AllMandatoryFieldsInRequestBody() throws Exception {
         stubForGettingDriverPassengerResponseDto(wireMockServer, objectMapper);
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -114,7 +114,7 @@ class RideControllerIntegrationTest {
     }
 
     @Test
-    void updateRide_withValidParams_thenSuccess() throws Exception {
+    void updateRide_ReturnsUpdatedRideDto_UpdatedDepartureAddressAndDestinationAddress() throws Exception {
         stubForGettingDriverPassengerResponseDto(wireMockServer, objectMapper);
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -133,7 +133,7 @@ class RideControllerIntegrationTest {
     }
 
     @Test
-    void changeRideStatus_withValidParams_thenSuccess() throws Exception {
+    void changeRideStatus_ReturnsUpdatedRideDto_UpdatedRideStatus() throws Exception {
         Response response = given()
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(RIDE_STATUS_CHANGE_REQUEST_DTO))
@@ -151,7 +151,7 @@ class RideControllerIntegrationTest {
     }
 
     @Test
-    void getPageRides_withValidParams_thenSuccess() throws Exception {
+    void getPageRides_ReturnsPageWithRideDto_DefaultOffsetAndLimit() throws Exception {
         Response response = given()
                 .when()
                     .get(AppTestUtil.RIDE_PAGE_GET_POST_ENDPOINT)

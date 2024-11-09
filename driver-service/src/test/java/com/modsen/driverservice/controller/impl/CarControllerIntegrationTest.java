@@ -19,15 +19,15 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static com.modsen.driverservice.AppIntegrationTestUtil.ID;
-import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_DELETE_ALL_DATA;
-import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_INSERT_CAR_DRIVER;
-import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_RESTART_SEQUENCES;
-import static com.modsen.driverservice.AppIntegrationTestUtil.CAR_CREATE_REQUEST_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.CAR_CREATE_RESPONSE_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.CAR_GET_RESPONSE_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.CAR_UPDATE_REQUEST_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.CAR_UPDATE_RESPONSE_DTO;
+import static com.modsen.driverservice.IntegrationTestData.ID;
+import static com.modsen.driverservice.IntegrationTestData.SQL_DELETE_ALL_DATA;
+import static com.modsen.driverservice.IntegrationTestData.SQL_INSERT_CAR_DRIVER;
+import static com.modsen.driverservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
+import static com.modsen.driverservice.IntegrationTestData.CAR_CREATE_REQUEST_DTO;
+import static com.modsen.driverservice.IntegrationTestData.CAR_CREATE_RESPONSE_DTO;
+import static com.modsen.driverservice.IntegrationTestData.CAR_GET_RESPONSE_DTO;
+import static com.modsen.driverservice.IntegrationTestData.CAR_UPDATE_REQUEST_DTO;
+import static com.modsen.driverservice.IntegrationTestData.CAR_UPDATE_RESPONSE_DTO;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -60,7 +60,7 @@ class CarControllerIntegrationTest {
     }
 
     @Test
-    void updateCar_withValidParams_thenSuccess() throws Exception {
+    void updateCar_ReturnsUpdatedCarDto_UpdatedColorField() throws Exception {
         given()
                         .contentType(ContentType.JSON)
                         .body(objectMapper.writeValueAsString(CAR_UPDATE_REQUEST_DTO))
@@ -74,7 +74,7 @@ class CarControllerIntegrationTest {
     }
 
     @Test
-    void createCar_withValidParams_thenSuccess() throws Exception {
+    void createCar_ReturnsCreatedCarDto_AllMandatoryFieldsInRequestBody() throws Exception {
         given()
                         .contentType(ContentType.JSON)
                         .body(objectMapper.writeValueAsString(CAR_CREATE_REQUEST_DTO))
@@ -87,7 +87,7 @@ class CarControllerIntegrationTest {
     }
 
     @Test
-    void safeDeleteCar_withValidParams_thenSuccess() {
+    void safeDeleteCar_ReturnsNoContentStatusCode_DatabaseContainsSuchCarId() {
         given()
                 .when()
                         .delete(AppTestUtil.CAR_DELETE_ENDPOINT, ID)
@@ -96,7 +96,7 @@ class CarControllerIntegrationTest {
     }
 
     @Test
-    void getCarById_withValidParams_thenSuccess() throws Exception {
+    void getCarById_ReturnsCarDto_DatabaseContainsSuchCarId() throws Exception {
         given()
                 .when()
                         .get(AppTestUtil.CAR_GET_ENDPOINT, ID)

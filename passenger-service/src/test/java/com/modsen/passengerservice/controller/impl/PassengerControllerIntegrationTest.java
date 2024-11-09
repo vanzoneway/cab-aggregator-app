@@ -75,7 +75,7 @@ class PassengerControllerIntegrationTest {
     }
 
     @Test
-    void getPagePassengers_ReturnsPageWithPassengerDto_WithDefaultOffsetAndLimit() throws Exception {
+    void getPagePassengers_ReturnsPageWithPassengerDto_DefaultOffsetAndLimit() throws Exception {
         given()
                 .when()
                     .get(AppTestUtil.PASSENGER_ENDPOINT)
@@ -86,7 +86,7 @@ class PassengerControllerIntegrationTest {
     }
 
     @Test
-    void updatePassengerById_ReturnsUpdatedPassengerDto_WithUpdatedPhoneField() throws Exception {
+    void updatePassengerById_ReturnsUpdatedPassengerDto_UpdatedPhoneField() throws Exception {
         given()
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(PASSENGER_REQUEST_UPDATE_DTO))
@@ -99,7 +99,7 @@ class PassengerControllerIntegrationTest {
     }
 
     @Test
-    void safeDeletePassenger_ReturnsNoContentStatusCode_IfDatabaseContainsSuchPassengerId() {
+    void safeDeletePassenger_ReturnsNoContentStatusCode_DatabaseContainsSuchPassengerId() {
         given()
                 .when()
                     .delete(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
@@ -108,7 +108,7 @@ class PassengerControllerIntegrationTest {
     }
 
     @Test
-    void getPassengerById_ReturnsPassengerDto_IfDatabaseContainsSuchPassengerId() throws Exception {
+    void getPassengerById_ReturnsPassengerDto_DatabaseContainsSuchPassengerId() throws Exception {
         given()
                 .when()
                     .get(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)

@@ -9,7 +9,9 @@ import com.modsen.ridesservice.dto.response.RideResponseDto;
 
 import java.util.List;
 
-public class AppIntegrationTestUtil {
+public final class IntegrationTestData {
+
+    private IntegrationTestData() {}
 
     public static final long PASSENGER_ID = 1L;
     public static final long DRIVER_ID = 1L;

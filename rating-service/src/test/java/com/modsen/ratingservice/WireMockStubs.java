@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.GET_RIDE_FROM_ANOTHER_SERVICE_ENDPOINT;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.RIDE_RESPONSE_DTO;
+import static com.modsen.ratingservice.IntegrationTestData.GET_RIDE_FROM_ANOTHER_SERVICE_ENDPOINT;
+import static com.modsen.ratingservice.IntegrationTestData.RIDE_RESPONSE_DTO;
 
 public class WireMockStubs {
 

@@ -8,7 +8,10 @@ import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class AppIntegrationTestUtil {
+
+public final class IntegrationTestData {
+
+    private IntegrationTestData() {}
 
     public static final long REF_USER_ID = 1L;
     public static final long RATING_ID = 1L;
@@ -82,7 +85,7 @@ public class AppIntegrationTestUtil {
             UPDATED_RATING,
             RIDE_ID);
 
-    public static RatingResponseDto RATING_RESPONSE_GET_DTO = new RatingResponseDto(
+    public static final RatingResponseDto RATING_RESPONSE_GET_DTO = new RatingResponseDto(
             RATING_ID,
             DEFAULT_COMMENT,
             USER_TYPE,

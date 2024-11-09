@@ -19,16 +19,16 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static com.modsen.driverservice.AppIntegrationTestUtil.ID;
-import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_DELETE_ALL_DATA;
-import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_INSERT_CAR_DRIVER;
-import static com.modsen.driverservice.AppIntegrationTestUtil.SQL_RESTART_SEQUENCES;
-import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_CAR_RESPONSE_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_CREATE_REQUEST_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_CREATE_RESPONSE_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_PAGE_GET_RESPONSE_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_UPDATE_REQUEST_DTO;
-import static com.modsen.driverservice.AppIntegrationTestUtil.DRIVER_UPDATE_RESPONSE_DTO;
+import static com.modsen.driverservice.IntegrationTestData.ID;
+import static com.modsen.driverservice.IntegrationTestData.SQL_DELETE_ALL_DATA;
+import static com.modsen.driverservice.IntegrationTestData.SQL_INSERT_CAR_DRIVER;
+import static com.modsen.driverservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
+import static com.modsen.driverservice.IntegrationTestData.DRIVER_CAR_RESPONSE_DTO;
+import static com.modsen.driverservice.IntegrationTestData.DRIVER_CREATE_REQUEST_DTO;
+import static com.modsen.driverservice.IntegrationTestData.DRIVER_CREATE_RESPONSE_DTO;
+import static com.modsen.driverservice.IntegrationTestData.DRIVER_PAGE_GET_RESPONSE_DTO;
+import static com.modsen.driverservice.IntegrationTestData.DRIVER_UPDATE_REQUEST_DTO;
+import static com.modsen.driverservice.IntegrationTestData.DRIVER_UPDATE_RESPONSE_DTO;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -61,7 +61,7 @@ class DriverControllerIntegrationTest {
     }
 
     @Test
-    void createDriver_withValidParams_thenSuccess() throws Exception {
+    void createDriver_ReturnsCreatedDriverDto_AllMandatoryParamsInRequestBody() throws Exception {
         given()
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(DRIVER_CREATE_REQUEST_DTO))
@@ -74,7 +74,7 @@ class DriverControllerIntegrationTest {
     }
 
     @Test
-    void getPageDrivers_withValidParams_thenSuccess() throws Exception {
+    void getPageDrivers_ReturnsPageWithDriverDto_DefaultOffsetAndLimit() throws Exception {
         given()
                 .when()
                     .get(AppTestUtil.DRIVER_ENDPOINT)
@@ -85,7 +85,7 @@ class DriverControllerIntegrationTest {
     }
 
     @Test
-    void updateDriver_withValidParams_thenSuccess() throws Exception {
+    void updateDriver_ReturnsUpdatedDriverDto_UpdatedNameField() throws Exception {
         given()
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(DRIVER_UPDATE_REQUEST_DTO))
@@ -98,7 +98,7 @@ class DriverControllerIntegrationTest {
     }
 
     @Test
-    void safeDeleteDriver_withValidParams_thenSuccess() {
+    void safeDeleteDriver_ReturnsNoContentStatusCode_DatabaseContainsSuchDriverId() {
         given()
                 .when()
                     .delete(AppTestUtil.DRIVER_DELETE_ENDPOINT, ID)
@@ -107,7 +107,7 @@ class DriverControllerIntegrationTest {
     }
 
     @Test
-    void getDriverWithCars_withValidParams_thenSuccess() throws Exception {
+    void getDriverWithCars_ReturnsDriverCarDto_DatabaseContainsSuchDriverId() throws Exception {
         given()
                 .when()
                     .get(AppTestUtil.DRIVER_CARS_ENDPOINT, ID)

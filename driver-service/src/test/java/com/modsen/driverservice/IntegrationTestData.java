@@ -7,7 +7,9 @@ import com.modsen.driverservice.dto.ListContainerResponseDto;
 
 import java.util.List;
 
-public class AppIntegrationTestUtil {
+public final class IntegrationTestData {
+
+    private IntegrationTestData() {}
 
     public static final Long ID = 1L;
     private static final long ID_AFTER_CREATE = 2L;
@@ -63,7 +65,6 @@ public class AppIntegrationTestUtil {
             VALUES ('Toyota', 'Red', 'ABC123', 'Toyota Camry', 2020, 1, false);
             """;
 
-    // Car UPDATE endpoint
     public static final CarDto CAR_UPDATE_REQUEST_DTO = new CarDto(
             null,
             null,
@@ -82,7 +83,6 @@ public class AppIntegrationTestUtil {
             CAR_UPDATE_YEAR,
             false);
 
-    // Car CREATE endpoint
     public static final CarDto CAR_CREATE_REQUEST_DTO = new CarDto(
             null,
             CAR_CREATE_BRAND,
@@ -100,7 +100,6 @@ public class AppIntegrationTestUtil {
             CAR_CREATE_YEAR,
             false);
 
-    // Car GET endpoint
     public static final CarDto CAR_GET_RESPONSE_DTO = new CarDto(
             ID,
             CAR_GET_BRAND,
@@ -110,7 +109,6 @@ public class AppIntegrationTestUtil {
             CAR_GET_YEAR,
             false);
 
-    // Driver CREATE endpoint
     public static final DriverDto DRIVER_CREATE_REQUEST_DTO = new DriverDto(
             null,
             DRIVER_CREATE_NAME,
@@ -129,7 +127,6 @@ public class AppIntegrationTestUtil {
             null,
             false);
 
-    // Driver UPDATE endpoint
     public static final DriverDto DRIVER_UPDATE_REQUEST_DTO = new DriverDto(
             null,
             DRIVER_UPDATE_NAME,
@@ -148,7 +145,6 @@ public class AppIntegrationTestUtil {
             null,
             false);
 
-    // Driver GET_BY_ID endpoint
     public static final DriverDto DRIVER_GET_RESPONSE_DTO = new DriverDto(
             ID,
             DRIVER_GET_NAME,
@@ -158,7 +154,6 @@ public class AppIntegrationTestUtil {
             null,
             false);
 
-    // Driver GET with PAGE endpoint
     public static final ListContainerResponseDto<DriverDto> DRIVER_PAGE_GET_RESPONSE_DTO =
             ListContainerResponseDto.<DriverDto>builder()
                     .withTotalPages(1)
@@ -169,7 +164,6 @@ public class AppIntegrationTestUtil {
                     .withValues(List.of(DRIVER_GET_RESPONSE_DTO))
                     .build();
 
-    // Driver GET_WITH_CAR endpoint
     public static final DriverCarDto DRIVER_CAR_RESPONSE_DTO = new DriverCarDto(
             DRIVER_GET_RESPONSE_DTO.id(),
             DRIVER_GET_RESPONSE_DTO.name(),

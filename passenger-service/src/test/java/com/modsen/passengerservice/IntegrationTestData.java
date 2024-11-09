@@ -5,7 +5,9 @@ import com.modsen.passengerservice.dto.PassengerDto;
 
 import java.util.List;
 
-public class IntegrationTestData {
+public final class IntegrationTestData {
+
+    private IntegrationTestData() {}
 
     public static final long PASSENGER_ID = 1L;
 

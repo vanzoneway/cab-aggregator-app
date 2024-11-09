@@ -22,17 +22,17 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static com.modsen.ratingservice.AppIntegrationTestUtil.AVERAGE_RATING_RESPONSE_DTO;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.RATING_ID;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.RATING_REQUEST_CREATE_DTO;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.RATING_REQUEST_UPDATE_DTO;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.RATING_RESPONSE_CREATE_DTO;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.RATING_RESPONSE_GET_DTO;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.RATING_RESPONSE_UPDATE_DTO;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.REF_USER_ID;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.SQL_DELETE_ALL_DATA;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.SQL_INSERT_DATA;
-import static com.modsen.ratingservice.AppIntegrationTestUtil.SQL_RESTART_SEQUENCES;
+import static com.modsen.ratingservice.IntegrationTestData.AVERAGE_RATING_RESPONSE_DTO;
+import static com.modsen.ratingservice.IntegrationTestData.RATING_ID;
+import static com.modsen.ratingservice.IntegrationTestData.RATING_REQUEST_CREATE_DTO;
+import static com.modsen.ratingservice.IntegrationTestData.RATING_REQUEST_UPDATE_DTO;
+import static com.modsen.ratingservice.IntegrationTestData.RATING_RESPONSE_CREATE_DTO;
+import static com.modsen.ratingservice.IntegrationTestData.RATING_RESPONSE_GET_DTO;
+import static com.modsen.ratingservice.IntegrationTestData.RATING_RESPONSE_UPDATE_DTO;
+import static com.modsen.ratingservice.IntegrationTestData.REF_USER_ID;
+import static com.modsen.ratingservice.IntegrationTestData.SQL_DELETE_ALL_DATA;
+import static com.modsen.ratingservice.IntegrationTestData.SQL_INSERT_DATA;
+import static com.modsen.ratingservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
 import static com.modsen.ratingservice.WireMockStubs.stubForGettingRideResponseDto;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -71,7 +71,7 @@ class DriverRatingControllerIntegrationTest {
     }
 
     @Test
-    void createDriverRating_withValidParams_thenSuccess() throws Exception {
+    void createDriverRating_ReturnsCreatedDriverDto_AllMandatoryFieldInRequestBody() throws Exception {
         stubForGettingRideResponseDto(wireMockServer, objectMapper);
         given()
                     .contentType(ContentType.JSON)
@@ -85,8 +85,7 @@ class DriverRatingControllerIntegrationTest {
     }
 
     @Test
-    void getAverageRating_withValidParams_thenSuccess() throws Exception {
-
+    void getAverageRating_ReturnsAverageRatingResponseDto_SuchRefUserIdExistsInDatabase() throws Exception {
         given()
                 .when()
                     .get(AppTestUtil.DRIVER_RATING_AVERAGE_ENDPOINT, REF_USER_ID)
@@ -97,7 +96,7 @@ class DriverRatingControllerIntegrationTest {
     }
 
     @Test
-    void updateDriverRating_withValidParams_thenSuccess() throws Exception {
+    void updateDriverRating_ReturnsUpdatedDriverRatingDto_UpdatedRatingAndCommentFields() throws Exception {
         given()
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(RATING_REQUEST_UPDATE_DTO))
@@ -110,7 +109,7 @@ class DriverRatingControllerIntegrationTest {
     }
 
     @Test
-    void safeDeleteDriverRating_withValidParams_thenSuccess() {
+    void safeDeleteDriverRating_ReturnsNoContentStatusCode_DatabaseContainsSuchRatingId() {
         given()
                 .when()
                     .delete(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
@@ -119,7 +118,7 @@ class DriverRatingControllerIntegrationTest {
     }
 
     @Test
-    void getDriverRating_withValidParams_thenSuccess() throws Exception {
+    void getDriverRating_ReturnsDriverRatingDto_DatabaseContainsSuchRatingId() throws Exception {
         given()
                 .when()
                     .get(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
