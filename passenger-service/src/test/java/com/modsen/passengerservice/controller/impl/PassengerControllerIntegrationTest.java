@@ -1,7 +1,7 @@
 package com.modsen.passengerservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.passengerservice.AppTestUtil;
+import com.modsen.passengerservice.TestData;
 import com.modsen.passengerservice.kafka.KafkaConsumerListener;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -67,7 +67,7 @@ class PassengerControllerIntegrationTest {
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(PASSENGER_REQUEST_CREATE_DTO))
                 .when()
-                    .post(AppTestUtil.PASSENGER_ENDPOINT)
+                    .post(TestData.PASSENGER_ENDPOINT)
                 .then()
                     .statusCode(HttpStatus.CREATED.value())
                     .contentType(ContentType.JSON)
@@ -78,7 +78,7 @@ class PassengerControllerIntegrationTest {
     void getPagePassengers_ReturnsPageWithPassengerDto_DefaultOffsetAndLimit() throws Exception {
         given()
                 .when()
-                    .get(AppTestUtil.PASSENGER_ENDPOINT)
+                    .get(TestData.PASSENGER_ENDPOINT)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
@@ -91,7 +91,7 @@ class PassengerControllerIntegrationTest {
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(PASSENGER_REQUEST_UPDATE_DTO))
                 .when()
-                    .put(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
+                    .put(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
@@ -102,7 +102,7 @@ class PassengerControllerIntegrationTest {
     void safeDeletePassenger_ReturnsNoContentStatusCode_DatabaseContainsSuchPassengerId() {
         given()
                 .when()
-                    .delete(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
+                    .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
     }
@@ -111,7 +111,7 @@ class PassengerControllerIntegrationTest {
     void getPassengerById_ReturnsPassengerDto_DatabaseContainsSuchPassengerId() throws Exception {
         given()
                 .when()
-                    .get(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
+                    .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)

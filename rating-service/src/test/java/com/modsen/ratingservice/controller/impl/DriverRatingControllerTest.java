@@ -1,7 +1,7 @@
 package com.modsen.ratingservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.ratingservice.AppTestUtil;
+import com.modsen.ratingservice.TestData;
 import com.modsen.ratingservice.client.RideFeignClientException;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
@@ -42,28 +42,28 @@ class DriverRatingControllerTest {
     void createDriverRating_ReturnsDriverRatingDto_ValidRequest() throws Exception {
         // Arrange
         when(driverRatingService.createRating(any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.post(AppTestUtil.DRIVER_RATING_ENDPOINT)
+        mockMvc.perform(MockMvcRequestBuilders.post(TestData.DRIVER_RATING_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.RATING_CREATE_REQUEST_DTO)))
+                        .content(objectMapper.writeValueAsString(TestData.RATING_CREATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO)));
+                        TestData.RATING_RESPONSE_IN_SERVICE_DTO)));
     }
 
     @Test
     void createDriverRating_ReturnsBadRequestStatusCode_BlankCommentField() throws Exception {
         // Arrange
         when(driverRatingService.createRating(any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.post(AppTestUtil.DRIVER_RATING_ENDPOINT)
+        mockMvc.perform(MockMvcRequestBuilders.post(TestData.DRIVER_RATING_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_RATING_CREATE_REQUEST_DTO)))
+                        .content(objectMapper.writeValueAsString(TestData.INVALID_RATING_CREATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -73,16 +73,16 @@ class DriverRatingControllerTest {
         // Arrange
         Long ratingId = 1L;
         when(driverRatingService.updateRatingById(eq(ratingId), any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.put(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId)
+        mockMvc.perform(MockMvcRequestBuilders.put(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.RATING_UPDATE_REQUEST_DTO)))
+                        .content(objectMapper.writeValueAsString(TestData.RATING_UPDATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO)));
+                        TestData.RATING_RESPONSE_IN_SERVICE_DTO)));
     }
 
     @Test
@@ -90,12 +90,12 @@ class DriverRatingControllerTest {
         // Arrange
         Long ratingId = 1L;
         when(driverRatingService.updateRatingById(eq(ratingId), any(RatingRequestDto.class)))
-                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.put(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId)
+        mockMvc.perform(MockMvcRequestBuilders.put(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_RATING_UPDATE_REQUEST_DTO)))
+                        .content(objectMapper.writeValueAsString(TestData.INVALID_RATING_UPDATE_REQUEST_DTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -105,14 +105,14 @@ class DriverRatingControllerTest {
         // Arrange
         Long ratingId = 1L;
         when(driverRatingService.getRating(ratingId))
-                .thenReturn(AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RATING_RESPONSE_IN_SERVICE_DTO);
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.get(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId))
+        mockMvc.perform(MockMvcRequestBuilders.get(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.RATING_RESPONSE_IN_SERVICE_DTO)));
+                        TestData.RATING_RESPONSE_IN_SERVICE_DTO)));
     }
 
     @Test
@@ -123,7 +123,7 @@ class DriverRatingControllerTest {
                 .thenThrow(new RatingNotFoundException(""));
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.get(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId))
+        mockMvc.perform(MockMvcRequestBuilders.get(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, ratingId))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -133,7 +133,7 @@ class DriverRatingControllerTest {
         doNothing().when(driverRatingService).safeDeleteRating(any(Long.class));
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.delete(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, 1L))
+        mockMvc.perform(MockMvcRequestBuilders.delete(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, 1L))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
@@ -144,7 +144,7 @@ class DriverRatingControllerTest {
                 .when(driverRatingService).safeDeleteRating(any(Long.class));
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.delete(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, 1L))
+        mockMvc.perform(MockMvcRequestBuilders.delete(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, 1L))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -156,7 +156,7 @@ class DriverRatingControllerTest {
         when(driverRatingService.getAverageRating(refUserId)).thenReturn(averageRatingResponseDto);
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.get(AppTestUtil.DRIVER_RATING_AVERAGE_ENDPOINT, refUserId))
+        mockMvc.perform(MockMvcRequestBuilders.get(TestData.DRIVER_RATING_AVERAGE_ENDPOINT, refUserId))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
@@ -174,7 +174,7 @@ class DriverRatingControllerTest {
                         LocalDateTime.now())));
 
         // Act and Assert
-        mockMvc.perform(MockMvcRequestBuilders.get(AppTestUtil.DRIVER_RATING_AVERAGE_ENDPOINT, refUserId))
+        mockMvc.perform(MockMvcRequestBuilders.get(TestData.DRIVER_RATING_AVERAGE_ENDPOINT, refUserId))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 

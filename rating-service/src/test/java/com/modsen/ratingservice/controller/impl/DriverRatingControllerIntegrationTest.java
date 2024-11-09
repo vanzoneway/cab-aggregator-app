@@ -2,7 +2,7 @@ package com.modsen.ratingservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.modsen.ratingservice.AppTestUtil;
+import com.modsen.ratingservice.TestData;
 import com.modsen.ratingservice.kafka.KafkaProducerSender;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -77,7 +77,7 @@ class DriverRatingControllerIntegrationTest {
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(RATING_REQUEST_CREATE_DTO))
                 .when()
-                        .post(AppTestUtil.DRIVER_RATING_ENDPOINT)
+                        .post(TestData.DRIVER_RATING_ENDPOINT)
                 .then()
                         .statusCode(HttpStatus.CREATED.value())
                             .contentType(ContentType.JSON)
@@ -88,7 +88,7 @@ class DriverRatingControllerIntegrationTest {
     void getAverageRating_ReturnsAverageRatingResponseDto_SuchRefUserIdExistsInDatabase() throws Exception {
         given()
                 .when()
-                    .get(AppTestUtil.DRIVER_RATING_AVERAGE_ENDPOINT, REF_USER_ID)
+                    .get(TestData.DRIVER_RATING_AVERAGE_ENDPOINT, REF_USER_ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
@@ -101,7 +101,7 @@ class DriverRatingControllerIntegrationTest {
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(RATING_REQUEST_UPDATE_DTO))
                 .when()
-                    .put(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
+                    .put(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
@@ -112,7 +112,7 @@ class DriverRatingControllerIntegrationTest {
     void safeDeleteDriverRating_ReturnsNoContentStatusCode_DatabaseContainsSuchRatingId() {
         given()
                 .when()
-                    .delete(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
+                    .delete(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
     }
@@ -121,7 +121,7 @@ class DriverRatingControllerIntegrationTest {
     void getDriverRating_ReturnsDriverRatingDto_DatabaseContainsSuchRatingId() throws Exception {
         given()
                 .when()
-                    .get(AppTestUtil.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
+                    .get(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)

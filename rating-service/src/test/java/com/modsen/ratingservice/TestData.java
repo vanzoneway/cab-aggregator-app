@@ -9,9 +9,9 @@ import com.modsen.ratingservice.model.DriverRating;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public final class AppTestUtil {
+public final class TestData {
 
-    private AppTestUtil() {}
+    private TestData() {}
 
     public static final String DRIVER_RATING_ENDPOINT = "/api/v1/drivers-ratings";
     public static final String DRIVER_RATING_UPDATE_DELETE_ENDPOINT = "/api/v1/drivers-ratings/{id}";
@@ -21,7 +21,7 @@ public final class AppTestUtil {
             1L,
             "Great ride!",
             "DRIVER",
-            1,
+            1L,
             5,
             1001L);
 
@@ -54,7 +54,7 @@ public final class AppTestUtil {
             1L,
             "Excellent ride!",
             "DRIVER",
-            1,
+            1L,
             5,
             1L
     );
@@ -73,12 +73,14 @@ public final class AppTestUtil {
     public static final DriverRating DRIVER_RATING;
 
     static {
+
         DRIVER_RATING = new DriverRating();
         DRIVER_RATING.setComment("Excellent ride!");
         DRIVER_RATING.setRating(3);
         DRIVER_RATING.setRideId(1L);
         DRIVER_RATING.setRefUserId(1L);
         DRIVER_RATING.setDeleted(false);
+
     }
 
 }

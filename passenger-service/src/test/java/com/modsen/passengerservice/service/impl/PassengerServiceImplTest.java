@@ -1,6 +1,6 @@
 package com.modsen.passengerservice.service.impl;
 
-import com.modsen.passengerservice.AppTestUtil;
+import com.modsen.passengerservice.TestData;
 import com.modsen.passengerservice.dto.ListContainerResponseDto;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.exception.passenger.DuplicatePassengerPhoneOrEmailException;
@@ -54,56 +54,56 @@ class PassengerServiceImplTest {
     @Test
     void createPassenger_CallCheckPassengerExistsByPhoneOrEmail_SuchPassengerAlreadyExists() {
         // Arrange
-        when(passengerRepository.existsByEmailAndDeletedIsFalse(AppTestUtil.PASSENGER.getEmail()))
+        when(passengerRepository.existsByEmailAndDeletedIsFalse(TestData.PASSENGER.getEmail()))
                 .thenReturn(true);
         when(messageSource.getMessage(any(), any(Object[].class), any(Locale.class)))
                 .thenReturn("");
 
         // Act and Assert
-        assertThatThrownBy(() -> passengerServiceImpl.createPassenger(AppTestUtil.PASSENGER_DTO))
+        assertThatThrownBy(() -> passengerServiceImpl.createPassenger(TestData.PASSENGER_DTO))
                 .isInstanceOf(DuplicatePassengerPhoneOrEmailException.class);
 
-        verify(passengerRepository).existsByEmailAndDeletedIsFalse(AppTestUtil.PASSENGER.getEmail());
+        verify(passengerRepository).existsByEmailAndDeletedIsFalse(TestData.PASSENGER.getEmail());
     }
 
     @Test
     void createPassenger_CallCheckPassengerRestoreOption_SuchPassengerWereDeleted() {
         // Arrange
-        when(passengerRepository.existsByEmailAndDeletedIsFalse(AppTestUtil.PASSENGER.getEmail()))
+        when(passengerRepository.existsByEmailAndDeletedIsFalse(TestData.PASSENGER.getEmail()))
                 .thenReturn(false);
-        when(passengerRepository.existsByEmailAndDeletedIsTrue(AppTestUtil.PASSENGER.getEmail()))
+        when(passengerRepository.existsByEmailAndDeletedIsTrue(TestData.PASSENGER.getEmail()))
                 .thenReturn(true);
         when(messageSource.getMessage(any(), any(Object[].class), any(Locale.class)))
                 .thenReturn("");
 
         // Act and Assert
-        assertThatThrownBy(() -> passengerServiceImpl.createPassenger(AppTestUtil.PASSENGER_DTO))
+        assertThatThrownBy(() -> passengerServiceImpl.createPassenger(TestData.PASSENGER_DTO))
                 .isInstanceOf(DuplicatePassengerPhoneOrEmailException.class);
 
-        verify(passengerRepository).existsByEmailAndDeletedIsTrue(AppTestUtil.PASSENGER.getEmail());
+        verify(passengerRepository).existsByEmailAndDeletedIsTrue(TestData.PASSENGER.getEmail());
     }
 
     @Test
     void createPassenger_ReturnsCreatedPassengerDto_ValidInputArguments() {
         // Arrange
-        when(passengerRepository.existsByEmailAndDeletedIsFalse(AppTestUtil.PASSENGER.getEmail()))
+        when(passengerRepository.existsByEmailAndDeletedIsFalse(TestData.PASSENGER.getEmail()))
                 .thenReturn(false);
-        when(passengerRepository.existsByEmailAndDeletedIsTrue(AppTestUtil.PASSENGER.getEmail()))
+        when(passengerRepository.existsByEmailAndDeletedIsTrue(TestData.PASSENGER.getEmail()))
                 .thenReturn(false);
         when(passengerMapper.toEntity(any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.PASSENGER);
+                .thenReturn(TestData.PASSENGER);
         when(passengerRepository.save(any(Passenger.class)))
-                .thenReturn(AppTestUtil.PASSENGER);
+                .thenReturn(TestData.PASSENGER);
         when(passengerMapper.toDto(any(Passenger.class)))
-                .thenReturn(AppTestUtil.PASSENGER_DTO);
+                .thenReturn(TestData.PASSENGER_DTO);
 
         // Act
-        PassengerDto actual = passengerServiceImpl.createPassenger(AppTestUtil.PASSENGER_DTO);
+        PassengerDto actual = passengerServiceImpl.createPassenger(TestData.PASSENGER_DTO);
 
         // Assert
         assertThat(actual)
                 .isNotNull()
-                .isEqualTo(AppTestUtil.PASSENGER_DTO);
+                .isEqualTo(TestData.PASSENGER_DTO);
 
         verify(passengerRepository).save(any(Passenger.class));
     }
@@ -116,15 +116,15 @@ class PassengerServiceImplTest {
         ListContainerResponseDto<PassengerDto> expectedResponse = ListContainerResponseDto.<PassengerDto>builder()
                 .withTotalElements(1)
                 .withTotalPages(1)
-                .withValues(Collections.singletonList(AppTestUtil.PASSENGER_DTO))
+                .withValues(Collections.singletonList(TestData.PASSENGER_DTO))
                 .build();
-        List<Passenger> passengers = Collections.singletonList(AppTestUtil.PASSENGER);
+        List<Passenger> passengers = Collections.singletonList(TestData.PASSENGER);
         Page<Passenger> passengerPage = new PageImpl<>(passengers);
 
         when(passengerRepository.findAllByDeletedIsFalse(PageRequest.of(offset, limit)))
                 .thenReturn(passengerPage);
         when(passengerMapper.toDto(any(Passenger.class)))
-                .thenReturn(AppTestUtil.PASSENGER_DTO);
+                .thenReturn(TestData.PASSENGER_DTO);
         when(listContainerMapper.toDto(any(Page.class)))
                 .thenReturn(expectedResponse);
 
@@ -136,7 +136,7 @@ class PassengerServiceImplTest {
                 .isNotNull()
                 .extracting(ListContainerResponseDto::totalPages, ListContainerResponseDto::totalElements,
                         r -> r.values().getFirst())
-                .containsExactly(1, 1L, AppTestUtil.PASSENGER_DTO);
+                .containsExactly(1, 1L, TestData.PASSENGER_DTO);
 
         verify(passengerRepository).findAllByDeletedIsFalse(PageRequest.of(offset, limit));
         verify(passengerMapper).toDto(any(Passenger.class));
@@ -161,9 +161,9 @@ class PassengerServiceImplTest {
         // Arrange
         Long passengerId = 1L;
         when(passengerRepository.findByIdAndDeletedIsFalse(any(Long.class)))
-                .thenReturn(Optional.of(AppTestUtil.PASSENGER));
+                .thenReturn(Optional.of(TestData.PASSENGER));
         when(passengerRepository.save(any(Passenger.class)))
-                .thenReturn(AppTestUtil.PASSENGER);
+                .thenReturn(TestData.PASSENGER);
 
         // Act
         passengerServiceImpl.safeDeletePassengerById(passengerId);
@@ -177,16 +177,16 @@ class PassengerServiceImplTest {
     void updatePassengerById_ReturnsUpdatedPassengerDto_ValidInputArguments() {
         Long passengerId = 1L;
         when(passengerRepository.findByIdAndDeletedIsFalse(any(Long.class)))
-                .thenReturn(Optional.of(AppTestUtil.PASSENGER));
+                .thenReturn(Optional.of(TestData.PASSENGER));
         doNothing()
                 .when(passengerMapper).partialUpdate(any(PassengerDto.class), any(Passenger.class));
         when(passengerRepository.save(any(Passenger.class)))
-                .thenReturn(AppTestUtil.PASSENGER);
+                .thenReturn(TestData.PASSENGER);
         when(passengerMapper.toDto(any(Passenger.class)))
-                .thenReturn(AppTestUtil.PASSENGER_DTO);
+                .thenReturn(TestData.PASSENGER_DTO);
 
         // Act
-        passengerServiceImpl.updatePassengerById(passengerId, AppTestUtil.PASSENGER_DTO);
+        passengerServiceImpl.updatePassengerById(passengerId, TestData.PASSENGER_DTO);
 
         // Assert
         verify(passengerRepository).save(any(Passenger.class));
@@ -198,9 +198,9 @@ class PassengerServiceImplTest {
         // Arrange
         Long passengerId = 1L;
         when(passengerRepository.findByIdAndDeletedIsFalse(any(Long.class)))
-                .thenReturn(Optional.of(AppTestUtil.PASSENGER));
+                .thenReturn(Optional.of(TestData.PASSENGER));
         when(passengerMapper.toDto(any(Passenger.class)))
-                .thenReturn(AppTestUtil.PASSENGER_DTO);
+                .thenReturn(TestData.PASSENGER_DTO);
 
         // Act
         passengerServiceImpl.getPassengerById(passengerId);

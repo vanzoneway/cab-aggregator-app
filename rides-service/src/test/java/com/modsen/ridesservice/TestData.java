@@ -11,9 +11,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public final class AppTestUtil {
+public final class TestData {
 
-    private AppTestUtil() {}
+    private TestData() {}
 
     public static final String RIDE_PAGE_GET_POST_ENDPOINT = "/api/v1/rides";
     public static final String RIDE_GET_ENDPOINT = "/api/v1/rides/1";
@@ -68,6 +68,7 @@ public final class AppTestUtil {
     public static final Ride RIDE;
 
     static {
+
         RIDE = new Ride();
         RIDE.setId(1L);
         RIDE.setDriverId(1L);
@@ -77,6 +78,7 @@ public final class AppTestUtil {
         RIDE.setRideStatus(RideStatus.CREATED);
         RIDE.setOrderDateTime(LocalDateTime.parse("2023-10-31T14:30:00"));
         RIDE.setCost(new BigDecimal("100.00"));
+
     }
 
 }

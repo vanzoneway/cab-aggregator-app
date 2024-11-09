@@ -8,7 +8,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.modsen.driverservice.AppTestUtil;
+import com.modsen.driverservice.TestData;
 import com.modsen.driverservice.dto.CarDto;
 import com.modsen.driverservice.exception.car.CarNotFoundException;
 import com.modsen.driverservice.exception.car.DuplicateCarNumbersException;
@@ -55,7 +55,7 @@ class CarServiceImplTest {
                 .thenReturn("An error occurred");
 
         // Act and Assert
-        assertThatThrownBy(() -> carServiceImpl.createCar(1L, AppTestUtil.CAR_DTO))
+        assertThatThrownBy(() -> carServiceImpl.createCar(1L, TestData.CAR_DTO))
                 .isInstanceOf(DuplicateCarNumbersException.class);
         verify(carRepository).existsByNumberAndDeletedIsTrue("42");
     }
@@ -71,7 +71,7 @@ class CarServiceImplTest {
                 .thenReturn("An error occurred");
 
         // Act and Assert
-        assertThatThrownBy(() -> carServiceImpl.createCar(1L, AppTestUtil.CAR_DTO))
+        assertThatThrownBy(() -> carServiceImpl.createCar(1L, TestData.CAR_DTO))
                 .isInstanceOf(DuplicateCarNumbersException.class);
         verify(carRepository).existsByNumberAndDeletedIsFalse("42");
     }
@@ -86,30 +86,30 @@ class CarServiceImplTest {
         when(carRepository.existsByNumberAndDeletedIsFalse(any()))
                 .thenReturn(false);
         when(driverRepository.findByIdAndDeletedIsFalse(driverId))
-                .thenReturn(Optional.of(AppTestUtil.DRIVER_ENTITY));
+                .thenReturn(Optional.of(TestData.DRIVER_ENTITY));
 
-        when(carMapper.toEntity(AppTestUtil.CAR_DTO)).thenReturn(AppTestUtil.CAR_ENTITY);
-        when(carMapper.toDto(AppTestUtil.CAR_ENTITY)).thenReturn(AppTestUtil.CAR_DTO);
+        when(carMapper.toEntity(TestData.CAR_DTO)).thenReturn(TestData.CAR_ENTITY);
+        when(carMapper.toDto(TestData.CAR_ENTITY)).thenReturn(TestData.CAR_DTO);
 
         // Act
-        CarDto actual = carServiceImpl.createCar(driverId, AppTestUtil.CAR_DTO);
+        CarDto actual = carServiceImpl.createCar(driverId, TestData.CAR_DTO);
 
         // Assert
         assertThat(actual)
                 .isNotNull()
                 .extracting(CarDto::number)
-                .isEqualTo(AppTestUtil.CAR_DTO.number());
-        verify(carRepository).save(AppTestUtil.CAR_ENTITY);
-        verify(driverRepository).save(AppTestUtil.DRIVER_ENTITY);
+                .isEqualTo(TestData.CAR_DTO.number());
+        verify(carRepository).save(TestData.CAR_ENTITY);
+        verify(driverRepository).save(TestData.DRIVER_ENTITY);
     }
 
     @Test
     void safeDeleteCarByCarId_CarDeletedSuccessfully_ValidInputArgument() {
         // Arrange
         when(carRepository.findByIdAndDeletedIsFalse(any()))
-                .thenReturn(Optional.of(AppTestUtil.CAR_ENTITY));
+                .thenReturn(Optional.of(TestData.CAR_ENTITY));
         when(carRepository.save(any(Car.class)))
-                .thenReturn(AppTestUtil.CAR_ENTITY);
+                .thenReturn(TestData.CAR_ENTITY);
 
         // Act
         carServiceImpl.safeDeleteCarByCarId(1L);
@@ -136,8 +136,8 @@ class CarServiceImplTest {
         // Arrange
         Long carId = 1L;
         when(carRepository.findByIdAndDeletedIsFalse(carId))
-                .thenReturn(Optional.of(AppTestUtil.CAR_ENTITY));
-        when(carMapper.toDto(any(Car.class))).thenReturn(AppTestUtil.CAR_DTO);
+                .thenReturn(Optional.of(TestData.CAR_ENTITY));
+        when(carMapper.toDto(any(Car.class))).thenReturn(TestData.CAR_DTO);
 
         // Act
         CarDto actual = carServiceImpl.getCarById(carId);
@@ -146,7 +146,7 @@ class CarServiceImplTest {
         verify(carMapper).toDto(isA(Car.class));
         verify(carRepository).findByIdAndDeletedIsFalse(carId);
         assertThat(actual)
-                .isSameAs(AppTestUtil.CAR_DTO);
+                .isSameAs(TestData.CAR_DTO);
     }
 
     @Test
@@ -168,29 +168,29 @@ class CarServiceImplTest {
                 .thenReturn(false);
         when(carRepository.existsByNumberAndDeletedIsFalse(any()))
                 .thenReturn(false);
-        when(carRepository.findByIdAndDeletedIsFalse(AppTestUtil.CAR_ENTITY.getId()))
-                .thenReturn(Optional.of(AppTestUtil.CAR_ENTITY));
-        when(driverRepository.findByIdAndDeletedIsFalse(AppTestUtil.DRIVER_ENTITY.getId()))
-                .thenReturn(Optional.of(AppTestUtil.DRIVER_ENTITY));
+        when(carRepository.findByIdAndDeletedIsFalse(TestData.CAR_ENTITY.getId()))
+                .thenReturn(Optional.of(TestData.CAR_ENTITY));
+        when(driverRepository.findByIdAndDeletedIsFalse(TestData.DRIVER_ENTITY.getId()))
+                .thenReturn(Optional.of(TestData.DRIVER_ENTITY));
         doNothing().when(carMapper).partialUpdate(any(CarDto.class), any(Car.class));
-        when(carMapper.toDto(AppTestUtil.CAR_ENTITY)).thenReturn(AppTestUtil.CAR_DTO);
-        when(driverRepository.save(any(Driver.class))).thenReturn(AppTestUtil.DRIVER_ENTITY);
-        when(carRepository.save(any(Car.class))).thenReturn(AppTestUtil.CAR_ENTITY);
+        when(carMapper.toDto(TestData.CAR_ENTITY)).thenReturn(TestData.CAR_DTO);
+        when(driverRepository.save(any(Driver.class))).thenReturn(TestData.DRIVER_ENTITY);
+        when(carRepository.save(any(Car.class))).thenReturn(TestData.CAR_ENTITY);
 
         // Act
-        CarDto actual = carServiceImpl.updateCarByCarIdAndDriverId(AppTestUtil.CAR_ENTITY.getId(),
-                AppTestUtil.DRIVER_ENTITY.getId(), AppTestUtil.CAR_DTO);
+        CarDto actual = carServiceImpl.updateCarByCarIdAndDriverId(TestData.CAR_ENTITY.getId(),
+                TestData.DRIVER_ENTITY.getId(), TestData.CAR_DTO);
 
         // Assert
-        verify(carRepository).findByIdAndDeletedIsFalse(AppTestUtil.CAR_ENTITY.getId());
-        verify(carMapper).partialUpdate(AppTestUtil.CAR_DTO, AppTestUtil.CAR_ENTITY);
-        verify(driverRepository).save(AppTestUtil.DRIVER_ENTITY);
-        verify(carRepository).save(AppTestUtil.CAR_ENTITY);
+        verify(carRepository).findByIdAndDeletedIsFalse(TestData.CAR_ENTITY.getId());
+        verify(carMapper).partialUpdate(TestData.CAR_DTO, TestData.CAR_ENTITY);
+        verify(driverRepository).save(TestData.DRIVER_ENTITY);
+        verify(carRepository).save(TestData.CAR_ENTITY);
 
         assertThat(actual)
                 .isNotNull()
                 .extracting(CarDto::id)
-                .isEqualTo(AppTestUtil.CAR_ENTITY.getId());
+                .isEqualTo(TestData.CAR_ENTITY.getId());
     }
 
 }

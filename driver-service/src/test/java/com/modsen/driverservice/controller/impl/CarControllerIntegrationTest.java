@@ -1,7 +1,7 @@
 package com.modsen.driverservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.driverservice.AppTestUtil;
+import com.modsen.driverservice.TestData;
 import com.modsen.driverservice.kafka.KafkaConsumerListener;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -66,7 +66,7 @@ class CarControllerIntegrationTest {
                         .body(objectMapper.writeValueAsString(CAR_UPDATE_REQUEST_DTO))
 
                 .when()
-                        .put(AppTestUtil.CAR_UPDATE_ENDPOINT, ID, ID)
+                        .put(TestData.CAR_UPDATE_ENDPOINT, ID, ID)
                 .then()
                         .statusCode(HttpStatus.OK.value())
                         .contentType(ContentType.JSON)
@@ -79,7 +79,7 @@ class CarControllerIntegrationTest {
                         .contentType(ContentType.JSON)
                         .body(objectMapper.writeValueAsString(CAR_CREATE_REQUEST_DTO))
                 .when()
-                        .post(AppTestUtil.CAR_ENDPOINT, ID)
+                        .post(TestData.CAR_ENDPOINT, ID)
                 .then()
                         .statusCode(HttpStatus.CREATED.value())
                         .contentType(ContentType.JSON)
@@ -90,7 +90,7 @@ class CarControllerIntegrationTest {
     void safeDeleteCar_ReturnsNoContentStatusCode_DatabaseContainsSuchCarId() {
         given()
                 .when()
-                        .delete(AppTestUtil.CAR_DELETE_ENDPOINT, ID)
+                        .delete(TestData.CAR_DELETE_ENDPOINT, ID)
                 .then()
                         .statusCode(HttpStatus.NO_CONTENT.value());
     }
@@ -99,7 +99,7 @@ class CarControllerIntegrationTest {
     void getCarById_ReturnsCarDto_DatabaseContainsSuchCarId() throws Exception {
         given()
                 .when()
-                        .get(AppTestUtil.CAR_GET_ENDPOINT, ID)
+                        .get(TestData.CAR_GET_ENDPOINT, ID)
                 .then()
                         .statusCode(HttpStatus.OK.value())
                         .contentType(ContentType.JSON)

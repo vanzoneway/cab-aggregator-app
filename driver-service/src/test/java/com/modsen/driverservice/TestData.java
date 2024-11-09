@@ -10,9 +10,9 @@ import com.modsen.driverservice.model.Driver;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public final class AppTestUtil {
+public final class TestData {
 
-    private AppTestUtil() {}
+    private TestData() {}
 
     public static final Long DRIVER_ID = 1L;
     public static final Long CAR_ID = 1L;

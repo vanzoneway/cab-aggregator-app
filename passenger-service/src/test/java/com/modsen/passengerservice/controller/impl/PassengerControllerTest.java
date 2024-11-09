@@ -8,7 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.passengerservice.AppTestUtil;
+import com.modsen.passengerservice.TestData;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.exception.passenger.PassengerNotFoundException;
 import com.modsen.passengerservice.service.PassengerService;
@@ -40,27 +40,27 @@ class PassengerControllerTest {
     void createPassenger_ReturnsCreatedPassengerDto_AllMandatoryFieldsInRequestBody() throws Exception {
         // Arrange
         when(passengerService.createPassenger(any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(AppTestUtil.PASSENGER_ENDPOINT)
+                .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(TestData.PASSENGER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.PASSENGER_RESPONSE_DTO)));
+                        TestData.PASSENGER_RESPONSE_DTO)));
     }
 
     @Test
     void createPassenger_ReturnsValidationError_AllMandatoryFieldsAreBlank() throws Exception {
         // Arrange
         when(passengerService.createPassenger(any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(AppTestUtil.PASSENGER_ENDPOINT)
+                .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(TestData.PASSENGER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -72,9 +72,9 @@ class PassengerControllerTest {
     void getPagePassengers_ReturnsPagePassengersDto_ValidRequest() throws Exception {
         // Arrange
         when(passengerService.getPagePassengers(anyInt(), anyInt()))
-                .thenReturn(AppTestUtil.PASSENGER_PAGE_RESPONSE_DTO);
+                .thenReturn(TestData.PASSENGER_PAGE_RESPONSE_DTO);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(AppTestUtil.PASSENGER_ENDPOINT)
+                .get(TestData.PASSENGER_ENDPOINT)
                 .param("limit", String.valueOf(1))
                 .param("offset", String.valueOf(1));
 
@@ -83,36 +83,36 @@ class PassengerControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.PASSENGER_PAGE_RESPONSE_DTO)));
+                        TestData.PASSENGER_PAGE_RESPONSE_DTO)));
     }
 
     @Test
     void updatePassengerById_ReturnsUpdatedPassengerDto_ValidRequest() throws Exception {
         // Arrange
         when(passengerService.updatePassengerById(any(Long.class), Mockito.any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
+                .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
+                .put(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(
-                        AppTestUtil.PASSENGER_RESPONSE_DTO)));
+                        TestData.PASSENGER_RESPONSE_DTO)));
     }
 
     @Test
     void updatePassengerById_ReturnsValidationError_AllMandatoryFieldsAreBlank() throws Exception {
         // Arrange
         when(passengerService.updatePassengerById(any(Long.class), Mockito.any(PassengerDto.class)))
-                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
+                .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
+                .put(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_PASSENGER_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -125,7 +125,7 @@ class PassengerControllerTest {
         // Arrange
         doNothing().when(passengerService).safeDeletePassengerById(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -138,7 +138,7 @@ class PassengerControllerTest {
         doThrow(PassengerNotFoundException.class)
                 .when(passengerService).safeDeletePassengerById(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -149,9 +149,9 @@ class PassengerControllerTest {
     void getPassengerById_ReturnsPassengerDto_ValidRequest() throws Exception {
         // Arrange
         when(passengerService.getPassengerById(anyLong()))
-                .thenReturn(AppTestUtil.PASSENGER_RESPONSE_DTO);
+                .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -159,7 +159,7 @@ class PassengerControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content()
                         .string(objectMapper.writeValueAsString(
-                                AppTestUtil.PASSENGER_RESPONSE_DTO)));
+                                TestData.PASSENGER_RESPONSE_DTO)));
     }
 
     @Test
@@ -168,7 +168,7 @@ class PassengerControllerTest {
         when(passengerService.getPassengerById(anyLong()))
                 .thenThrow(new PassengerNotFoundException(""));
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(AppTestUtil.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
 
         // Act and Assert
         mockMvc.perform(requestBuilder)

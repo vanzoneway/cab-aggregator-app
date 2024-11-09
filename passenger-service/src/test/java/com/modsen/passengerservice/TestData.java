@@ -6,9 +6,9 @@ import com.modsen.passengerservice.model.Passenger;
 
 import java.util.ArrayList;
 
-public final class AppTestUtil {
+public final class TestData {
 
-    private AppTestUtil() {
+    private TestData() {
     }
 
     public static final String PASSENGER_ENDPOINT = "/api/v1/passengers";
@@ -49,11 +49,12 @@ public final class AppTestUtil {
                     "Sort",
                     new ArrayList<>());
 
-
     public static final Passenger PASSENGER;
+
     public static final PassengerDto PASSENGER_DTO;
 
     static {
+
         PASSENGER = new Passenger();
         PASSENGER.setId(1L);
         PASSENGER.setEmail("some.email@gmail.com");
@@ -70,6 +71,7 @@ public final class AppTestUtil {
                 PASSENGER.getPhone(),
                 PASSENGER.getAverageRating(),
                 PASSENGER.getDeleted());
+
     }
 
 }

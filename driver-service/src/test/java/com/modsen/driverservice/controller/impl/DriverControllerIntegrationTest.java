@@ -1,7 +1,7 @@
 package com.modsen.driverservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.driverservice.AppTestUtil;
+import com.modsen.driverservice.TestData;
 import com.modsen.driverservice.kafka.KafkaConsumerListener;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -66,7 +66,7 @@ class DriverControllerIntegrationTest {
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(DRIVER_CREATE_REQUEST_DTO))
                 .when()
-                    .post(AppTestUtil.DRIVER_ENDPOINT)
+                    .post(TestData.DRIVER_ENDPOINT)
                 .then()
                     .statusCode(HttpStatus.CREATED.value())
                     .contentType(ContentType.JSON)
@@ -77,7 +77,7 @@ class DriverControllerIntegrationTest {
     void getPageDrivers_ReturnsPageWithDriverDto_DefaultOffsetAndLimit() throws Exception {
         given()
                 .when()
-                    .get(AppTestUtil.DRIVER_ENDPOINT)
+                    .get(TestData.DRIVER_ENDPOINT)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
@@ -90,7 +90,7 @@ class DriverControllerIntegrationTest {
                     .contentType(ContentType.JSON)
                     .body(objectMapper.writeValueAsString(DRIVER_UPDATE_REQUEST_DTO))
                 .when()
-                    .put(AppTestUtil.DRIVER_UPDATE_ENDPOINT, AppTestUtil.DRIVER_ID)
+                    .put(TestData.DRIVER_UPDATE_ENDPOINT, TestData.DRIVER_ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
@@ -101,7 +101,7 @@ class DriverControllerIntegrationTest {
     void safeDeleteDriver_ReturnsNoContentStatusCode_DatabaseContainsSuchDriverId() {
         given()
                 .when()
-                    .delete(AppTestUtil.DRIVER_DELETE_ENDPOINT, ID)
+                    .delete(TestData.DRIVER_DELETE_ENDPOINT, ID)
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
     }
@@ -110,7 +110,7 @@ class DriverControllerIntegrationTest {
     void getDriverWithCars_ReturnsDriverCarDto_DatabaseContainsSuchDriverId() throws Exception {
         given()
                 .when()
-                    .get(AppTestUtil.DRIVER_CARS_ENDPOINT, ID)
+                    .get(TestData.DRIVER_CARS_ENDPOINT, ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                 .contentType(ContentType.JSON)

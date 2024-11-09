@@ -1,6 +1,6 @@
 package com.modsen.ridesservice.service.impl;
 
-import com.modsen.ridesservice.AppTestUtil;
+import com.modsen.ridesservice.TestData;
 import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
@@ -65,21 +65,21 @@ class RideServiceImplTest {
         // Arrange
         doNothing().when(rideServiceValidation).checkExistingPassengerOrDriver(any(RideRequestDto.class));
         when(rideMapper.toEntity(any(RideRequestDto.class)))
-                .thenReturn(AppTestUtil.RIDE);
+                .thenReturn(TestData.RIDE);
         when(priceGenerator.generateRandomCost())
                 .thenReturn(new BigDecimal("100.00"));
         when(rideRepository.save(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE);
+                .thenReturn(TestData.RIDE);
         when(rideMapper.toDto(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RIDE_RESPONSE_IN_SERVICE_DTO);
 
         // Act
-        RideResponseDto actual = rideService.createRide(AppTestUtil.RIDE_REQUEST_IN_SERVICE_DTO);
+        RideResponseDto actual = rideService.createRide(TestData.RIDE_REQUEST_IN_SERVICE_DTO);
 
         // Assert
-        assertThat(actual).isSameAs(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO);
-        verify(rideServiceValidation).checkExistingPassengerOrDriver(AppTestUtil.RIDE_REQUEST_IN_SERVICE_DTO);
-        verify(rideMapper).toDto(AppTestUtil.RIDE);
+        assertThat(actual).isSameAs(TestData.RIDE_RESPONSE_IN_SERVICE_DTO);
+        verify(rideServiceValidation).checkExistingPassengerOrDriver(TestData.RIDE_REQUEST_IN_SERVICE_DTO);
+        verify(rideMapper).toDto(TestData.RIDE);
         verify(priceGenerator).generateRandomCost();
     }
 
@@ -90,14 +90,14 @@ class RideServiceImplTest {
                 .validateChangingRideStatus(any(Ride.class), any(RideStatusRequestDto.class));
         doNothing().when(rideMapper).partialUpdate(any(RideStatusRequestDto.class), any(Ride.class));
         when(rideRepository.findById(anyLong()))
-                .thenReturn(Optional.of(AppTestUtil.RIDE));
+                .thenReturn(Optional.of(TestData.RIDE));
         when(rideRepository.save(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE);
+                .thenReturn(TestData.RIDE);
         when(rideMapper.toDto(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RIDE_RESPONSE_IN_SERVICE_DTO);
 
         // Act
-        rideService.changeRideStatus(1L, AppTestUtil.RIDE_STATUS_REQUEST_DTO);
+        rideService.changeRideStatus(1L, TestData.RIDE_STATUS_REQUEST_DTO);
 
         // Assert
         verify(rideServiceValidation).validateChangingRideStatus(any(Ride.class), any(RideStatusRequestDto.class));
@@ -110,15 +110,15 @@ class RideServiceImplTest {
         // Arrange
         doNothing().when(rideMapper).partialUpdate(any(RideRequestDto.class), any(Ride.class));
         when(rideRepository.findById(anyLong()))
-                .thenReturn(Optional.of(AppTestUtil.RIDE));
+                .thenReturn(Optional.of(TestData.RIDE));
         when(rideRepository.save(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE);
+                .thenReturn(TestData.RIDE);
         when(rideMapper.toDto(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RIDE_RESPONSE_IN_SERVICE_DTO);
         doNothing().when(rideServiceValidation).checkExistingPassengerOrDriver(any(RideRequestDto.class));
 
         // Act
-        rideService.updateRide(1L, AppTestUtil.RIDE_REQUEST_IN_SERVICE_DTO);
+        rideService.updateRide(1L, TestData.RIDE_REQUEST_IN_SERVICE_DTO);
 
         // Assert
         verify(rideMapper).partialUpdate(any(RideRequestDto.class), any(Ride.class));
@@ -141,15 +141,15 @@ class RideServiceImplTest {
     void getRideById_ReturnsRideDto_ValidInputArguments() {
         // Arrange
         when(rideRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(AppTestUtil.RIDE));
+                .thenReturn(Optional.of(TestData.RIDE));
         when(rideMapper.toDto(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RIDE_RESPONSE_IN_SERVICE_DTO);
 
         // Act
         RideResponseDto actual = rideService.getRideById(1L);
 
         // Assert
-        assertThat(actual).isSameAs(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO);
+        assertThat(actual).isSameAs(TestData.RIDE_RESPONSE_IN_SERVICE_DTO);
     }
 
     @Test
@@ -160,9 +160,9 @@ class RideServiceImplTest {
         ListContainerResponseDto<RideResponseDto> expectedResponse = ListContainerResponseDto.<RideResponseDto>builder()
                 .withTotalElements(1)
                 .withTotalPages(1)
-                .withValues(Collections.singletonList(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO))
+                .withValues(Collections.singletonList(TestData.RIDE_RESPONSE_IN_SERVICE_DTO))
                 .build();
-        List<Ride> rides = Collections.singletonList(AppTestUtil.RIDE);
+        List<Ride> rides = Collections.singletonList(TestData.RIDE);
         Page<Ride> ridePage = new PageImpl<>(rides);
         when(rideRepository.findAll(any(Pageable.class)))
                 .thenReturn(ridePage);
@@ -173,7 +173,7 @@ class RideServiceImplTest {
 
         // Assert
         assertThat(actual).isSameAs(expectedResponse);
-        verify(rideMapper).toDto(AppTestUtil.RIDE);
+        verify(rideMapper).toDto(TestData.RIDE);
         verify(listContainerMapper).toDto(any(Page.class));
     }
 
@@ -185,9 +185,9 @@ class RideServiceImplTest {
         ListContainerResponseDto<RideResponseDto> expectedResponse = ListContainerResponseDto.<RideResponseDto>builder()
                 .withTotalElements(1)
                 .withTotalPages(1)
-                .withValues(Collections.singletonList(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO))
+                .withValues(Collections.singletonList(TestData.RIDE_RESPONSE_IN_SERVICE_DTO))
                 .build();
-        List<Ride> rides = Collections.singletonList(AppTestUtil.RIDE);
+        List<Ride> rides = Collections.singletonList(TestData.RIDE);
         Page<Ride> ridePage = new PageImpl<>(rides);
         when(rideRepository.findAllByDriverId(anyLong(), any(Pageable.class)))
                 .thenReturn(ridePage);
@@ -198,7 +198,7 @@ class RideServiceImplTest {
 
         // Assert
         assertThat(actual).isSameAs(expectedResponse);
-        verify(rideMapper).toDto(AppTestUtil.RIDE);
+        verify(rideMapper).toDto(TestData.RIDE);
         verify(listContainerMapper).toDto(any(Page.class));
     }
 
@@ -210,9 +210,9 @@ class RideServiceImplTest {
         ListContainerResponseDto<RideResponseDto> expectedResponse = ListContainerResponseDto.<RideResponseDto>builder()
                 .withTotalElements(1)
                 .withTotalPages(1)
-                .withValues(Collections.singletonList(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO))
+                .withValues(Collections.singletonList(TestData.RIDE_RESPONSE_IN_SERVICE_DTO))
                 .build();
-        List<Ride> rides = Collections.singletonList(AppTestUtil.RIDE);
+        List<Ride> rides = Collections.singletonList(TestData.RIDE);
         Page<Ride> ridePage = new PageImpl<>(rides);
         when(rideRepository.findAllByPassengerId(anyLong(), any(Pageable.class)))
                 .thenReturn(ridePage);
@@ -224,13 +224,13 @@ class RideServiceImplTest {
 
         // Assert
         assertThat(actual).isSameAs(expectedResponse);
-        verify(rideMapper).toDto(AppTestUtil.RIDE);
+        verify(rideMapper).toDto(TestData.RIDE);
         verify(listContainerMapper).toDto(any(Page.class));
     }
 
     private void arrangeForTestingPageMethods(ListContainerResponseDto<RideResponseDto> expectedResponse) {
         when(rideMapper.toDto(any(Ride.class)))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_IN_SERVICE_DTO);
+                .thenReturn(TestData.RIDE_RESPONSE_IN_SERVICE_DTO);
         when(listContainerMapper.toDto(any(Page.class)))
                 .thenReturn(expectedResponse);
     }

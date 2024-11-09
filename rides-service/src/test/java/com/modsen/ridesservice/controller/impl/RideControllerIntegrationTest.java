@@ -3,7 +3,7 @@ package com.modsen.ridesservice.controller.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.modsen.ridesservice.AppTestUtil;
+import com.modsen.ridesservice.TestData;
 import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
 import io.restassured.RestAssured;
@@ -80,7 +80,7 @@ class RideControllerIntegrationTest {
     void getRideById_ReturnsRideDto_DatabaseContainsSuchRideId() throws Exception {
         Response response = given()
                 .when()
-                    .get(AppTestUtil.RIDE_GET_ENDPOINT)
+                    .get(TestData.RIDE_GET_ENDPOINT)
                 .then()
                     .contentType(ContentType.JSON)
                     .statusCode(HttpStatus.OK)
@@ -100,7 +100,7 @@ class RideControllerIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(RIDE_REQUEST_CREATE_DTO))
                 .when()
-                    .post(AppTestUtil.RIDE_PAGE_GET_POST_ENDPOINT)
+                    .post(TestData.RIDE_PAGE_GET_POST_ENDPOINT)
                 .then()
                     .statusCode(HttpStatus.CREATED)
                     .extract()
@@ -120,7 +120,7 @@ class RideControllerIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(RIDE_REQUEST_UPDATE_DTO))
                 .when()
-                    .put(AppTestUtil.RIDE_UPDATE_ENDPOINT, RIDE_ID)
+                    .put(TestData.RIDE_UPDATE_ENDPOINT, RIDE_ID)
                 .then()
                     .statusCode(HttpStatus.OK)
                     .extract()
@@ -138,7 +138,7 @@ class RideControllerIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(objectMapper.writeValueAsString(RIDE_STATUS_CHANGE_REQUEST_DTO))
                 .when()
-                    .patch(AppTestUtil.RIDE_CHANGE_RIDE_STATUS_ENDPOINT, RIDE_ID)
+                    .patch(TestData.RIDE_CHANGE_RIDE_STATUS_ENDPOINT, RIDE_ID)
                 .then()
                     .statusCode(HttpStatus.OK)
                     .extract()
@@ -154,7 +154,7 @@ class RideControllerIntegrationTest {
     void getPageRides_ReturnsPageWithRideDto_DefaultOffsetAndLimit() throws Exception {
         Response response = given()
                 .when()
-                    .get(AppTestUtil.RIDE_PAGE_GET_POST_ENDPOINT)
+                    .get(TestData.RIDE_PAGE_GET_POST_ENDPOINT)
                 .then()
                     .statusCode(HttpStatus.OK)
                     .extract()
