@@ -3,13 +3,13 @@ package com.modsen.passengerservice;
 import com.modsen.passengerservice.dto.ListContainerResponseDto;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.model.Passenger;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TestData {
-
-    private TestData() {
-    }
 
     public static final String PASSENGER_ENDPOINT = "/api/v1/passengers";
     public static final String PASSENGER_UPDATE_DELETE_ENDPOINT = "/api/v1/passengers/{passengerId}";

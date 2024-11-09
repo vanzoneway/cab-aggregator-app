@@ -4,12 +4,13 @@ import com.modsen.driverservice.dto.CarDto;
 import com.modsen.driverservice.dto.DriverCarDto;
 import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.dto.ListContainerResponseDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestData {
-
-    private IntegrationTestData() {}
 
     public static final Long ID = 1L;
     private static final long ID_AFTER_CREATE = 2L;

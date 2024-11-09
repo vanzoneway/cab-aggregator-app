@@ -6,12 +6,13 @@ import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestData {
-
-    private IntegrationTestData() {}
 
     public static final long PASSENGER_ID = 1L;
     public static final long DRIVER_ID = 1L;

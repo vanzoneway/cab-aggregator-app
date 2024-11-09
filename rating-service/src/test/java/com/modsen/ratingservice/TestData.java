@@ -5,13 +5,14 @@ import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import com.modsen.ratingservice.model.DriverRating;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TestData {
-
-    private TestData() {}
 
     public static final String DRIVER_RATING_ENDPOINT = "/api/v1/drivers-ratings";
     public static final String DRIVER_RATING_UPDATE_DELETE_ENDPOINT = "/api/v1/drivers-ratings/{id}";

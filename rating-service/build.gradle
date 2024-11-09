@@ -78,6 +78,7 @@ dependencies {
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "io.rest-assured:rest-assured"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testCompileOnly 'org.projectlombok:lombok'
 }
 
 dependencies {

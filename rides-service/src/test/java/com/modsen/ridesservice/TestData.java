@@ -6,14 +6,15 @@ import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
 import com.modsen.ridesservice.model.Ride;
 import com.modsen.ridesservice.model.enums.RideStatus;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TestData {
-
-    private TestData() {}
 
     public static final String RIDE_PAGE_GET_POST_ENDPOINT = "/api/v1/rides";
     public static final String RIDE_GET_ENDPOINT = "/api/v1/rides/1";

@@ -2,12 +2,13 @@ package com.modsen.passengerservice;
 
 import com.modsen.passengerservice.dto.ListContainerResponseDto;
 import com.modsen.passengerservice.dto.PassengerDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestData {
-
-    private IntegrationTestData() {}
 
     public static final long PASSENGER_ID = 1L;
 

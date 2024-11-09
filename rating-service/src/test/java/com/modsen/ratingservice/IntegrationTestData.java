@@ -4,14 +4,14 @@ import com.modsen.ratingservice.client.RideResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class IntegrationTestData {
-
-    private IntegrationTestData() {}
 
     public static final long REF_USER_ID = 1L;
     public static final long RATING_ID = 1L;
