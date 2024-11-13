@@ -3,13 +3,13 @@ package com.modsen.passengerservice;
 import com.modsen.passengerservice.dto.ListContainerResponseDto;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.model.Passenger;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 
-public final class AppTestUtil {
-
-    private AppTestUtil() {
-    }
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TestData {
 
     public static final String PASSENGER_ENDPOINT = "/api/v1/passengers";
     public static final String PASSENGER_UPDATE_DELETE_ENDPOINT = "/api/v1/passengers/{passengerId}";
@@ -49,11 +49,12 @@ public final class AppTestUtil {
                     "Sort",
                     new ArrayList<>());
 
-
     public static final Passenger PASSENGER;
+
     public static final PassengerDto PASSENGER_DTO;
 
     static {
+
         PASSENGER = new Passenger();
         PASSENGER.setId(1L);
         PASSENGER.setEmail("some.email@gmail.com");
@@ -70,6 +71,7 @@ public final class AppTestUtil {
                 PASSENGER.getPhone(),
                 PASSENGER.getAverageRating(),
                 PASSENGER.getDeleted());
+
     }
 
 }

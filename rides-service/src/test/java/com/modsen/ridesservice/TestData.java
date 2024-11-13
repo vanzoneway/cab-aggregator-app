@@ -6,14 +6,15 @@ import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
 import com.modsen.ridesservice.model.Ride;
 import com.modsen.ridesservice.model.enums.RideStatus;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public final class AppTestUtil {
-
-    private AppTestUtil() {}
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TestData {
 
     public static final String RIDE_PAGE_GET_POST_ENDPOINT = "/api/v1/rides";
     public static final String RIDE_GET_ENDPOINT = "/api/v1/rides/1";
@@ -68,6 +69,7 @@ public final class AppTestUtil {
     public static final Ride RIDE;
 
     static {
+
         RIDE = new Ride();
         RIDE.setId(1L);
         RIDE.setDriverId(1L);
@@ -77,6 +79,7 @@ public final class AppTestUtil {
         RIDE.setRideStatus(RideStatus.CREATED);
         RIDE.setOrderDateTime(LocalDateTime.parse("2023-10-31T14:30:00"));
         RIDE.setCost(new BigDecimal("100.00"));
+
     }
 
 }

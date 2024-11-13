@@ -7,7 +7,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.driverservice.AppTestUtil;
+import com.modsen.driverservice.TestData;
 import com.modsen.driverservice.dto.CarDto;
 import com.modsen.driverservice.exception.car.CarNotFoundException;
 import com.modsen.driverservice.service.CarService;
@@ -37,31 +37,31 @@ class CarControllerTest {
     void createCar_ReturnsCreatedCarDto_AllMandatoryFieldsInRequestBody() throws Exception {
         // Arrange
         when(carService.createCar(anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
+                .thenReturn(TestData.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post(AppTestUtil.CAR_ENDPOINT, AppTestUtil.DRIVER_ID)
+                .post(TestData.CAR_ENDPOINT, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.CAR_REQUEST_DTO));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(
-                        objectMapper.writeValueAsString(AppTestUtil.CAR_RESPONSE_DTO)));
+                        objectMapper.writeValueAsString(TestData.CAR_RESPONSE_DTO)));
     }
 
     @Test
     void createCar_ReturnsValidationError_InvalidCarNumberFormatAndNotNullDeletedField() throws Exception {
         //Arrange
         when(carService.createCar(anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
+                .thenReturn(TestData.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post(AppTestUtil.CAR_ENDPOINT, AppTestUtil.DRIVER_ID)
+                .post(TestData.CAR_ENDPOINT, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_CAR_REQUEST_DTO));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -73,19 +73,19 @@ class CarControllerTest {
     void updateCarByCarIdAndDriverId_ReturnsUpdatedCarDto_AllFieldsUpdated() throws Exception {
         // Arrange
         when(carService.updateCarByCarIdAndDriverId(anyLong(), anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
+                .thenReturn(TestData.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put(AppTestUtil.CAR_UPDATE_ENDPOINT, AppTestUtil.CAR_ID, AppTestUtil.DRIVER_ID)
+                .put(TestData.CAR_UPDATE_ENDPOINT, TestData.CAR_ID, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.CAR_REQUEST_DTO));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(
-                        objectMapper.writeValueAsString(AppTestUtil.CAR_RESPONSE_DTO)));
+                        objectMapper.writeValueAsString(TestData.CAR_RESPONSE_DTO)));
     }
 
     @Test
@@ -93,12 +93,12 @@ class CarControllerTest {
             throws Exception {
         //Arrange
         when(carService.updateCarByCarIdAndDriverId(anyLong(), anyLong(), any(CarDto.class)))
-                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
+                .thenReturn(TestData.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put(AppTestUtil.CAR_UPDATE_ENDPOINT, AppTestUtil.CAR_ID, AppTestUtil.DRIVER_ID)
+                .put(TestData.CAR_UPDATE_ENDPOINT, TestData.CAR_ID, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.INVALID_CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_CAR_REQUEST_DTO));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -112,7 +112,7 @@ class CarControllerTest {
         // Arrange
         doNothing().when(carService).safeDeleteCarByCarId(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(AppTestUtil.CAR_DELETE_ENDPOINT, AppTestUtil.CAR_ID);
+                .delete(TestData.CAR_DELETE_ENDPOINT, TestData.CAR_ID);
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -126,7 +126,7 @@ class CarControllerTest {
                 .when(carService).safeDeleteCarByCarId(anyLong());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(AppTestUtil.CAR_DELETE_ENDPOINT, AppTestUtil.CAR_ID);
+                .delete(TestData.CAR_DELETE_ENDPOINT, TestData.CAR_ID);
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -137,17 +137,17 @@ class CarControllerTest {
     void getCarById_ReturnsCarDto_ValidRequest() throws Exception {
         // Arrange
         when(carService.getCarById(anyLong()))
-                .thenReturn(AppTestUtil.CAR_RESPONSE_DTO);
+                .thenReturn(TestData.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(AppTestUtil.CAR_GET_ENDPOINT, AppTestUtil.CAR_ID);
+                .get(TestData.CAR_GET_ENDPOINT, TestData.CAR_ID);
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().string(
-                        objectMapper.writeValueAsString(AppTestUtil.CAR_RESPONSE_DTO)
+                        objectMapper.writeValueAsString(TestData.CAR_RESPONSE_DTO)
                 ));
     }
 
@@ -158,7 +158,7 @@ class CarControllerTest {
                 .when(carService).getCarById(anyLong());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(AppTestUtil.CAR_GET_ENDPOINT, AppTestUtil.CAR_ID);
+                .get(TestData.CAR_GET_ENDPOINT, TestData.CAR_ID);
         //Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isNotFound());

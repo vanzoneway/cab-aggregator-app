@@ -6,13 +6,14 @@ import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.dto.ListContainerResponseDto;
 import com.modsen.driverservice.model.Car;
 import com.modsen.driverservice.model.Driver;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public final class AppTestUtil {
-
-    private AppTestUtil() {}
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TestData {
 
     public static final Long DRIVER_ID = 1L;
     public static final Long CAR_ID = 1L;

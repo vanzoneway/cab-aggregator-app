@@ -1,7 +1,7 @@
 package com.modsen.ridesservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.ridesservice.AppTestUtil;
+import com.modsen.ridesservice.TestData;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
@@ -42,68 +42,68 @@ class RideControllerTest {
     void getPageRides_ReturnsPageRideDto_ValidRequest() throws Exception {
         //Arrange
         when(rideService.getPageRides(anyInt(), anyInt()))
-                .thenReturn(AppTestUtil.RIDE_PAGE_RESPONSE_DTO);
+                .thenReturn(TestData.RIDE_PAGE_RESPONSE_DTO);
         //Act and Assert
-        mockMvc.perform(get(AppTestUtil.RIDE_PAGE_GET_POST_ENDPOINT))
+        mockMvc.perform(get(TestData.RIDE_PAGE_GET_POST_ENDPOINT))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.RIDE_PAGE_RESPONSE_DTO)));
+                .andExpect(content().string(objectMapper.writeValueAsString(TestData.RIDE_PAGE_RESPONSE_DTO)));
     }
 
     @Test
     void getRideById_ReturnsRideDto_ValidRequest() throws Exception {
         //Arrange
         when(rideService.getRideById(anyLong()))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_DTO);
+                .thenReturn(TestData.RIDE_RESPONSE_DTO);
 
         //Act and Assert
-        mockMvc.perform(get(AppTestUtil.RIDE_GET_ENDPOINT))
+        mockMvc.perform(get(TestData.RIDE_GET_ENDPOINT))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.RIDE_RESPONSE_DTO)));
+                .andExpect(content().string(objectMapper.writeValueAsString(TestData.RIDE_RESPONSE_DTO)));
     }
 
     @Test
     void getPageRideByDriverId_ReturnsPageRideDto_ValidRequest() throws Exception {
         //Arrange
         when(rideService.getPageRidesByDriverId(anyLong(), anyInt(), anyInt()))
-                .thenReturn(AppTestUtil.RIDE_PAGE_RESPONSE_DTO);
+                .thenReturn(TestData.RIDE_PAGE_RESPONSE_DTO);
 
         //Act and Assert
-        mockMvc.perform(get(AppTestUtil.RIDE_BY_DRIVER_ID_GET_ENDPOINT, 1L))
+        mockMvc.perform(get(TestData.RIDE_BY_DRIVER_ID_GET_ENDPOINT, 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.RIDE_PAGE_RESPONSE_DTO)));
+                .andExpect(content().string(objectMapper.writeValueAsString(TestData.RIDE_PAGE_RESPONSE_DTO)));
     }
 
     @Test
     void getPageRideByPassengerId_ReturnsPageRideDto_ValidRequest() throws Exception {
         //Arrange
         when(rideService.getPageRidesByPassengerId(anyLong(), anyInt(), anyInt()))
-                .thenReturn(AppTestUtil.RIDE_PAGE_RESPONSE_DTO);
+                .thenReturn(TestData.RIDE_PAGE_RESPONSE_DTO);
 
         //Act and Assert
-        mockMvc.perform(get(AppTestUtil.RIDE_BY_PASSENGER_ID_GET_ENDPOINT, 1L))
+        mockMvc.perform(get(TestData.RIDE_BY_PASSENGER_ID_GET_ENDPOINT, 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.RIDE_PAGE_RESPONSE_DTO)));
+                .andExpect(content().string(objectMapper.writeValueAsString(TestData.RIDE_PAGE_RESPONSE_DTO)));
     }
 
     @Test
     void createRide_ReturnsCreatedRideDto_AllMandatoryFieldsInRequestBody() throws Exception {
         //Arrange
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post(AppTestUtil.RIDE_PAGE_GET_POST_ENDPOINT)
+                .post(TestData.RIDE_PAGE_GET_POST_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.RIDE_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.RIDE_REQUEST_DTO));
         when(rideService.createRide(any(RideRequestDto.class)))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_DTO);
+                .thenReturn(TestData.RIDE_RESPONSE_DTO);
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.RIDE_RESPONSE_DTO)));
+                .andExpect(content().string(objectMapper.writeValueAsString(TestData.RIDE_RESPONSE_DTO)));
     }
 
     @Test
@@ -115,7 +115,7 @@ class RideControllerTest {
                 "Vilnius", "Riga", "ACCEPTED",
                 LocalDateTime.parse("2023-10-31T14:30:00"), new BigDecimal(231));
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .patch(AppTestUtil.RIDE_CHANGE_RIDE_STATUS_ENDPOINT, 1L)
+                .patch(TestData.RIDE_CHANGE_RIDE_STATUS_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(rideStatusRequestDto));
         when(rideService.changeRideStatus(1L, rideStatusRequestDto))
@@ -132,17 +132,17 @@ class RideControllerTest {
     void updateRide_ReturnsUpdatedRideDto_ValidRequest() throws Exception {
         //Arrange
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put(AppTestUtil.RIDE_UPDATE_ENDPOINT, 1L)
+                .put(TestData.RIDE_UPDATE_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(AppTestUtil.RIDE_REQUEST_DTO));
-        when(rideService.updateRide(1L, AppTestUtil.RIDE_REQUEST_DTO))
-                .thenReturn(AppTestUtil.RIDE_RESPONSE_DTO);
+                .content(objectMapper.writeValueAsString(TestData.RIDE_REQUEST_DTO));
+        when(rideService.updateRide(1L, TestData.RIDE_REQUEST_DTO))
+                .thenReturn(TestData.RIDE_RESPONSE_DTO);
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(objectMapper.writeValueAsString(AppTestUtil.RIDE_RESPONSE_DTO)));
+                .andExpect(content().string(objectMapper.writeValueAsString(TestData.RIDE_RESPONSE_DTO)));
     }
 
 }
