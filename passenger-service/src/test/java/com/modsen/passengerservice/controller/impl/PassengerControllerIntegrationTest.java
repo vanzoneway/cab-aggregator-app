@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -32,7 +34,6 @@ import static com.modsen.passengerservice.IntegrationTestData.SQL_RESTART_SEQUEN
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @MockBean({KafkaConsumerListener.class})
@@ -44,6 +45,14 @@ import static org.hamcrest.Matchers.equalTo;
 class PassengerControllerIntegrationTest {
 
     private static final String POSTGRESQL_IMAGE_NAME = "postgres:latest";
+
+    private static final String EUREKA_CLIENT_ENABLED_PROPERTY = "eureka.client.enabled";
+    private static final String BOOLEAN_PROPERTY_VALUE = "false";
+
+    @DynamicPropertySource
+    private static void disableEureka(DynamicPropertyRegistry registry) {
+        registry.add(EUREKA_CLIENT_ENABLED_PROPERTY, () -> BOOLEAN_PROPERTY_VALUE);
+    }
 
     @ServiceConnection
     @Container
@@ -65,7 +74,7 @@ class PassengerControllerIntegrationTest {
     void createPassenger_ReturnsNewPassengerDto_ContainsAllMandatoryFields() throws Exception {
         given()
                     .contentType(ContentType.JSON)
-                    .body(objectMapper.writeValueAsString(PASSENGER_REQUEST_CREATE_DTO))
+                    .body(PASSENGER_REQUEST_CREATE_DTO)
                 .when()
                     .post(TestData.PASSENGER_ENDPOINT)
                 .then()
@@ -89,7 +98,7 @@ class PassengerControllerIntegrationTest {
     void updatePassengerById_ReturnsUpdatedPassengerDto_UpdatedPhoneField() throws Exception {
         given()
                     .contentType(ContentType.JSON)
-                    .body(objectMapper.writeValueAsString(PASSENGER_REQUEST_UPDATE_DTO))
+                    .body(PASSENGER_REQUEST_UPDATE_DTO)
                 .when()
                     .put(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
                 .then()

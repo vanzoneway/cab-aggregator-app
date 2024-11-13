@@ -3,6 +3,7 @@ package com.modsen.ratingservice.controller.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.modsen.ratingservice.TestData;
+import com.modsen.ratingservice.kafka.KafkaProducerConfig;
 import com.modsen.ratingservice.kafka.KafkaProducerSender;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -16,6 +17,8 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -30,6 +33,7 @@ import static com.modsen.ratingservice.IntegrationTestData.RATING_RESPONSE_CREAT
 import static com.modsen.ratingservice.IntegrationTestData.RATING_RESPONSE_GET_DTO;
 import static com.modsen.ratingservice.IntegrationTestData.RATING_RESPONSE_UPDATE_DTO;
 import static com.modsen.ratingservice.IntegrationTestData.REF_USER_ID;
+import static com.modsen.ratingservice.IntegrationTestData.RIDE_RESPONSE_DTO;
 import static com.modsen.ratingservice.IntegrationTestData.SQL_DELETE_ALL_DATA;
 import static com.modsen.ratingservice.IntegrationTestData.SQL_INSERT_DATA;
 import static com.modsen.ratingservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
@@ -39,7 +43,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@MockBean({KafkaProducerSender.class})
+@MockBean({KafkaProducerSender.class, KafkaProducerConfig.class})
 @ActiveProfiles("test")
 @AutoConfigureWireMock(port = 9090)
 @Sql(statements = {
@@ -50,6 +54,14 @@ import static org.hamcrest.Matchers.equalTo;
 class DriverRatingControllerIntegrationTest {
 
     private static final String POSTGRESQL_IMAGE_NAME = "postgres:latest";
+
+    private static final String EUREKA_CLIENT_ENABLED_PROPERTY = "eureka.client.enabled";
+    private static final String BOOLEAN_PROPERTY_VALUE = "false";
+
+    @DynamicPropertySource
+    private static void disableEureka(DynamicPropertyRegistry registry) {
+        registry.add(EUREKA_CLIENT_ENABLED_PROPERTY, () -> BOOLEAN_PROPERTY_VALUE);
+    }
 
     @ServiceConnection
     @Container
@@ -72,10 +84,10 @@ class DriverRatingControllerIntegrationTest {
 
     @Test
     void createDriverRating_ReturnsCreatedDriverDto_AllMandatoryFieldInRequestBody() throws Exception {
-        stubForGettingRideResponseDto(wireMockServer, objectMapper);
+        stubForGettingRideResponseDto(wireMockServer, objectMapper, RIDE_RESPONSE_DTO);
         given()
                     .contentType(ContentType.JSON)
-                    .body(objectMapper.writeValueAsString(RATING_REQUEST_CREATE_DTO))
+                    .body(RATING_REQUEST_CREATE_DTO)
                 .when()
                         .post(TestData.DRIVER_RATING_ENDPOINT)
                 .then()
@@ -99,7 +111,7 @@ class DriverRatingControllerIntegrationTest {
     void updateDriverRating_ReturnsUpdatedDriverRatingDto_UpdatedRatingAndCommentFields() throws Exception {
         given()
                     .contentType(ContentType.JSON)
-                    .body(objectMapper.writeValueAsString(RATING_REQUEST_UPDATE_DTO))
+                    .body(RATING_REQUEST_UPDATE_DTO)
                 .when()
                     .put(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
                 .then()

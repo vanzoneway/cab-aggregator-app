@@ -13,6 +13,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -44,6 +46,14 @@ class DriverControllerIntegrationTest {
 
     private static final String POSTGRESQL_IMAGE_NAME = "postgres:latest";
 
+    private static final String EUREKA_CLIENT_ENABLED_PROPERTY = "eureka.client.enabled";
+    private static final String BOOLEAN_PROPERTY_VALUE = "false";
+
+    @DynamicPropertySource
+    private static void disableEureka(DynamicPropertyRegistry registry) {
+        registry.add(EUREKA_CLIENT_ENABLED_PROPERTY, () -> BOOLEAN_PROPERTY_VALUE);
+    }
+
     @ServiceConnection
     @Container
     static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(DockerImageName
@@ -64,7 +74,7 @@ class DriverControllerIntegrationTest {
     void createDriver_ReturnsCreatedDriverDto_AllMandatoryParamsInRequestBody() throws Exception {
         given()
                     .contentType(ContentType.JSON)
-                    .body(objectMapper.writeValueAsString(DRIVER_CREATE_REQUEST_DTO))
+                    .body(DRIVER_CREATE_REQUEST_DTO)
                 .when()
                     .post(TestData.DRIVER_ENDPOINT)
                 .then()
@@ -88,7 +98,7 @@ class DriverControllerIntegrationTest {
     void updateDriver_ReturnsUpdatedDriverDto_UpdatedNameField() throws Exception {
         given()
                     .contentType(ContentType.JSON)
-                    .body(objectMapper.writeValueAsString(DRIVER_UPDATE_REQUEST_DTO))
+                    .body(DRIVER_UPDATE_REQUEST_DTO)
                 .when()
                     .put(TestData.DRIVER_UPDATE_ENDPOINT, TestData.DRIVER_ID)
                 .then()
@@ -113,8 +123,8 @@ class DriverControllerIntegrationTest {
                     .get(TestData.DRIVER_CARS_ENDPOINT, ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
-                .contentType(ContentType.JSON)
-                .body(equalTo(objectMapper.writeValueAsString(DRIVER_CAR_RESPONSE_DTO)));
+                    .contentType(ContentType.JSON)
+                    .body(equalTo(objectMapper.writeValueAsString(DRIVER_CAR_RESPONSE_DTO)));
     }
 
 }

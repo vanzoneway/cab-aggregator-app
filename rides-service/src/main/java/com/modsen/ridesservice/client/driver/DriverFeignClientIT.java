@@ -1,6 +1,5 @@
 package com.modsen.ridesservice.client.driver;
 
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Profile;
 

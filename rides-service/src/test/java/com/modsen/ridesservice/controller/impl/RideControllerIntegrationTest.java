@@ -18,17 +18,21 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.cloud.contract.spec.internal.HttpStatus;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import static com.modsen.ridesservice.IntegrationTestData.DRIVER_RESPONSE_DTO;
 import static com.modsen.ridesservice.IntegrationTestData.IGNORING_FIELD_ONE;
 import static com.modsen.ridesservice.IntegrationTestData.IGNORING_FIELD_TWO;
 import static com.modsen.ridesservice.IntegrationTestData.INNER_IGNORING_FIELD_ONE;
 import static com.modsen.ridesservice.IntegrationTestData.INNER_IGNORING_FIELD_TWO;
 import static com.modsen.ridesservice.IntegrationTestData.PAGE_RIDE_RESPONSE_DTO;
+import static com.modsen.ridesservice.IntegrationTestData.PASSENGER_RESPONSE_DTO;
 import static com.modsen.ridesservice.IntegrationTestData.RIDE_ID;
 import static com.modsen.ridesservice.IntegrationTestData.RIDE_REQUEST_CREATE_DTO;
 import static com.modsen.ridesservice.IntegrationTestData.RIDE_REQUEST_UPDATE_DTO;
@@ -40,7 +44,8 @@ import static com.modsen.ridesservice.IntegrationTestData.RIDE_STATUS_CHANGE_REQ
 import static com.modsen.ridesservice.IntegrationTestData.SQL_DELETE_ALL_DATA;
 import static com.modsen.ridesservice.IntegrationTestData.SQL_INSERT_DATA;
 import static com.modsen.ridesservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
-import static com.modsen.ridesservice.WireMockStubs.stubForGettingDriverPassengerResponseDto;
+import static com.modsen.ridesservice.WireMockStubs.stubForGettingDriverResponseDto;
+import static com.modsen.ridesservice.WireMockStubs.stubForGettingPassengerResponseDto;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,6 +61,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RideControllerIntegrationTest {
 
     private static final String POSTGRESQL_IMAGE_NAME = "postgres:latest";
+
+    private static final String EUREKA_CLIENT_ENABLED_PROPERTY = "eureka.client.enabled";
+    private static final String BOOLEAN_PROPERTY_VALUE = "false";
+
+    @DynamicPropertySource
+    private static void disableEureka(DynamicPropertyRegistry registry) {
+        registry.add(EUREKA_CLIENT_ENABLED_PROPERTY, () -> BOOLEAN_PROPERTY_VALUE);
+    }
 
     @ServiceConnection
     @Container
@@ -77,7 +90,7 @@ class RideControllerIntegrationTest {
     }
 
     @Test
-    void getRideById_ReturnsRideDto_DatabaseContainsSuchRideId() throws Exception {
+    void getRideById_ReturnsRideDto_DatabaseContainsSuchRideId() {
         Response response = given()
                 .when()
                     .get(TestData.RIDE_GET_ENDPOINT)
@@ -86,7 +99,7 @@ class RideControllerIntegrationTest {
                     .statusCode(HttpStatus.OK)
                     .extract()
                     .response();
-        RideResponseDto actual = objectMapper.readValue(response.getBody().asString(), RideResponseDto.class);
+        RideResponseDto actual = response.as(RideResponseDto.class);
         assertThat(actual)
                 .usingRecursiveComparison()
                 .ignoringFields(IGNORING_FIELD_ONE, IGNORING_FIELD_TWO)
@@ -95,17 +108,18 @@ class RideControllerIntegrationTest {
 
     @Test
     void createRide_ReturnsCreatedRideDto_AllMandatoryFieldsInRequestBody() throws Exception {
-        stubForGettingDriverPassengerResponseDto(wireMockServer, objectMapper);
+        stubForGettingPassengerResponseDto(wireMockServer, objectMapper, PASSENGER_RESPONSE_DTO);
+        stubForGettingDriverResponseDto(wireMockServer, objectMapper, DRIVER_RESPONSE_DTO);
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(RIDE_REQUEST_CREATE_DTO))
+                .body(RIDE_REQUEST_CREATE_DTO)
                 .when()
                     .post(TestData.RIDE_PAGE_GET_POST_ENDPOINT)
                 .then()
                     .statusCode(HttpStatus.CREATED)
                     .extract()
                     .response();
-        RideResponseDto actual = objectMapper.readValue(response.getBody().asString(), RideResponseDto.class);
+        RideResponseDto actual = response.as(RideResponseDto.class);
 
         assertThat(actual)
                 .usingRecursiveComparison()
@@ -115,10 +129,11 @@ class RideControllerIntegrationTest {
 
     @Test
     void updateRide_ReturnsUpdatedRideDto_UpdatedDepartureAddressAndDestinationAddress() throws Exception {
-        stubForGettingDriverPassengerResponseDto(wireMockServer, objectMapper);
+        stubForGettingPassengerResponseDto(wireMockServer, objectMapper, PASSENGER_RESPONSE_DTO);
+        stubForGettingDriverResponseDto(wireMockServer, objectMapper, DRIVER_RESPONSE_DTO);
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(RIDE_REQUEST_UPDATE_DTO))
+                .body(RIDE_REQUEST_UPDATE_DTO)
                 .when()
                     .put(TestData.RIDE_UPDATE_ENDPOINT, RIDE_ID)
                 .then()
@@ -133,17 +148,17 @@ class RideControllerIntegrationTest {
     }
 
     @Test
-    void changeRideStatus_ReturnsUpdatedRideDto_UpdatedRideStatus() throws Exception {
+    void changeRideStatus_ReturnsUpdatedRideDto_UpdatedRideStatus() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body(objectMapper.writeValueAsString(RIDE_STATUS_CHANGE_REQUEST_DTO))
+                .body(RIDE_STATUS_CHANGE_REQUEST_DTO)
                 .when()
                     .patch(TestData.RIDE_CHANGE_RIDE_STATUS_ENDPOINT, RIDE_ID)
                 .then()
                     .statusCode(HttpStatus.OK)
                     .extract()
                     .response();
-        RideResponseDto actual = objectMapper.readValue(response.getBody().asString(), RideResponseDto.class);
+        RideResponseDto actual = response.as(RideResponseDto.class);
         assertThat(actual)
                 .usingRecursiveComparison()
                 .ignoringFields(IGNORING_FIELD_ONE, IGNORING_FIELD_TWO)

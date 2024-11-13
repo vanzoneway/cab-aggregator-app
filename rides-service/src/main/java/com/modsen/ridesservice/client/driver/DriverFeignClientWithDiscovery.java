@@ -5,5 +5,5 @@ import org.springframework.context.annotation.Profile;
 
 @FeignClient(value = "driver-service")
 @Profile("dev")
-public interface DriverFeignClientWithDiscovery extends DriverFeignClient{
+public interface DriverFeignClientWithDiscovery extends DriverFeignClient {
 }
