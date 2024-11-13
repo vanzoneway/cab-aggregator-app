@@ -37,7 +37,7 @@ ext {
     picocliVersion = '4.6.1'
     jacksonDatatypeVersion = '2.15.0'
     testContainersVersion = '1.19.7'
-
+    cucumberVersion = '7.16.1'
 }
 
 dependencyManagement {
@@ -76,8 +76,11 @@ dependencies {
     testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
     testImplementation "org.testcontainers:postgresql"
     testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine:${cucumberVersion}"
+    testImplementation "org.junit.vintage:junit-vintage-engine"
     testImplementation "io.rest-assured:rest-assured"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testCompileOnly 'org.projectlombok:lombok'
 }
 
@@ -101,5 +104,16 @@ liquibase {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        exclude "**/CucumberRunnerTest.class"
+    }
+}
+
+tasks.register("cucumberTest", Test) {
+    useJUnitPlatform {
+        include "**/CucumberRunnerTest.class"
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
