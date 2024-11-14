@@ -1,6 +1,134 @@
 version: '3.8'
 
 services:
+
+  discovery-service:
+    build:
+      context: ../discovery-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    networks:
+      - cab-app-network
+
+  gateway-service:
+    build:
+      context: ../gateway-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: gateway-service
+    container_name: gateway-service
+    environment:
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-service
+    networks:
+      - cab-app-network
+
+  passenger-service:
+    build:
+      context: ../passenger-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: passenger-service
+    container_name: passenger-service
+    environment:
+      DB_URL: jdbc:postgresql://passengers-db/passengers
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-0:9092, kafka-1:9092, kafka-2:9092"
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+    ports:
+      - "8086:8086"
+    depends_on:
+      - passengers-db
+      - discovery-service
+      - gateway-service
+      - zookeeper
+      - kafka-0
+      - kafka-1
+      - kafka-2
+    networks:
+      - cab-app-network
+
+  driver-service:
+    build:
+      context: ../driver-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: driver-service
+    container_name: driver-service
+    environment:
+      DB_URL: jdbc:postgresql://drivers-db/drivers
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-0:9092, kafka-1:9092, kafka-2:9092"
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+    ports:
+      - "8085:8085"
+    depends_on:
+      - drivers-db
+      - discovery-service
+      - gateway-service
+      - zookeeper
+      - kafka-0
+      - kafka-1
+      - kafka-2
+    networks:
+      - cab-app-network
+
+  rating-service:
+    build:
+      context: ../rating-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: rating-service
+    container_name: rating-service
+    environment:
+      DB_URL: jdbc:postgresql://rating-db/ratings
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-0:9092, kafka-1:9092, kafka-2:9092"
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+    ports:
+      - "8088:8088"
+    depends_on:
+      - rating-db
+      - discovery-service
+      - gateway-service
+      - zookeeper
+      - kafka-0
+      - kafka-1
+      - kafka-2
+    networks:
+      - cab-app-network
+
+  rides-service:
+    build:
+      context: ../rides-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: rides-service
+    container_name: rides-service
+    environment:
+      DB_URL: jdbc:postgresql://rides-db/rides
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+    ports:
+      - "8087:8087"
+    depends_on:
+      - rides-db
+      - discovery-service
+      - gateway-service
+    networks:
+      - cab-app-network
+
   passengers-db:
     image: postgres:latest
     container_name: passengers_db
@@ -12,6 +140,8 @@ services:
       - "5433:5432"
     volumes:
       - passengers_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
 
   drivers-db:
     image: postgres:latest
@@ -24,6 +154,8 @@ services:
       - "5434:5432"
     volumes:
       - drivers_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
 
   rides-db:
     image: postgres:latest
@@ -36,6 +168,8 @@ services:
       - "5435:5432"
     volumes:
       - rides_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
 
   rating-db:
     image: postgres:latest
@@ -48,18 +182,21 @@ services:
       - "5436:5432"
     volumes:
       - ratings_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
 
   zookeeper:
     image: bitnami/zookeeper:3.5
     container_name: zookeeper
     ports:
       - "2181"
-    networks:
-      - kafkanet
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     volumes:
       - zookeeper_data:/bitnami/zookeeper
+    networks:
+      - cab-app-network
+
   kafka-0:
     image: bitnami/kafka:2.8.1
     container_name: kafka-0
@@ -67,8 +204,6 @@ services:
       - 9092
     ports:
       - "29092:29092"
-    networks:
-      - kafkanet
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
@@ -81,6 +216,9 @@ services:
       - kafka_0_data:/bitnami/kafka
     depends_on:
       - zookeeper
+    networks:
+      - cab-app-network
+
   kafka-1:
     image: bitnami/kafka:2.8.1
     container_name: kafka-1
@@ -88,8 +226,6 @@ services:
       - 9092
     ports:
       - "29093:29093"
-    networks:
-      - kafkanet
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
@@ -102,6 +238,9 @@ services:
       - kafka_1_data:/bitnami/kafka
     depends_on:
       - zookeeper
+    networks:
+      - cab-app-network
+
   kafka-2:
     image: bitnami/kafka:2.8.1
     container_name: kafka-2
@@ -109,8 +248,6 @@ services:
       - 9092
     ports:
       - "29094:29094"
-    networks:
-      - kafkanet
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
@@ -123,22 +260,25 @@ services:
       - kafka_2_data:/bitnami/kafka
     depends_on:
       - zookeeper
+    networks:
+      - cab-app-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:master
     container_name: kafka-ui
     ports:
       - "8079:8080"
-    networks:
-      - kafkanet
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-0:9092,kafka-1:9092,kafka-2:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - cab-app-network
 
 networks:
-  kafkanet:
-    name: kafka-network
+  cab-app-network:
+    name: cab-app-network
+    driver: bridge
 
 volumes:
   passengers_data:
