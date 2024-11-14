@@ -7,5 +7,8 @@ import lombok.NoArgsConstructor;
 public final class E2ETestData {
 
     public static final String BASE_URL = "http://localhost:8080/api/v1/passengers";
+    public static final String OFFSET_PARAM = "?offset=";
+    public static final String LIMIT_PARAM = "&limit=";
+    public static final String ID_POSTFIX = "/{id}";
 
 }

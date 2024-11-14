@@ -12,6 +12,9 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import static com.modsen.passengerservice.e2e.E2ETestData.BASE_URL;
+import static com.modsen.passengerservice.e2e.E2ETestData.ID_POSTFIX;
+import static com.modsen.passengerservice.e2e.E2ETestData.LIMIT_PARAM;
+import static com.modsen.passengerservice.e2e.E2ETestData.OFFSET_PARAM;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +58,7 @@ public class PassengerServiceSteps {
     public void getPageWithPassengersWithCurrentOffsetAndLimit(int offset, int limit) {
         actual = given()
                 .when()
-                    .get(BASE_URL + "?offset=" + offset + "&limit=" + limit);
+                    .get(BASE_URL + OFFSET_PARAM + offset + LIMIT_PARAM + limit);
 
     }
 
@@ -71,7 +74,7 @@ public class PassengerServiceSteps {
     public void getPassengerWithId(int id) {
         actual = given()
                 .when()
-                    .get(BASE_URL + "/{id}", id);
+                    .get(BASE_URL + ID_POSTFIX, id);
     }
 
 
@@ -88,7 +91,7 @@ public class PassengerServiceSteps {
                     .contentType(ContentType.JSON)
                     .body(passengerRequestDto)
                 .when()
-                    .put(BASE_URL + "/{id}", id);
+                    .put(BASE_URL + ID_POSTFIX, id);
     }
 
     @And("the response body should contain the information about updated passenger")
@@ -102,7 +105,7 @@ public class PassengerServiceSteps {
     public void deletePassengerWithId(int id) {
         actual = given()
                 .when()
-                    .delete(BASE_URL + "/{id}", id);
+                    .delete(BASE_URL + ID_POSTFIX, id);
     }
 
 }
