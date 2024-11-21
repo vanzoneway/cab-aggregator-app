@@ -15,5 +15,6 @@ COPY --from=builder app/dependencies/ ./
 COPY --from=builder app/spring-boot-loader/ ./
 COPY --from=builder app/snapshot-dependencies/ ./
 COPY --from=builder app/application/ ./
+RUN apt-get update && apt-get install -y curl
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
 

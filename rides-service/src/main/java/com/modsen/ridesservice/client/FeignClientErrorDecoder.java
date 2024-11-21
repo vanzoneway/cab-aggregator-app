@@ -23,6 +23,9 @@ public class FeignClientErrorDecoder implements ErrorDecoder {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         ApiExceptionDto apiExceptionDto;
+        if (response.status() >= 500) {
+            return new ErrorDecoder.Default().decode(s, response);
+        }
         apiExceptionDto = objectMapper.readValue(readResponseBody(response), ApiExceptionDto.class);
         return new CustomFeignClientException(apiExceptionDto);
     }
