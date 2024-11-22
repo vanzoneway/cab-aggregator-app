@@ -10,11 +10,11 @@ COPY --from=build /app/build/libs/${SERVICE_NAME}-0.0.1-SNAPSHOT.jar ./${SERVICE
 RUN java -Djarmode=layertools -jar ${SERVICE_NAME}.jar extract
 
 FROM openjdk:21-slim
+RUN apt-get update && apt-get install -y curl
 WORKDIR /app
 COPY --from=builder app/dependencies/ ./
 COPY --from=builder app/spring-boot-loader/ ./
 COPY --from=builder app/snapshot-dependencies/ ./
 COPY --from=builder app/application/ ./
-RUN apt-get update && apt-get install -y curl
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
 

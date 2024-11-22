@@ -7,6 +7,7 @@ import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -17,14 +18,16 @@ import java.util.Objects;
 @Component
 public class FeignClientErrorDecoder implements ErrorDecoder {
 
+    private final ErrorDecoder.Default eDefault = new ErrorDecoder.Default();
+
     @Override
     @SneakyThrows
     public Exception decode(String s, Response response) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         ApiExceptionDto apiExceptionDto;
-        if (response.status() >= 500) {
-            return new ErrorDecoder.Default().decode(s, response);
+        if (response.status() >= HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+            return eDefault.decode(s, response);
         }
         apiExceptionDto = objectMapper.readValue(readResponseBody(response), ApiExceptionDto.class);
         return new CustomFeignClientException(apiExceptionDto);
