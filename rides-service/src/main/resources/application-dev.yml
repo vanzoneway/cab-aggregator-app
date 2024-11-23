@@ -19,9 +19,16 @@ spring:
           enabled: true
 
 resilience4j:
+  retry:
+    configs:
+      default:
+        ignore-exceptions:
+          - com.modsen.ridesservice.client.CustomFeignClientException
   circuitbreaker:
     configs:
       default:
+        ignore-exceptions:
+          - com.modsen.ridesservice.client.CustomFeignClientException
         register-health-indicator: true
         slidingWindowSize: 10
         minimumNumberOfCalls: 5
@@ -30,19 +37,11 @@ resilience4j:
         waitDurationInOpenState: 5s
         failureRateThreshold: 51
         eventConsumerBufferSize: 10
-    instances:
-      PassengerFeignClientfindPassengerByIdLongString:
-        register-health-indicator: true
-        base-config: default
-      DriverFeignClientfindDriverByIdLongString:
-        register-health-indicator: true
-        base-config: default
   timelimiter:
-    instances:
-      PassengerFeignClientfindPassengerByIdLongString:
-        timeout-duration: 4s
-      DriverFeignClientfindDriverByIdLongString:
-        timeout-duration: 4s
+    configs:
+      default:
+        timeout-duration:
+          seconds: 4
 
 management:
   health:

@@ -7,6 +7,7 @@ import com.modsen.ridesservice.exception.ride.RideNotFoundException;
 import com.modsen.ridesservice.exception.violation.ValidationErrorResponse;
 import com.modsen.ridesservice.exception.violation.Violation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({RideNotFoundException.class})
@@ -57,7 +59,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiExceptionDto handleAnyException() {
+    public ApiExceptionDto handleAnyException(Exception e) {
+        log.error(e.getMessage(), e);
         return new ApiExceptionDto(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 AppConstants.INTERNAL_SERVER_ERROR,
