@@ -7,3 +7,16 @@ eureka:
     fetch-registry: false #accept or not information about registered services
 server:
   port: 8761
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: discovery-service

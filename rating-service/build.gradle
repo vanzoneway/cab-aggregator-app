@@ -40,6 +40,7 @@ ext {
     jacksonDatatypeVersion = '2.15.0'
     testContainersVersion = '1.19.7'
     cucumberVersion = '7.16.1'
+    lokiVersion = '1.4.2'
 
 }
 
@@ -61,6 +62,9 @@ dependencies {
     implementation "org.springframework.kafka:spring-kafka"
     implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "io.micrometer:micrometer-registry-prometheus"
+    implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
+    implementation "org.codehaus.janino:janino"
 
     implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
     implementation "org.postgresql:postgresql"

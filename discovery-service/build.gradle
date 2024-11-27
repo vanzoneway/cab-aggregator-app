@@ -20,6 +20,7 @@ repositories {
 ext {
     springBootVersion = '3.3.4'
     springCloudVersion = '2023.0.3'
+    lokiVersion = '1.4.2'
 }
 
 dependencyManagement {
@@ -30,10 +31,13 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "io.micrometer:micrometer-registry-prometheus"
+    implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
+    implementation "org.codehaus.janino:janino"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

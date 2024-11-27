@@ -17,7 +17,18 @@ spring:
       client-id: "driver-average-rating-consumer"
       auto-offset-reset: earliest
 
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: driver-service
 
 server:
   port: 8085
