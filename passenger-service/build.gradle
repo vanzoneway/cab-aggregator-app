@@ -65,6 +65,11 @@ dependencies {
     implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
     implementation "org.postgresql:postgresql"
 
+    implementation "io.micrometer:micrometer-tracing"
+    implementation "io.micrometer:micrometer-tracing-bridge-otel"
+    implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
+    implementation "io.github.openfeign:feign-micrometer"
+
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
 

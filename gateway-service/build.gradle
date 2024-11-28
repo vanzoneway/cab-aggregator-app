@@ -37,6 +37,11 @@ dependencies {
     implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
     implementation "org.codehaus.janino:janino"
 
+    implementation "io.micrometer:micrometer-tracing"
+    implementation "io.micrometer:micrometer-tracing-bridge-otel"
+    implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
+    implementation "io.github.openfeign:feign-micrometer"
+
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
