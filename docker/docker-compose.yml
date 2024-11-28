@@ -402,6 +402,7 @@ services:
 
   loki:
     image: grafana/loki:2.9.2
+    container_name: loki
     volumes:
       - ./loki:/etc/loki
     ports:
@@ -412,6 +413,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     volumes:
       - ./grafana:/var/lib/grafana
     ports:
