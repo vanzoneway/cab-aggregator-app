@@ -22,7 +22,7 @@ public class RequestResponseLogger {
 
     private final ObjectMapper objectMapper;
 
-    private static final String REQUEST_LOGGING_MESSAGE = "Request: Method: {}, URI: {}, Body: {}";
+    private static final String REQUEST_LOGGING_MESSAGE = "Request: Method: {}, URI: {}, Args -> Body: {}";
     private static final String RESPONSE_LOGGING_MESSAGE = "Response: Method: {}, URI: {}, Args -> Body: {} Time Taken: {} ms";
     private static final String ERROR_SERIALIZING_JSON_MESSAGE = "Error serializing object to JSON";
     private static final String ERROR_SERIALIZING_REQUEST_BODY_MESSAGE = "Error serializing request body";
