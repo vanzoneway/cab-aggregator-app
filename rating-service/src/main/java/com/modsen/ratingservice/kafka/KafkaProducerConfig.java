@@ -46,7 +46,9 @@ public class KafkaProducerConfig {
 
     @Bean
     public KafkaTemplate<String, AverageRatingResponseDto> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+        KafkaTemplate<String, AverageRatingResponseDto> kafkaTemplate = new KafkaTemplate<>(producerFactory());
+        kafkaTemplate.setObservationEnabled(true);
+        return kafkaTemplate;
     }
 
     @Bean

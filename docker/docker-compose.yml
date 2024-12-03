@@ -1,8 +1,14 @@
 version: '3.8'
 
-x-kafka-in-app-common: &kafka-in-app-common
+x-kafka-monitoring-in-app-common: &kafka-monitoring-in-app-common
   KAFKA_BOOTSTRAP_SERVERS: "kafka-0:9092, kafka-1:9092, kafka-2:9092"
   EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+  LOKI: http://loki:3100
+  TEMPO_ZIPKIN_URL: http://tempo:9411
+
+x-monitoring-app-common: &monitoring-in-app-common
+  LOKI: http://loki:3100
+  TEMPO_ZIPKIN_URL: http://tempo:9411
 
 services:
 
@@ -13,6 +19,8 @@ services:
       args:
         SERVICE_NAME: discovery-service
     container_name: discovery-service
+    environment:
+      << : *monitoring-in-app-common
     ports:
       - "8761:8761"
     networks:
@@ -32,6 +40,7 @@ services:
         SERVICE_NAME: gateway-service
     container_name: gateway-service
     environment:
+      << : *monitoring-in-app-common
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
     ports:
       - "8080:8080"
@@ -55,10 +64,11 @@ services:
         SERVICE_NAME: passenger-service
     container_name: passenger-service
     environment:
+      << : *kafka-monitoring-in-app-common
       DB_URL: jdbc:postgresql://passengers-db/passengers
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
-      << : *kafka-in-app-common
+
     ports:
       - "8086:8086"
     depends_on:
@@ -93,10 +103,10 @@ services:
         SERVICE_NAME: driver-service
     container_name: driver-service
     environment:
+      << : *kafka-monitoring-in-app-common
       DB_URL: jdbc:postgresql://drivers-db/drivers
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
-      << : *kafka-in-app-common
     ports:
       - "8085:8085"
     depends_on:
@@ -131,10 +141,10 @@ services:
         SERVICE_NAME: rating-service
     container_name: rating-service
     environment:
+      << : *kafka-monitoring-in-app-common
       DB_URL: jdbc:postgresql://rating-db/ratings
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
-      << : *kafka-in-app-common
     ports:
       - "8088:8088"
     depends_on:
@@ -169,6 +179,7 @@ services:
         SERVICE_NAME: rides-service
     container_name: rides-service
     environment:
+      << : *monitoring-in-app-common
       DB_URL: jdbc:postgresql://rides-db/rides
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
@@ -386,6 +397,63 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-0:9092,kafka-1:9092,kafka-2:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - cab-app-network
+
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: loki
+    volumes:
+      - ./loki:/etc/loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - cab-app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+    - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    - ./grafana/config.ini:/etc/grafana/config.ini
+    - ./grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    networks:
+      - cab-app-network
+
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: victoria-metrics
+    ports:
+      - "8428:8428"
+    volumes:
+      - ./victoria-metrics/promscrape.yml:/victoria-metrics/promscrape.yml
+    networks:
+      - cab-app-network
+    command:
+      - '--promscrape.config=/victoria-metrics/promscrape.yml'
+      - '--promscrape.config.strictParse=false'
+
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yml" ]
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo.yml
+    ports:
+      - "14268:14268" # jaeger ingest
+      - "3200:3200" # tempo
+      - "55680:55680" # otlp grpc
+      - "55681:55681" # otlp http
+      - "9411:9411" # zipkin
+      - "4318:4318" # new http
+      - "4317:4317" # new grpc
     networks:
       - cab-app-network
 

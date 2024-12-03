@@ -42,6 +42,7 @@ public class AverageRatingConsumerConfig {
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaAverageRatingListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
+        factory.getContainerProperties().setObservationEnabled(true);
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

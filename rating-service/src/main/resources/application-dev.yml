@@ -16,11 +16,34 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092, localhost:29093, localhost:29094}
       client-id: "average-rating-producer"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  zipkin:
+    tracing:
+      endpoint: ${TEMPO_ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+  tracing:
+    sampling:
+      probability: 1.0
+  metrics:
+    tags:
+      application: rating-service
 
 server:
   port: 8088
 
 eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8088"
   client:
     service-url:
       defaultZone:
