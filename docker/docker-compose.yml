@@ -216,7 +216,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: pg_isready
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -236,7 +236,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: pg_isready
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -256,7 +256,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -276,7 +276,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: pg_isready
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -457,6 +457,51 @@ services:
     networks:
       - cab-app-network
 
+  keycloak:
+    image: bitnami/keycloak
+    container_name: keycloak
+    ports:
+      - "8090:8090"
+      - "8443:8443"
+    environment:
+      KEYCLOAK_HTTPS_PORT: 8443
+      KEYCLOAK_HTTP_PORT: 8090
+      KEYCLOAK_ADMIN_USER: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_DATABASE_HOST: keycloak-db
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: ${KEYCLOAK_DATABASE_NAME}
+      KEYCLOAK_DATABASE_USER: ${KEYCLOAK_DATABASE_USER}
+      KEYCLOAK_DATABASE_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+      KEYCLOAK_EXTRA_ARGS: --import-realm --verbose
+    volumes:
+      - ./keycloak/realms:/opt/bitnami/keycloak/data/import
+    networks:
+      - cab-app-network
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  keycloak-db:
+    image: postgres:latest
+    container_name: keycloak_db
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DATABASE_NAME}
+      POSTGRES_USER: ${KEYCLOAK_DATABASE_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+    ports:
+      - "5440:5432"
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
 networks:
   cab-app-network:
     name: cab-app-network
@@ -467,6 +512,7 @@ volumes:
   drivers_data:
   rides_data:
   ratings_data:
+  keycloak_data:
   zookeeper_data:
     driver: local
     name: zookeeper_data
