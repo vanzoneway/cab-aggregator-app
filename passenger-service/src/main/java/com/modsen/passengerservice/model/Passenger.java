@@ -30,6 +30,8 @@ public class Passenger {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    private Double averageRating;
+
     private Boolean deleted;
 
 }

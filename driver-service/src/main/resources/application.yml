@@ -11,11 +11,42 @@ spring:
   liquibase:
     change-log: db/changelog/main-changelog.xml
 
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092, localhost:29093, localhost:29094}
+      client-id: "driver-average-rating-consumer"
+      auto-offset-reset: earliest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  zipkin:
+    tracing:
+      endpoint: ${TEMPO_ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+  tracing:
+    sampling:
+      probability: 1.0
+  metrics:
+    tags:
+      application: driver-service
+
 server:
   port: 8085
 
 eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8085"
   client:
     service-url:
       defaultZone:
         ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+

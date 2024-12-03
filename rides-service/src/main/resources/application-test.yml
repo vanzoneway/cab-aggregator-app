@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: rides-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+
+server:
+  port: 0
+
+passenger-driver-service:
+  wire-mock:
+    url: ${PASSENGER_SERVICE_URI:http://localhost:9091/}
+

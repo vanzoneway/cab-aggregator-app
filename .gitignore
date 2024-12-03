@@ -1,8 +1,10 @@
 .gradle
 build/
+target/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+docker/grafana/grafana.db
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

@@ -1,6 +1,5 @@
 INSERT INTO driver_rating (id, comment, rating, ride_id, ref_user_id, deleted)
-VALUES (nextval('driver_rating_seq'), 'Great driver, very polite!', 5, 1, 1, false),
-       (nextval('driver_rating_seq'), 'The ride was okay, but could be improved.', 3, 2, 10, false),
+VALUES (nextval('driver_rating_seq'), 'The ride was okay, but could be improved.', 3, 2, 10, false),
        (nextval('driver_rating_seq'), 'Had a fantastic experience, highly recommend!', 5, 3, 2, false),
        (nextval('driver_rating_seq'), 'Driver was late, but the ride was smooth.', 4, 4, 2, false),
        (nextval('driver_rating_seq'), 'Not very satisfied with the service.', 2, 5, 3, false),
@@ -27,5 +26,4 @@ VALUES (nextval('driver_rating_seq'), 'Great driver, very polite!', 5, 1, 1, fal
        (nextval('driver_rating_seq'), 'Quick and efficient ride.', 4, 26, 3, false),
        (nextval('driver_rating_seq'), 'Driver was very knowledgeable about the area.', 5, 27, 4, false),
        (nextval('driver_rating_seq'), 'The ride was longer due to traffic.', 3, 28, 4, false),
-       (nextval('driver_rating_seq'), 'Driver forgot to turn on the meter.', 1, 29, 5, false),
        (nextval('driver_rating_seq'), 'Really enjoyed the ride, thanks!', 5, 30, 1, false);

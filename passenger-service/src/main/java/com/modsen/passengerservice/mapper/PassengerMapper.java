@@ -1,5 +1,6 @@
 package com.modsen.passengerservice.mapper;
 
+import com.modsen.passengerservice.dto.AverageRatingResponseDto;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.model.Passenger;
 import org.mapstruct.BeanMapping;
@@ -20,4 +21,6 @@ public interface PassengerMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void partialUpdate(PassengerDto passengerDto, @MappingTarget Passenger passenger);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void partialUpdate(AverageRatingResponseDto averageRatingResponseDto, @MappingTarget Passenger passenger);
 }

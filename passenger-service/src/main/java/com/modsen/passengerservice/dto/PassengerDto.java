@@ -39,6 +39,9 @@ public record PassengerDto(
         @NotBlank(message = "{phone.empty}", groups = Marker.OnCreate.class)
         String phone,
 
+        @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
+        Double averageRating,
+
         @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class}, message = "{deleted.must.be.null}")
         @Schema(hidden = true)
         Boolean deleted) implements Serializable {

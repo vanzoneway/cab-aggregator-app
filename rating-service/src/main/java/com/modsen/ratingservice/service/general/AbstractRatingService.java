@@ -11,6 +11,7 @@ import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.exception.rating.DuplicateRideIdException;
 import com.modsen.ratingservice.exception.rating.RefUserIdNotFoundException;
+import com.modsen.ratingservice.kafka.KafkaProducerSender;
 import com.modsen.ratingservice.mapper.general.BaseRatingMapper;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.model.general.Rating;
@@ -33,6 +34,7 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     protected final ListContainerMapper listContainerMapper;
     protected final MessageSource messageSource;
     protected final RideFeignClient rideFeignClient;
+    protected final KafkaProducerSender kafkaProducerSender;
     private String userType;
 
     @Override
@@ -86,12 +88,24 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
 
     @Override
     public AverageRatingResponseDto getAverageRating(Long refUserId) {
-        return new AverageRatingResponseDto(repository.getAverageRatingByRefUserId(refUserId)
-                .orElseThrow(() -> new RefUserIdNotFoundException(messageSource.getMessage(
-                        AppConstants.REF_USER_ID_NOT_FOUND_MESSAGE_KEY,
-                        new Object[]{userType, refUserId},
-                        LocaleContextHolder.getLocale()
-                ))));
+        AverageRatingResponseDto averageRatingResponseDto = new AverageRatingResponseDto(refUserId,
+                repository.getAverageRatingByRefUserId(refUserId)
+                        .orElseThrow(() -> new RefUserIdNotFoundException(messageSource.getMessage(
+                                AppConstants.REF_USER_ID_NOT_FOUND_MESSAGE_KEY,
+                                new Object[]{userType, refUserId},
+                                LocaleContextHolder.getLocale()
+                        ))));
+        sendAverageRatingToConsumers(averageRatingResponseDto);
+        return averageRatingResponseDto;
+    }
+
+    private void sendAverageRatingToConsumers(AverageRatingResponseDto averageRatingResponseDto) {
+        if (userType.equals(UserType.DRIVER.toString())) {
+            kafkaProducerSender.sendAverageRatingToDriver(averageRatingResponseDto);
+        }
+        if(userType.equals(UserType.PASSENGER.toString())) {
+            kafkaProducerSender.sendAverageRatingToPassenger(averageRatingResponseDto);
+        }
     }
 
     private void checkRatingRestoreOption(RatingRequestDto ratingRequestDto) {

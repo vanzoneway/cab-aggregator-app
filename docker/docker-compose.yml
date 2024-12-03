@@ -1,6 +1,207 @@
 version: '3.8'
 
+x-kafka-monitoring-in-app-common: &kafka-monitoring-in-app-common
+  KAFKA_BOOTSTRAP_SERVERS: "kafka-0:9092, kafka-1:9092, kafka-2:9092"
+  EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+  LOKI: http://loki:3100
+  TEMPO_ZIPKIN_URL: http://tempo:9411
+
+x-monitoring-app-common: &monitoring-in-app-common
+  LOKI: http://loki:3100
+  TEMPO_ZIPKIN_URL: http://tempo:9411
+
 services:
+
+  discovery-service:
+    build:
+      context: ../discovery-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: discovery-service
+    container_name: discovery-service
+    environment:
+      << : *monitoring-in-app-common
+    ports:
+      - "8761:8761"
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://discovery-service:8761/actuator/health
+      interval: 1s
+      timeout: 10s
+      retries: 30
+      start_period: 10s
+
+  gateway-service:
+    build:
+      context: ../gateway-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: gateway-service
+    container_name: gateway-service
+    environment:
+      << : *monitoring-in-app-common
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+    ports:
+      - "8080:8080"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://gateway-service:8080/actuator/health
+      interval: 1s
+      timeout: 10s
+      retries: 30
+      start_period: 10s
+
+  passenger-service:
+    build:
+      context: ../passenger-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: passenger-service
+    container_name: passenger-service
+    environment:
+      << : *kafka-monitoring-in-app-common
+      DB_URL: jdbc:postgresql://passengers-db/passengers
+      DB_USERNAME: ${BASE_DB_USERNAME}
+      DB_PASSWORD: ${BASE_DB_PASSWORD}
+
+    ports:
+      - "8086:8086"
+    depends_on:
+      passengers-db:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
+      kafka-0:
+        condition: service_healthy
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://passenger-service:8086/actuator/health
+      interval: 1s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
+  driver-service:
+    build:
+      context: ../driver-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: driver-service
+    container_name: driver-service
+    environment:
+      << : *kafka-monitoring-in-app-common
+      DB_URL: jdbc:postgresql://drivers-db/drivers
+      DB_USERNAME: ${BASE_DB_USERNAME}
+      DB_PASSWORD: ${BASE_DB_PASSWORD}
+    ports:
+      - "8085:8085"
+    depends_on:
+      drivers-db:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
+      kafka-0:
+        condition: service_healthy
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://driver-service:8085/actuator/health
+      interval: 1s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
+  rating-service:
+    build:
+      context: ../rating-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: rating-service
+    container_name: rating-service
+    environment:
+      << : *kafka-monitoring-in-app-common
+      DB_URL: jdbc:postgresql://rating-db/ratings
+      DB_USERNAME: ${BASE_DB_USERNAME}
+      DB_PASSWORD: ${BASE_DB_PASSWORD}
+    ports:
+      - "8088:8088"
+    depends_on:
+      rating-db:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
+      kafka-0:
+        condition: service_healthy
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://rating-service:8088/actuator/health
+      interval: 1s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
+  rides-service:
+    build:
+      context: ../rides-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: rides-service
+    container_name: rides-service
+    environment:
+      << : *monitoring-in-app-common
+      DB_URL: jdbc:postgresql://rides-db/rides
+      DB_USERNAME: ${BASE_DB_USERNAME}
+      DB_PASSWORD: ${BASE_DB_PASSWORD}
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+    ports:
+      - "8087:8087"
+    depends_on:
+      rides-db:
+        condition: service_healthy
+      discovery-service:
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://rides-service:8087/actuator/health
+      interval: 1s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
   passengers-db:
     image: postgres:latest
     container_name: passengers_db
@@ -12,6 +213,14 @@ services:
       - "5433:5432"
     volumes:
       - passengers_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: pg_isready
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   drivers-db:
     image: postgres:latest
@@ -24,6 +233,14 @@ services:
       - "5434:5432"
     volumes:
       - drivers_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: pg_isready
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   rides-db:
     image: postgres:latest
@@ -36,6 +253,14 @@ services:
       - "5435:5432"
     volumes:
       - rides_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   rating-db:
     image: postgres:latest
@@ -48,40 +273,209 @@ services:
       - "5436:5432"
     volumes:
       - ratings_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: pg_isready
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
-  keycloak_db:
-    image: postgres:latest
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: keycloak
+  zookeeper:
+    image: bitnami/zookeeper:3.5
+    container_name: zookeeper
     ports:
-      - "5437:5432"
+      - "2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
     volumes:
-      - keycloak_data:/var/lib/postgresql/data
+      - zookeeper_data:/bitnami/zookeeper
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
-  kc:
-    image: quay.io/keycloak/keycloak:latest
-    command: start-dev
-    environment:
-      KC_DB: postgres
-      KC_DB_URL_HOST: keycloak_db
-      KC_DB_URL_DATABASE: keycloak
-      KC_DB_PASSWORD: postgres
-      KC_DB_USERNAME: postgres
-      KC_DB_SCHEMA: public
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+  kafka-0:
+    image: bitnami/kafka:2.8.1
+    container_name: kafka-0
+    expose:
+      - 9092
     ports:
-      - "8890:8080"
+      - "29092:29092"
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_BROKER_ID=0
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-0:9092,EXTERNAL://localhost:29092
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+    volumes:
+      - kafka_0_data:/bitnami/kafka
     depends_on:
-      - keycloak_db
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+      start_period: 5s
 
+
+  kafka-1:
+    image: bitnami/kafka:2.8.1
+    container_name: kafka-1
+    expose:
+      - 9092
+    ports:
+      - "29093:29093"
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:29093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-1:9092,EXTERNAL://localhost:29093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+    volumes:
+      - kafka_1_data:/bitnami/kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+      start_period: 5s
+
+  kafka-2:
+    image: bitnami/kafka:2.8.1
+    container_name: kafka-2
+    expose:
+      - 9092
+    ports:
+      - "29094:29094"
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_BROKER_ID=2
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:29094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-2:9092,EXTERNAL://localhost:29094
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+    volumes:
+      - kafka_2_data:/bitnami/kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+      start_period: 5s
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:master
+    container_name: kafka-ui
+    ports:
+      - "8079:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-0:9092,kafka-1:9092,kafka-2:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - cab-app-network
+
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: loki
+    volumes:
+      - ./loki:/etc/loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - cab-app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+    - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    - ./grafana/config.ini:/etc/grafana/config.ini
+    - ./grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    networks:
+      - cab-app-network
+
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: victoria-metrics
+    ports:
+      - "8428:8428"
+    volumes:
+      - ./victoria-metrics/promscrape.yml:/victoria-metrics/promscrape.yml
+    networks:
+      - cab-app-network
+    command:
+      - '--promscrape.config=/victoria-metrics/promscrape.yml'
+      - '--promscrape.config.strictParse=false'
+
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yml" ]
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo.yml
+    ports:
+      - "14268:14268" # jaeger ingest
+      - "3200:3200" # tempo
+      - "55680:55680" # otlp grpc
+      - "55681:55681" # otlp http
+      - "9411:9411" # zipkin
+      - "4318:4318" # new http
+      - "4317:4317" # new grpc
+    networks:
+      - cab-app-network
+
+networks:
+  cab-app-network:
+    name: cab-app-network
+    driver: bridge
 
 volumes:
   passengers_data:
   drivers_data:
   rides_data:
   ratings_data:
-  keycloak_data:
+  zookeeper_data:
+    driver: local
+    name: zookeeper_data
+  kafka_0_data:
+    driver: local
+    name: kafka_0_data
+  kafka_1_data:
+    driver: local
+    name: kafka_1_data
+  kafka_2_data:
+    driver: local
+    name: kafka_2_data

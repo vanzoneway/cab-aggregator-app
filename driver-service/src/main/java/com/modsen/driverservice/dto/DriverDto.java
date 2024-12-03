@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 
 import java.io.Serializable;
@@ -36,6 +37,9 @@ public record DriverDto(
         @NotBlank(message = "{gender.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Gender of the driver", example = "Female")
         String gender,
+
+        @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
+        Double averageRating,
 
         @Schema(hidden = true)
         Boolean deleted) implements Serializable {

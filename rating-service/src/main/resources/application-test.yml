@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: rating-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092, localhost:29093, localhost:29094}
+      client-id: "average-rating-producer"
+
+rides-service:
+  wire-mock:
+    url: ${RIDE_SERVICE_URI:http://localhost:9090/}
+server:
+  port: 0

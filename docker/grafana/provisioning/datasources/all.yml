@@ -1,0 +1,55 @@
+apiVersion: 1
+datasources:
+  - orgId: 1
+    version: 4
+    name: loki
+    type: loki
+    uid: loki-uid
+    access: proxy
+    url: http://loki:3100
+    isDefault: true
+  - orgId: 1
+    version: 7
+    name: prometheus
+    type: prometheus
+    uid: prometheus-uid
+    access: proxy
+    url: http://victoria-metrics:8428
+    jsonData:
+      httpMethod: POST
+  - orgId: 1
+    version: 6
+    name: tempo
+    type: tempo
+    uid: tempo-uid
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      nodeGraph:
+        enabled: true
+      search:
+        filters:
+          - id: service-name
+            operator: =
+            scope: resource
+            tag: service.name
+          - id: span-name
+            operator: =
+            scope: span
+            tag: names
+      serviceMap:
+        datasourceUid: prometheus-uid
+      streamingEnabled:
+        search: true
+      tracesToLogsV2:
+        customQuery: false
+        datasourceUid: loki-uid
+        tags:
+          - key: application
+            value: ""
+      tracesToMetrics:
+        datasourceUid: prometheus-uid
+        queries: [ ]
+        tags:
+          - key: application
+            value: ""
