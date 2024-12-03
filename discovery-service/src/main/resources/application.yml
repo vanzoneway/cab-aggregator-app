@@ -2,6 +2,11 @@ spring:
   application:
     name: discovery-service
 eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8761"
   client:
     register-with-eureka: false #defines is discovery-service registered as client
     fetch-registry: false #accept or not information about registered services

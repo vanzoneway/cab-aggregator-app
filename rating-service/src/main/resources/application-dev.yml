@@ -35,12 +35,15 @@ management:
     tags:
       application: rating-service
 
-
-
 server:
   port: 8088
 
 eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8088"
   client:
     service-url:
       defaultZone:

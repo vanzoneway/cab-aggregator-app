@@ -40,6 +40,11 @@ server:
   port: 8085
 
 eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8085"
   client:
     service-url:
       defaultZone:
