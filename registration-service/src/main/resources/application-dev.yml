@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: registration-service
+
+server:
+  port: 8089
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  zipkin:
+    tracing:
+      endpoint: ${TEMPO_ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+  tracing:
+    sampling:
+      probability: 1.0
+  metrics:
+    tags:
+      application: registration-service
+
+eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8089"
+  client:
+    service-url:
+      defaultZone:
+        ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+
+keycloak:
+  user-management:
+    client-id: ${CLIENT_ID_FOR_KC_ADMIN_CLIENT:admin-cli}
+    client-secret: ${CLIENT_SECRET_FOR_KC_ADMIN_CLIENT:VW0msamXP7l5NARSzDYwE22I8IF9s7Jo}
+    username: ${USERNAME_FOR_KC_ADMIN_CLIENT:admin}
+    password: ${USERNAME_FOR_KC_ADMIN_CLIENT:password}
+    server-url: ${SERVER_URL_FOR_KC_ADMIN_CLIENT:http://localhost:8090}
+
+  auth:
+    client-id: ${CLIENT_ID_FOR_AUTH_KC:cab-aggregator-client}
+  realm: ${KC_REALM:cab-aggregator-app}

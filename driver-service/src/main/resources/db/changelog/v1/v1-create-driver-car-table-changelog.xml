@@ -47,7 +47,9 @@
                              primaryKey="true"
                              primaryKeyName="pk_driver"/>
             </column>
-            <column name="name"
+            <column name="first_name"
+                    type="VARCHAR(255)"/>
+            <column name="last_name"
                     type="VARCHAR(255)"/>
             <column name="email"
                     type="VARCHAR(255)">
