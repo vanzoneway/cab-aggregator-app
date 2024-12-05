@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ public class DriverController implements DriverOperations {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public DriverDto createDriver(@RequestBody @Valid DriverDto driverDto) {
         return driverService.createDriver(driverDto);
     }
@@ -45,12 +47,14 @@ public class DriverController implements DriverOperations {
     @Override
     @DeleteMapping("/{driverId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
     public void safeDeleteDriver(@PathVariable Long driverId) {
         driverService.safeDeleteDriverByDriverId(driverId);
     }
 
     @Override
     @PutMapping("/{driverId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
     public DriverDto updateDriverById(@PathVariable Long driverId, @RequestBody @Valid DriverDto driverDto) {
         return driverService.updateDriverById(driverId, driverDto);
     }

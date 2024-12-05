@@ -9,6 +9,7 @@ public interface DriverFeignClient {
 
     @PostMapping("/api/v1/drivers")
     DriverResponseDto createDriver(@RequestBody SignUpDto signUpDto,
-                                      @RequestHeader("Accept-Language") String acceptLanguage);
+                                   @RequestHeader("Accept-Language") String acceptLanguage,
+                                   @RequestHeader("Authorization") String authorization);
 
 }

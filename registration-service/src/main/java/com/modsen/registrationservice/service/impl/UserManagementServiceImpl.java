@@ -35,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
@@ -73,6 +74,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         UserRepresentation keycloakUser = getUserRepresentation(signUpDto);
         RealmResource realmResource = keycloak.realm(keycloakProperties.getRealm());
         UsersResource usersResource = realmResource.users();
+        String adminClientAccessToken = keycloak.tokenManager().getAccessTokenString();
         Response response;
         try {
             response = Optional.ofNullable(usersResource.create(keycloakUser))
@@ -86,9 +88,11 @@ public class UserManagementServiceImpl implements UserManagementService {
         if (response.getStatus() == HttpStatus.CREATED.value()) {
             try {
                 if (Objects.equals(signUpDto.role(), PASSENGER_ROLE)) {
-                    passengerFeignClient.createPassenger(signUpDto, LocaleContextHolder.getLocale().toLanguageTag());
+                    passengerFeignClient.createPassenger(signUpDto, LocaleContextHolder.getLocale().toLanguageTag(),
+                            "Bearer " + adminClientAccessToken);
                 } else {
-                    driverFeignClient.createDriver(signUpDto, LocaleContextHolder.getLocale().toLanguageTag());
+                    driverFeignClient.createDriver(signUpDto, LocaleContextHolder.getLocale().toLanguageTag(),
+                            "Bearer " + adminClientAccessToken);
                 }
             } catch (Exception exception) {
                 usersResource.delete(CreatedResponseUtil.getCreatedId(response));
@@ -106,7 +110,6 @@ public class UserManagementServiceImpl implements UserManagementService {
         userById.roles()
                 .realmLevel()
                 .add(List.of(role));
-
     }
 
     @Override
@@ -129,11 +132,11 @@ public class UserManagementServiceImpl implements UserManagementService {
         ResponseEntity<String> response;
         try {
             response = restTemplate.exchange(authUrl, HttpMethod.POST, requestEntity, String.class);
-        } catch (Exception exception) {
-            throw new ServiceUnavailableException(messageSource.getMessage(
-                    SERVICE_UNAVAILABLE_MESSAGE_KEY,
-                    new Object[]{},
-                    LocaleContextHolder.getLocale()));
+        } catch (HttpClientErrorException exception) {
+            throw new KeycloakCreateUserException(
+                    new ApiExceptionDto(HttpStatus.valueOf(exception.getStatusCode().value()),
+                            exception.getMessage(),
+                            LocalDateTime.now()));
         }
         return response;
     }

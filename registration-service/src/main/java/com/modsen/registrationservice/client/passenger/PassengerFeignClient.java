@@ -9,6 +9,7 @@ public interface PassengerFeignClient {
 
     @PostMapping("/api/v1/passengers")
     PassengerResponseDto createPassenger(@RequestBody SignUpDto signUpDto,
-                                         @RequestHeader("Accept-Language") String acceptLanguage);
+                                         @RequestHeader("Accept-Language") String acceptLanguage,
+                                         @RequestHeader("Authorization") String authorization);
 
 }

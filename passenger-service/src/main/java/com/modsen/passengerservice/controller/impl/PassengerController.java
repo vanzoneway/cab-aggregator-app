@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class PassengerController implements PassengerOperations {
 
     @Override
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public PassengerDto createPassenger(@RequestBody @Valid PassengerDto passengerDto) {
         return passengerService.createPassenger(passengerDto);
@@ -44,12 +46,14 @@ public class PassengerController implements PassengerOperations {
 
     @Override
     @DeleteMapping("/{passengerId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PASSENGER')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void safeDeletePassenger(@PathVariable Long passengerId) {
         passengerService.safeDeletePassengerById(passengerId);
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PASSENGER')")
     @PutMapping("/{passengerId}")
     public PassengerDto updatePassengerById(@PathVariable Long passengerId,
                                             @RequestBody @Valid PassengerDto passengerDto) {
