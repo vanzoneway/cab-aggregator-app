@@ -27,10 +27,10 @@ services:
       - cab-app-network
     healthcheck:
       test: curl -f http://discovery-service:8761/actuator/health
-      interval: 1s
+      interval: 60s
       timeout: 10s
       retries: 30
-      start_period: 10s
+      start_period: 40s
 
   gateway-service:
     build:
@@ -51,10 +51,10 @@ services:
       - cab-app-network
     healthcheck:
       test: curl -f http://gateway-service:8080/actuator/health
-      interval: 1s
+      interval: 60s
       timeout: 10s
       retries: 30
-      start_period: 10s
+      start_period: 40s
 
   passenger-service:
     build:
@@ -68,7 +68,7 @@ services:
       DB_URL: jdbc:postgresql://passengers-db/passengers
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
-
+      JWT_ISSUER_URL: ${JWT_ISSUER_URL}
     ports:
       - "8086:8086"
     depends_on:
@@ -90,10 +90,10 @@ services:
       - cab-app-network
     healthcheck:
       test: curl -f http://passenger-service:8086/actuator/health
-      interval: 1s
+      interval: 60s
       timeout: 10s
       retries: 30
-      start_period: 60s
+      start_period: 40s
 
   driver-service:
     build:
@@ -107,6 +107,7 @@ services:
       DB_URL: jdbc:postgresql://drivers-db/drivers
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
+      JWT_ISSUER_URL: ${JWT_ISSUER_URL}
     ports:
       - "8085:8085"
     depends_on:
@@ -128,10 +129,10 @@ services:
       - cab-app-network
     healthcheck:
       test: curl -f http://driver-service:8085/actuator/health
-      interval: 1s
+      interval: 60s
       timeout: 10s
       retries: 30
-      start_period: 60s
+      start_period: 40s
 
   rating-service:
     build:
@@ -145,6 +146,7 @@ services:
       DB_URL: jdbc:postgresql://rating-db/ratings
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
+      JWT_ISSUER_URL: ${JWT_ISSUER_URL}
     ports:
       - "8088:8088"
     depends_on:
@@ -166,10 +168,10 @@ services:
       - cab-app-network
     healthcheck:
       test: curl -f http://rating-service:8088/actuator/health
-      interval: 1s
+      interval: 60s
       timeout: 10s
       retries: 30
-      start_period: 60s
+      start_period: 40s
 
   rides-service:
     build:
@@ -184,6 +186,7 @@ services:
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+      JWT_ISSUER_URL: ${JWT_ISSUER_URL}
     ports:
       - "8087:8087"
     depends_on:
@@ -197,10 +200,45 @@ services:
       - cab-app-network
     healthcheck:
       test: curl -f http://rides-service:8087/actuator/health
-      interval: 1s
+      interval: 60s
       timeout: 10s
       retries: 30
-      start_period: 60s
+      start_period: 40s
+
+  registration-service:
+    build:
+      context: ../registration-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: registration-service
+    container_name: registration-service
+    environment:
+      <<: *monitoring-in-app-common
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+      CLIENT_ID_FOR_KC_ADMIN_CLIENT: ${CLIENT_ID_FOR_KC_ADMIN_CLIENT}
+      CLIENT_SECRET_FOR_KC_ADMIN_CLIENT: ${CLIENT_SECRET_FOR_KC_ADMIN_CLIENT}
+      USERNAME_FOR_KC_ADMIN_CLIENT: ${USERNAME_FOR_KC_ADMIN_CLIENT}
+      PASSWORD_FOR_KC_ADMIN_CLIENT: ${PASSWORD_FOR_KC_ADMIN_CLIENT}
+      SERVER_URL_FOR_KC_ADMIN_CLIENT: ${SERVER_URL_FOR_KC_ADMIN_CLIENT}
+      CLIENT_ID_FOR_AUTH_KC: ${CLIENT_ID_FOR_AUTH_KC}
+      KC_REALM: ${KC_REALM}
+    ports:
+      - "8089:8089"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://rides-service:8089/actuator/health
+      interval: 60s
+      timeout: 10s
+      retries: 30
+      start_period: 40s
 
   passengers-db:
     image: postgres:latest
@@ -216,7 +254,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: pg_isready
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -236,7 +274,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: pg_isready
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -256,7 +294,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -276,7 +314,7 @@ services:
     networks:
       - cab-app-network
     healthcheck:
-      test: pg_isready
+      test: pg_isready -U postgres
       interval: 10s
       timeout: 5s
       retries: 5
@@ -457,6 +495,56 @@ services:
     networks:
       - cab-app-network
 
+  keycloak:
+    image: bitnami/keycloak
+    container_name: keycloak
+    ports:
+      - "8090:8090"
+      - "8443:8443"
+    environment:
+      KEYCLOAK_HTTPS_PORT: 8443
+      KEYCLOAK_HTTP_PORT: 8090
+      KEYCLOAK_ADMIN_USER: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_DATABASE_HOST: keycloak-db
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: ${KEYCLOAK_DATABASE_NAME}
+      KEYCLOAK_DATABASE_USER: ${KEYCLOAK_DATABASE_USER}
+      KEYCLOAK_DATABASE_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+      KEYCLOAK_EXTRA_ARGS: --import-realm --verbose --health-enabled=true
+    volumes:
+      - ./keycloak/realms:/opt/bitnami/keycloak/data/import
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://localhost:9000/health/live
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  keycloak-db:
+    image: postgres:latest
+    container_name: keycloak_db
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DATABASE_NAME}
+      POSTGRES_USER: ${KEYCLOAK_DATABASE_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+    ports:
+      - "5440:5432"
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
 networks:
   cab-app-network:
     name: cab-app-network
@@ -467,6 +555,7 @@ volumes:
   drivers_data:
   rides_data:
   ratings_data:
+  keycloak_data:
   zookeeper_data:
     driver: local
     name: zookeeper_data

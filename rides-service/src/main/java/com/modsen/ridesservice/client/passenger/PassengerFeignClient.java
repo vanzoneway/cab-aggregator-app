@@ -8,6 +8,7 @@ public interface PassengerFeignClient {
 
     @GetMapping("/api/v1/passengers/{passengerId}")
     PassengerResponseDto findPassengerById(@PathVariable Long passengerId,
-                                           @RequestHeader("Accept-Language") String acceptLanguage);
+                                           @RequestHeader("Accept-Language") String acceptLanguage,
+                                           @RequestHeader("Authorization") String authorization);
 
 }

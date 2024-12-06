@@ -6,6 +6,7 @@ import com.modsen.driverservice.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class CarController implements CarOperations {
     @Override
     @PostMapping("/drivers/{driverId}")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public CarDto createCar(@PathVariable Long driverId,
                             @RequestBody @Valid CarDto carDto) {
         return carService.createCar(driverId, carDto);
@@ -33,6 +35,7 @@ public class CarController implements CarOperations {
 
     @Override
     @PutMapping("/{carId}/drivers/{driverId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public CarDto updateCarByCarIdAndDriverId(@PathVariable Long carId,
                                               @PathVariable Long driverId,
                                               @RequestBody @Valid CarDto carDto) {
@@ -42,6 +45,7 @@ public class CarController implements CarOperations {
     @Override
     @DeleteMapping("/{carId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void safeDeleteCarById(@PathVariable Long carId) {
         carService.safeDeleteCarByCarId(carId);
     }

@@ -8,6 +8,7 @@ public interface DriverFeignClient {
 
     @GetMapping("/api/v1/drivers/{driverId}")
     DriverResponseDto findDriverById(@PathVariable("driverId") Long driverId,
-                                     @RequestHeader("Accept-Language") String acceptLanguage);
+                                     @RequestHeader("Accept-Language") String acceptLanguage,
+                                     @RequestHeader("Authorization") String authorization);
 
 }

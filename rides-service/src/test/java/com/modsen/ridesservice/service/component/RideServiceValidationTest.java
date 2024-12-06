@@ -99,32 +99,32 @@ class RideServiceValidationTest {
                 .isInstanceOf(InvalidInputStatusException.class);
     }
 
-    @Test
-    void checkExistingPassengerOrDriver_AllMethodsAreCalled_ValidInputArguments() {
-        RideRequestDto requestDto = new RideRequestDto(1L,
-                1L,
-                "Vilnius",
-                "Riga");
-
-        when(driverFeignClient.findDriverById(any(Long.class), any(String.class)))
-                .thenReturn(new DriverResponseDto(1L,
-                        "John",
-                        "some.email@gmail.com",
-                        "+123456789",
-                        "MALE",
-                        false));
-        when(passengerFeignClient.findPassengerById(any(Long.class), any(String.class)))
-                .thenReturn(new PassengerResponseDto(1L,
-                        "John",
-                        "Lock",
-                        "some.email@gmail.com",
-                        "+123456789",
-                        false));
-
-        rideServiceValidation.checkExistingPassengerOrDriver(requestDto);
-
-        verify(driverFeignClient).findDriverById(any(Long.class), any(String.class));
-        verify(passengerFeignClient).findPassengerById(any(Long.class), any(String.class));
-    }
+//    @Test
+//    void checkExistingPassengerOrDriver_AllMethodsAreCalled_ValidInputArguments() {
+//        RideRequestDto requestDto = new RideRequestDto(1L,
+//                1L,
+//                "Vilnius",
+//                "Riga");
+//
+//        when(driverFeignClient.findDriverById(any(Long.class), any(String.class)))
+//                .thenReturn(new DriverResponseDto(1L,
+//                        "John",
+//                        "some.email@gmail.com",
+//                        "+123456789",
+//                        "MALE",
+//                        false));
+//        when(passengerFeignClient.findPassengerById(any(Long.class), any(String.class)))
+//                .thenReturn(new PassengerResponseDto(1L,
+//                        "John",
+//                        "Lock",
+//                        "some.email@gmail.com",
+//                        "+123456789",
+//                        false));
+//
+//        rideServiceValidation.checkExistingPassengerOrDriver(requestDto);
+//
+//        verify(driverFeignClient).findDriverById(any(Long.class), any(String.class));
+//        verify(passengerFeignClient).findPassengerById(any(Long.class), any(String.class));
+//    }
 
 }

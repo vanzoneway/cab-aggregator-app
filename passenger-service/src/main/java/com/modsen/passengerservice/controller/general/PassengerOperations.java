@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.controller;
+package com.modsen.passengerservice.controller.general;
 
 import com.modsen.passengerservice.dto.ListContainerResponseDto;
 import com.modsen.passengerservice.dto.Marker;
@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,7 +70,8 @@ public interface PassengerOperations {
     })
     void safeDeletePassenger(
             @Parameter(description = "ID of the passenger to be deleted", required = true)
-            @PathVariable Long passengerId);
+            @PathVariable Long passengerId,
+            JwtAuthenticationToken token);
 
     @Operation(summary = "Update passenger information",
             description = "Updates the details of the specified passenger.")
@@ -87,7 +89,8 @@ public interface PassengerOperations {
             @Parameter(description = "Updated passenger details. It is not necessary to specify all parameters." +
                     " It is sufficient to provide just a subset of them.",
                     required = true)
-            @RequestBody @Valid PassengerDto passengerDto);
+            @RequestBody @Valid PassengerDto passengerDto,
+            JwtAuthenticationToken token);
 
     @Operation(summary = "Get passenger by id",
             description = "Getting information about passenger in JSON format")

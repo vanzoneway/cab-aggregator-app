@@ -1,6 +1,11 @@
 spring:
   application:
     name: passenger-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URL:http://localhost:8090/realms/cab-aggregator-app}
 
   datasource:
     driver-class-name: org.postgresql.Driver

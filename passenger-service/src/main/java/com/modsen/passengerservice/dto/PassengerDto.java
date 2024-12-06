@@ -21,6 +21,7 @@ public record PassengerDto(
 
         @NotBlank(message = "{firstname.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "First name of the passenger", example = "Jane")
+        @Null(groups = Marker.OnUpdate.class)
         String firstName,
 
         @NotBlank(message = "{lastname.empty}", groups = Marker.OnCreate.class)
@@ -30,6 +31,7 @@ public record PassengerDto(
         @Email(message = "{email.invalid}", groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
         @Schema(description = "Email address of the passenger", example = "janedoe@example.com")
         @NotBlank(message = "{email.empty}", groups = Marker.OnCreate.class)
+        @Null(groups = Marker.OnUpdate.class)
         String email,
 
         @Pattern(message = "{phone.invalid}",
