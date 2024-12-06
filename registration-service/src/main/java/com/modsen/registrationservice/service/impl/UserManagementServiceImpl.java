@@ -3,6 +3,7 @@ package com.modsen.registrationservice.service.impl;
 import com.modsen.registrationservice.client.driver.DriverFeignClient;
 import com.modsen.registrationservice.client.passenger.PassengerFeignClient;
 import com.modsen.registrationservice.configuration.KeycloakProperties;
+import com.modsen.registrationservice.dto.SignInAdminDto;
 import com.modsen.registrationservice.dto.SignInDto;
 import com.modsen.registrationservice.dto.SignUpDto;
 import com.modsen.registrationservice.exception.ApiExceptionDto;
@@ -51,6 +52,8 @@ import java.util.Optional;
 
 import static com.modsen.registrationservice.constants.AppConstants.SERVICE_UNAVAILABLE_MESSAGE_KEY;
 import static com.modsen.registrationservice.service.ServiceConstants.CLIENT_ID_FIELD;
+import static com.modsen.registrationservice.service.ServiceConstants.CLIENT_SECRET_FIELD;
+import static com.modsen.registrationservice.service.ServiceConstants.GRANT_TYPE_CLIENT_CREDENTIALS_FIELD;
 import static com.modsen.registrationservice.service.ServiceConstants.GRANT_TYPE_FIELD;
 import static com.modsen.registrationservice.service.ServiceConstants.GRANT_TYPE_PASSWORD_FIELD;
 import static com.modsen.registrationservice.service.ServiceConstants.PASSENGER_ROLE;
@@ -114,10 +117,6 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Override
     public ResponseEntity<String> signIn(SignInDto signInDto) {
-        String authUrl = keycloakProperties.getUserManagement().getServerUrl() +
-                "/realms/" + keycloakProperties.getRealm() +
-                "/protocol/openid-connect/token";
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -129,9 +128,34 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
+        return getResponseWithToken(requestEntity);
+    }
+
+    @Override
+    public ResponseEntity<String> signInAsAdmin(SignInAdminDto signInDto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add(GRANT_TYPE_FIELD, GRANT_TYPE_CLIENT_CREDENTIALS_FIELD);
+        body.add(CLIENT_ID_FIELD, keycloakProperties.getUserManagement().getClientId());
+        body.add(CLIENT_SECRET_FIELD, keycloakProperties.getUserManagement().getClientSecret());
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        return getResponseWithToken(requestEntity);
+    }
+
+    private String getAuthUrl() {
+        return keycloakProperties.getUserManagement().getServerUrl() +
+                "/realms/" + keycloakProperties.getRealm() +
+                "/protocol/openid-connect/token";
+    }
+
+    private ResponseEntity<String> getResponseWithToken(HttpEntity<MultiValueMap<String, String>> requestEntity) {
         ResponseEntity<String> response;
         try {
-            response = restTemplate.exchange(authUrl, HttpMethod.POST, requestEntity, String.class);
+            response = restTemplate.exchange(getAuthUrl(), HttpMethod.POST, requestEntity, String.class);
         } catch (HttpClientErrorException exception) {
             throw new KeycloakCreateUserException(
                     new ApiExceptionDto(HttpStatus.valueOf(exception.getStatusCode().value()),

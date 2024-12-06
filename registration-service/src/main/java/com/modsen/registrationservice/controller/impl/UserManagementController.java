@@ -1,9 +1,11 @@
 package com.modsen.registrationservice.controller.impl;
 
 import com.modsen.registrationservice.controller.general.UserManagementOperations;
+import com.modsen.registrationservice.dto.SignInAdminDto;
 import com.modsen.registrationservice.dto.SignInDto;
 import com.modsen.registrationservice.dto.SignUpDto;
 import com.modsen.registrationservice.service.UserManagementService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,14 +22,20 @@ public class UserManagementController implements UserManagementOperations {
 
     @Override
     @PostMapping("/signin")
-    public ResponseEntity<String> signIn(@RequestBody SignInDto signInDto) {
+    public ResponseEntity<String> signIn(@Valid @RequestBody SignInDto signInDto) {
         return userManagementService.signIn(signInDto);
     }
 
     @Override
     @PostMapping("/signup")
-    public void signUp(@RequestBody SignUpDto signUpDto) {
+    public void signUp(@Valid @RequestBody SignUpDto signUpDto) {
         userManagementService.signUp(signUpDto);
+    }
+
+    @Override
+    @PostMapping("/signin/admin")
+    public ResponseEntity<String> signInAsAdmin(@Valid @RequestBody SignInAdminDto signInAdminDto) {
+        return userManagementService.signInAsAdmin(signInAdminDto);
     }
 
 }

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 public record SignInDto(
+
         @Email(message = "{email.invalid}")
         @NotBlank(message = "{email.empty}")
         String email,
