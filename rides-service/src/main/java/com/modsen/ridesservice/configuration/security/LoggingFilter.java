@@ -1,4 +1,4 @@
-package com.modsen.driverservice.configuration.security;
+package com.modsen.ridesservice.configuration.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

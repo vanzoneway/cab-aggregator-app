@@ -1,4 +1,4 @@
-package com.modsen.driverservice.configuration.security;
+package com.modsen.ridesservice.configuration.security;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;

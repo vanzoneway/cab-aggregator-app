@@ -18,11 +18,13 @@ public class UserManagementController implements UserManagementOperations {
 
     private final UserManagementService userManagementService;
 
+    @Override
     @PostMapping("/signin")
     public ResponseEntity<String> signIn(@RequestBody SignInDto signInDto) {
         return userManagementService.signIn(signInDto);
     }
 
+    @Override
     @PostMapping("/signup")
     public void signUp(@RequestBody SignUpDto signUpDto) {
         userManagementService.signUp(signUpDto);

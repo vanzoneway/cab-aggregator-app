@@ -1,5 +1,6 @@
 package com.modsen.driverservice.controller.impl;
 
+import com.modsen.driverservice.aspect.ValidateAccessToResources;
 import com.modsen.driverservice.controller.DriverOperations;
 import com.modsen.driverservice.dto.DriverCarDto;
 import com.modsen.driverservice.dto.DriverDto;
@@ -11,6 +12,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,14 +50,17 @@ public class DriverController implements DriverOperations {
     @DeleteMapping("/{driverId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
-    public void safeDeleteDriver(@PathVariable Long driverId) {
+    @ValidateAccessToResources
+    public void safeDeleteDriver(@PathVariable Long driverId, JwtAuthenticationToken jwtAuthenticationToken) {
         driverService.safeDeleteDriverByDriverId(driverId);
     }
 
     @Override
     @PutMapping("/{driverId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
-    public DriverDto updateDriverById(@PathVariable Long driverId, @RequestBody @Valid DriverDto driverDto) {
+    @ValidateAccessToResources
+    public DriverDto updateDriverById(@PathVariable Long driverId, @RequestBody @Valid DriverDto driverDto,
+                                      JwtAuthenticationToken jwtAuthenticationToken) {
         return driverService.updateDriverById(driverId, driverDto);
     }
 

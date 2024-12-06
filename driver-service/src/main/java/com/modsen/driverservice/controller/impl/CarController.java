@@ -27,7 +27,7 @@ public class CarController implements CarOperations {
     @Override
     @PostMapping("/drivers/{driverId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public CarDto createCar(@PathVariable Long driverId,
                             @RequestBody @Valid CarDto carDto) {
         return carService.createCar(driverId, carDto);
@@ -35,7 +35,7 @@ public class CarController implements CarOperations {
 
     @Override
     @PutMapping("/{carId}/drivers/{driverId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public CarDto updateCarByCarIdAndDriverId(@PathVariable Long carId,
                                               @PathVariable Long driverId,
                                               @RequestBody @Valid CarDto carDto) {
@@ -45,7 +45,7 @@ public class CarController implements CarOperations {
     @Override
     @DeleteMapping("/{carId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void safeDeleteCarById(@PathVariable Long carId) {
         carService.safeDeleteCarByCarId(carId);
     }

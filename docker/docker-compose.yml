@@ -202,6 +202,41 @@ services:
       retries: 30
       start_period: 60s
 
+  registration-service:
+    build:
+      context: ../registration-service
+      dockerfile: ../docker/Dockerfile
+      args:
+        SERVICE_NAME: registration-service
+    container_name: registration-service
+    environment:
+      <<: *monitoring-in-app-common
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+      CLIENT_ID_FOR_KC_ADMIN_CLIENT: ${CLIENT_ID_FOR_KC_ADMIN_CLIENT}
+      CLIENT_SECRET_FOR_KC_ADMIN_CLIENT: ${CLIENT_SECRET_FOR_KC_ADMIN_CLIENT}
+      USERNAME_FOR_KC_ADMIN_CLIENT: ${USERNAME_FOR_KC_ADMIN_CLIENT}
+      PASSWORD_FOR_KC_ADMIN_CLIENT: ${PASSWORD_FOR_KC_ADMIN_CLIENT}
+      SERVER_URL_FOR_KC_ADMIN_CLIENT: ${SERVER_URL_FOR_KC_ADMIN_CLIENT}
+      CLIENT_ID_FOR_AUTH_KC: ${CLIENT_ID_FOR_AUTH_KC}
+      KC_REALM: ${KC_REALM}
+    ports:
+      - "8089:8089"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://rides-service:8089/actuator/health
+      interval: 1s
+      timeout: 10s
+      retries: 30
+      start_period: 60s
+
   passengers-db:
     image: postgres:latest
     container_name: passengers_db
@@ -478,6 +513,11 @@ services:
       - ./keycloak/realms:/opt/bitnami/keycloak/data/import
     networks:
       - cab-app-network
+    healthcheck:
+      test: curl -f http://localhost:9000/health/live
+      interval: 30s
+      timeout: 10s
+      retries: 5
     depends_on:
       keycloak-db:
         condition: service_healthy

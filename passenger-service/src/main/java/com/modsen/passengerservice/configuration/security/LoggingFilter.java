@@ -17,7 +17,11 @@ public class LoggingFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        log.info("Incoming request: {} {} from IP: {}", request.getMethod(), request.getRequestURI(), request.getRemoteAddr());
+        log.info("Incoming request: {} {} from IP: {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getRemoteAddr());
         filterChain.doFilter(request, response);
     }
+
 }

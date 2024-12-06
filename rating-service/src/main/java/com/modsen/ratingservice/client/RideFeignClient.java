@@ -8,6 +8,7 @@ public interface RideFeignClient {
 
     @GetMapping("/api/v1/rides/{rideId}")
     RideResponseDto findRideById(@PathVariable Long rideId,
-                                 @RequestHeader("Accept-Language") String acceptLanguage);
+                                 @RequestHeader("Accept-Language") String acceptLanguage,
+                                 @RequestHeader("Authorization") String authorization);
 
 }

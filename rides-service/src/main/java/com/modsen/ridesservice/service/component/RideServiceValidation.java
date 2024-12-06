@@ -11,6 +11,9 @@ import com.modsen.ridesservice.model.enums.RideStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -44,13 +47,17 @@ public class RideServiceValidation {
     }
 
     public void checkExistingPassengerOrDriver(RideRequestDto rideRequestDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
         if (Objects.nonNull(rideRequestDto.passengerId())) {
             passengerFeignClient
-                    .findPassengerById(rideRequestDto.passengerId(), LocaleContextHolder.getLocale().toLanguageTag());
+                    .findPassengerById(rideRequestDto.passengerId(), LocaleContextHolder.getLocale().toLanguageTag(),
+                            "Bearer " + token.getToken().getTokenValue());
         }
         if (Objects.nonNull(rideRequestDto.driverId())) {
             driverFeignClient
-                    .findDriverById(rideRequestDto.driverId(), LocaleContextHolder.getLocale().toLanguageTag());
+                    .findDriverById(rideRequestDto.driverId(), LocaleContextHolder.getLocale().toLanguageTag(),
+                            "Bearer " + token.getToken().getTokenValue());
         }
     }
 

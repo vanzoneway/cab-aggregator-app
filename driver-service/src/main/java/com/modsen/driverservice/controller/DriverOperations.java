@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,7 +73,8 @@ public interface DriverOperations {
     })
     void safeDeleteDriver(
             @Parameter(description = "ID of the driver to be deleted", required = true)
-            @PathVariable Long driverId);
+            @PathVariable Long driverId,
+            JwtAuthenticationToken jwtAuthenticationToken);
 
     @Operation(summary = "Update driver information",
             description = "Updates the details of the specified driver.")
@@ -90,7 +92,8 @@ public interface DriverOperations {
             @Parameter(description = "Updated driver details. It is not necessary to specify all parameters. It is " +
                     "sufficient to provide just a subset of them.",
                     required = true)
-            @RequestBody @Valid DriverDto driverDto);
+            @RequestBody @Valid DriverDto driverDto,
+            JwtAuthenticationToken jwtAuthenticationToken);
 
     @Operation(summary = "Get driver by id",
             description = "Getting information about driver in JSON format")

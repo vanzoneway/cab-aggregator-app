@@ -1,5 +1,6 @@
 package com.modsen.passengerservice.exception;
 
+import com.modsen.passengerservice.aspect.AccessToResourcesDeniedException;
 import com.modsen.passengerservice.constants.AppConstants;
 import com.modsen.passengerservice.exception.passenger.DuplicatePassengerPhoneOrEmailException;
 import com.modsen.passengerservice.exception.passenger.PassengerNotFoundException;
@@ -38,6 +39,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiExceptionDto handleForbiddenException(AuthorizationDeniedException e) {
         return new ApiExceptionDto(HttpStatus.CONFLICT, e.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({AccessToResourcesDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiExceptionDto handleAccessToResourcesDeniedException(AccessToResourcesDeniedException e) {
+        return new ApiExceptionDto(HttpStatus.FORBIDDEN, e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(Exception.class)

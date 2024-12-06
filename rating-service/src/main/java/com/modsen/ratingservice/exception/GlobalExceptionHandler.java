@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,6 +34,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateRideIdException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiExceptionDto handleDuplicateException(Exception e) {
+        return new ApiExceptionDto(HttpStatus.CONFLICT, e.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({AuthorizationDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiExceptionDto handleForbiddenException(AuthorizationDeniedException e) {
         return new ApiExceptionDto(HttpStatus.CONFLICT, e.getMessage(), LocalDateTime.now());
     }
 

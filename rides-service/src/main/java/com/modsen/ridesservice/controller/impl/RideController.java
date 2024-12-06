@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,12 +61,14 @@ public class RideController implements RideOperations {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PASSENGER')")
     public RideResponseDto createRide(@Valid @RequestBody RideRequestDto rideRequestDto) {
         return rideService.createRide(rideRequestDto);
     }
 
     @Override
     @PatchMapping("/{rideId}/status")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER') or hasRole('PASSENGER')")
     public RideResponseDto changeRideStatus(
             @PathVariable Long rideId,
             @RequestBody @Valid RideStatusRequestDto rideStatusRequestDto) {
@@ -74,6 +77,7 @@ public class RideController implements RideOperations {
 
     @Override
     @PutMapping("/{rideId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public RideResponseDto updateRide(@PathVariable Long rideId,
                                       @RequestBody @Valid RideRequestDto rideRequestDto) {
         return rideService.updateRide(rideId, rideRequestDto);
