@@ -28,6 +28,7 @@ ext {
 	jacksonDatatypeVersion = '2.15.0'
 	testContainersVersion = '1.19.7'
 	lokiVersion = '1.4.2'
+	keycloakClientVersion = '26.0.3'
 
 }
 
@@ -52,8 +53,8 @@ dependencies {
 	implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
 	implementation "org.codehaus.janino:janino"
 
-	implementation "org.keycloak:keycloak-admin-client:26.0.3"
-	implementation "org.keycloak:keycloak-authz-client:26.0.3"
+	implementation "org.keycloak:keycloak-admin-client:${keycloakClientVersion}"
+	implementation "org.keycloak:keycloak-authz-client:${keycloakClientVersion}"
 
 	implementation "io.micrometer:micrometer-tracing"
 	implementation "io.micrometer:micrometer-tracing-bridge-otel"

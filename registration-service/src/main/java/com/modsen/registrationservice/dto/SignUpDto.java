@@ -1,5 +1,6 @@
 package com.modsen.registrationservice.dto;
 
+import com.modsen.registrationservice.constants.AppConstants;
 import com.modsen.registrationservice.exception.validation.AccessRoles;
 import com.modsen.registrationservice.exception.validation.EnumTypeSubset;
 import com.modsen.registrationservice.exception.validation.GenderTypes;
@@ -25,7 +26,7 @@ public record SignUpDto(
         String password,
 
         @NotBlank(message = "{phone.empty}")
-        @Pattern(message = "{phone.invalid}", regexp = "^\\+?[1-9][0-9]{7,14}$")
+        @Pattern(message = "{phone.invalid}", regexp = AppConstants.PHONE_PATTERN)
         String phone,
 
         @NotBlank(message = "{empty.gender}")

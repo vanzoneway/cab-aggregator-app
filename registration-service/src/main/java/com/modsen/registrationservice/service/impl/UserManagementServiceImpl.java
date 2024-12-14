@@ -79,15 +79,11 @@ public class UserManagementServiceImpl implements UserManagementService {
         UsersResource usersResource = realmResource.users();
         String adminClientAccessToken = keycloak.tokenManager().getAccessTokenString();
         Response response;
-        try {
-            response = Optional.ofNullable(usersResource.create(keycloakUser))
-                    .orElseThrow();
-        } catch (Exception e) {
-            throw new ServiceUnavailableException(messageSource.getMessage(
-                    SERVICE_UNAVAILABLE_MESSAGE_KEY,
-                    new Object[]{},
-                    LocaleContextHolder.getLocale()));
-        }
+        response = Optional.ofNullable(usersResource.create(keycloakUser))
+                .orElseThrow(() -> new ServiceUnavailableException(messageSource.getMessage(
+                        SERVICE_UNAVAILABLE_MESSAGE_KEY,
+                        new Object[]{},
+                        LocaleContextHolder.getLocale())));
         if (response.getStatus() == HttpStatus.CREATED.value()) {
             try {
                 if (Objects.equals(signUpDto.role(), PASSENGER_ROLE)) {

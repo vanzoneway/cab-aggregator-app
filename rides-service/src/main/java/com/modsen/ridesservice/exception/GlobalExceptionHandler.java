@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({AuthorizationDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiExceptionDto handleForbiddenException(AuthorizationDeniedException e) {
-        return new ApiExceptionDto(HttpStatus.CONFLICT, e.getMessage(), LocalDateTime.now());
+        return new ApiExceptionDto(HttpStatus.FORBIDDEN, e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(Exception.class)
