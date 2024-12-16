@@ -1,9 +1,11 @@
 package com.modsen.registrationservice.controller.impl;
 
 import com.modsen.registrationservice.controller.general.UserManagementOperations;
+import com.modsen.registrationservice.dto.AdminKeycloakTokenResponseDto;
 import com.modsen.registrationservice.dto.SignInAdminDto;
 import com.modsen.registrationservice.dto.SignInDto;
 import com.modsen.registrationservice.dto.SignUpDto;
+import com.modsen.registrationservice.dto.UserKeycloakTokenResponseDto;
 import com.modsen.registrationservice.service.UserManagementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class UserManagementController implements UserManagementOperations {
 
     @Override
     @PostMapping("/signin")
-    public ResponseEntity<String> signIn(@Valid @RequestBody SignInDto signInDto) {
+    public UserKeycloakTokenResponseDto signIn(@Valid @RequestBody SignInDto signInDto) {
         return userManagementService.signIn(signInDto);
     }
 
@@ -37,7 +39,7 @@ public class UserManagementController implements UserManagementOperations {
 
     @Override
     @PostMapping("/signin/admin")
-    public ResponseEntity<String> signInAsAdmin(@Valid @RequestBody SignInAdminDto signInAdminDto) {
+    public AdminKeycloakTokenResponseDto signInAsAdmin(@Valid @RequestBody SignInAdminDto signInAdminDto) {
         return userManagementService.signInAsAdmin(signInAdminDto);
     }
 

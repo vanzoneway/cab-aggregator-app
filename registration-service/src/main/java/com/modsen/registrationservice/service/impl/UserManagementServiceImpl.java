@@ -1,13 +1,17 @@
 package com.modsen.registrationservice.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modsen.registrationservice.client.driver.DriverFeignClient;
 import com.modsen.registrationservice.client.passenger.PassengerFeignClient;
 import com.modsen.registrationservice.configuration.KeycloakProperties;
+import com.modsen.registrationservice.dto.AdminKeycloakTokenResponseDto;
 import com.modsen.registrationservice.dto.SignInAdminDto;
 import com.modsen.registrationservice.dto.SignInDto;
 import com.modsen.registrationservice.dto.SignUpDto;
+import com.modsen.registrationservice.dto.UserKeycloakTokenResponseDto;
 import com.modsen.registrationservice.exception.ApiExceptionDto;
 import com.modsen.registrationservice.exception.keycloak.KeycloakCreateUserException;
+import com.modsen.registrationservice.exception.keycloak.KeycloakException;
 import com.modsen.registrationservice.service.UserManagementService;
 import com.modsen.registrationservice.service.ServiceConstants;
 import jakarta.ws.rs.ServiceUnavailableException;
@@ -71,6 +75,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final DriverFeignClient driverFeignClient;
     private final PassengerFeignClient passengerFeignClient;
     private final MessageSource messageSource;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void signUp(SignUpDto signUpDto) {
@@ -112,7 +117,8 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public ResponseEntity<String> signIn(SignInDto signInDto) {
+    @SneakyThrows
+    public UserKeycloakTokenResponseDto signIn(SignInDto signInDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -124,11 +130,17 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
-        return getResponseWithToken(requestEntity);
+        ResponseEntity<String> response = getResponseWithToken(requestEntity);
+
+        handleAnyStatusCodeExceptOk(response);
+
+        return objectMapper.readValue(response.getBody(),
+                UserKeycloakTokenResponseDto.class);
     }
 
     @Override
-    public ResponseEntity<String> signInAsAdmin(SignInAdminDto signInDto) {
+    @SneakyThrows
+    public AdminKeycloakTokenResponseDto signInAsAdmin(SignInAdminDto signInDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -139,7 +151,22 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
-        return getResponseWithToken(requestEntity);
+        ResponseEntity<String> response = getResponseWithToken(requestEntity);
+
+        handleAnyStatusCodeExceptOk(response);
+
+        return objectMapper.readValue(getResponseWithToken(requestEntity).getBody(),
+                AdminKeycloakTokenResponseDto.class);
+    }
+
+    private void handleAnyStatusCodeExceptOk(ResponseEntity<String> response) {
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new KeycloakException(
+                    new ApiExceptionDto(HttpStatus.valueOf(response.getStatusCode().value()),
+                            response.getBody(),
+                            LocalDateTime.now()));
+
+        }
     }
 
     private String getAuthUrl() {

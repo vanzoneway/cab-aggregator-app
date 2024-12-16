@@ -3,6 +3,7 @@ package com.modsen.registrationservice.exception;
 import com.modsen.registrationservice.client.CustomFeignClientException;
 import com.modsen.registrationservice.constants.AppConstants;
 import com.modsen.registrationservice.exception.keycloak.KeycloakCreateUserException;
+import com.modsen.registrationservice.exception.keycloak.KeycloakException;
 import com.modsen.registrationservice.exception.violation.ValidationErrorResponse;
 import com.modsen.registrationservice.exception.violation.Violation;
 import jakarta.validation.ConstraintViolationException;
@@ -51,6 +52,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(KeycloakCreateUserException.class)
     public ResponseEntity<ApiExceptionDto> handleKeycloakCreateUserException(KeycloakCreateUserException e) {
+        ApiExceptionDto exceptionDto = e.getApiExceptionDto();
+        return ResponseEntity.status(exceptionDto.status()).body(e.getApiExceptionDto());
+    }
+
+    @ExceptionHandler(KeycloakException.class)
+    public ResponseEntity<ApiExceptionDto> handleKeycloakException(KeycloakException e) {
         ApiExceptionDto exceptionDto = e.getApiExceptionDto();
         return ResponseEntity.status(exceptionDto.status()).body(e.getApiExceptionDto());
     }
