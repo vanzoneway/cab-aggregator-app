@@ -1,12 +1,15 @@
 package com.modsen.passengerservice.exception;
 
+import com.modsen.passengerservice.aspect.AccessToResourcesDeniedException;
 import com.modsen.passengerservice.constants.AppConstants;
 import com.modsen.passengerservice.exception.passenger.DuplicatePassengerPhoneOrEmailException;
 import com.modsen.passengerservice.exception.passenger.PassengerNotFoundException;
 import com.modsen.passengerservice.exception.violation.ValidationErrorResponse;
 import com.modsen.passengerservice.exception.violation.Violation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -17,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({PassengerNotFoundException.class})
@@ -31,9 +35,22 @@ public class GlobalExceptionHandler {
         return new ApiExceptionDto(HttpStatus.CONFLICT, e.getMessage(), LocalDateTime.now());
     }
 
+    @ExceptionHandler({AuthorizationDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiExceptionDto handleForbiddenException(AuthorizationDeniedException e) {
+        return new ApiExceptionDto(HttpStatus.FORBIDDEN, e.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({AccessToResourcesDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiExceptionDto handleAccessToResourcesDeniedException(AccessToResourcesDeniedException e) {
+        return new ApiExceptionDto(HttpStatus.FORBIDDEN, e.getMessage(), LocalDateTime.now());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiExceptionDto handleAnyException(Exception e) {
+        log.error(e.getMessage(), e);
         return new ApiExceptionDto(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 AppConstants.INTERNAL_SERVER_ERROR,
