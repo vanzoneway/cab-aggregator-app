@@ -6,9 +6,9 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <include file="v2-create-average-rating-column-changelog.xml" relativeToChangelogFile="true"/>
+    <include file="v2-change-name-on-first-name-and-last-name.xml" relativeToChangelogFile="true"/>
 
-    <changeSet id="11" author="vanz.evergarden0@gmail.com">
+    <changeSet id="12" author="vanz.evergarden0@gmail.com">
         <tagDatabase tag="v2.0.0_added_average_rating_column"/>
     </changeSet>
-
 </databaseChangeLog>

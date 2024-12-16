@@ -26,7 +26,9 @@ public class Driver {
     @Column(nullable = false)
     private Long id;
 
-    private String name;
+    private String firstName;
+
+    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String email;

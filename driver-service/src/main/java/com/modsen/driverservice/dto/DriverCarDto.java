@@ -17,8 +17,9 @@ public class DriverCarDto {
     @Schema(description = "Unique identifier for the driver", example = "1")
     private Long id;
 
-    @Schema(description = "Name of the driver", example = "John Doe")
-    private String name;
+    private String firstName;
+
+    private String lastName;
 
     @Schema(description = "Email of the driver", example = "johndoe@example.com")
     private String email;

@@ -18,13 +18,18 @@ public record DriverDto(
         @Schema(description = "Unique identifier for the driver", example = "1")
         Long id,
 
-        @NotBlank(message = "{name.empty}", groups = Marker.OnCreate.class)
-        @Schema(description = "Name of the driver", example = "Jane Doe")
-        String name,
+        @NotBlank(message = "{firstname.empty}", groups = Marker.OnCreate.class)
+        @Null(groups = Marker.OnUpdate.class)
+        String firstName,
+
+        @NotBlank(message = "{lastname.empty}", groups = Marker.OnCreate.class)
+        @Null(groups = Marker.OnUpdate.class)
+        String lastName,
 
         @Email(message = "{email.invalid}", groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
         @Schema(description = "Email address of the driver", example = "janedoe@example.com")
         @NotBlank(message = "{email.empty}", groups = Marker.OnCreate.class)
+        @Null(groups = Marker.OnUpdate.class)
         String email,
 
         @Pattern(message = "{phone.invalid}",
@@ -36,6 +41,7 @@ public record DriverDto(
 
         @NotBlank(message = "{gender.empty}", groups = Marker.OnCreate.class)
         @Schema(description = "Gender of the driver", example = "Female")
+        @Null(groups = Marker.OnUpdate.class)
         String gender,
 
         @Null(groups = {Marker.OnCreate.class, Marker.OnUpdate.class})

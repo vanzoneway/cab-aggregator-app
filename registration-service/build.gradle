@@ -1,0 +1,83 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.modsen'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	springCloudVersion = '2023.0.1'
+	springBootVersion = '3.3.4'
+	springBootValidationVersion = '3.3.1'
+	springBootWebVersion = '3.3.0'
+	springDocVersion = '2.6.0'
+	mapstructVersion = '1.5.5.Final'
+	picocliVersion = '4.6.1'
+	jacksonDatatypeVersion = '2.15.0'
+	testContainersVersion = '1.19.7'
+	lokiVersion = '1.4.2'
+	keycloakClientVersion = '26.0.3'
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		mavenBom "org.testcontainers:testcontainers-bom:${testContainersVersion}"
+	}
+}
+
+dependencies {
+	implementation "org.springframework.boot:spring-boot-starter"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-aop"
+	implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+	implementation "com.fasterxml.jackson.core:jackson-databind"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+	implementation "io.micrometer:micrometer-registry-prometheus"
+	implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
+	implementation "org.codehaus.janino:janino"
+
+	implementation "org.keycloak:keycloak-admin-client:${keycloakClientVersion}"
+	implementation "org.keycloak:keycloak-authz-client:${keycloakClientVersion}"
+
+	implementation "io.micrometer:micrometer-tracing"
+	implementation "io.micrometer:micrometer-tracing-bridge-otel"
+	implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
+	implementation "io.github.openfeign:feign-micrometer"
+
+	compileOnly "org.projectlombok:lombok"
+	annotationProcessor "org.projectlombok:lombok"
+
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}"
+	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "org.springframework.boot:spring-boot-testcontainers"
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
+	testImplementation "org.testcontainers:postgresql"
+	testImplementation "org.testcontainers:junit-jupiter"
+	testImplementation "io.rest-assured:rest-assured"
+	testCompileOnly 'org.projectlombok:lombok'
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -55,6 +56,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiExceptionDto> handleRideNotFoundException(CustomFeignClientException e) {
         ApiExceptionDto exceptionDto = e.getApiExceptionDto();
         return ResponseEntity.status(exceptionDto.status()).body(e.getApiExceptionDto());
+    }
+
+    @ExceptionHandler({AuthorizationDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiExceptionDto handleForbiddenException(AuthorizationDeniedException e) {
+        return new ApiExceptionDto(HttpStatus.FORBIDDEN, e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(Exception.class)

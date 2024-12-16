@@ -21,6 +21,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
@@ -40,8 +43,11 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     @Override
     @Transactional
     public RatingResponseDto createRating(RatingRequestDto ratingRequestDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JwtAuthenticationToken token = (JwtAuthenticationToken) authentication;
         RideResponseDto rideResponseDto = rideFeignClient
-                .findRideById(ratingRequestDto.rideId(), LocaleContextHolder.getLocale().toLanguageTag());
+                .findRideById(ratingRequestDto.rideId(), LocaleContextHolder.getLocale().toLanguageTag(),
+                        "Bearer " + token.getToken().getTokenValue());
         checkRatingExistsByRideId(ratingRequestDto);
         checkRatingRestoreOption(ratingRequestDto);
         T rating = ratingMapper.toRating(ratingRequestDto);
@@ -103,7 +109,7 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
         if (userType.equals(UserType.DRIVER.toString())) {
             kafkaProducerSender.sendAverageRatingToDriver(averageRatingResponseDto);
         }
-        if(userType.equals(UserType.PASSENGER.toString())) {
+        if (userType.equals(UserType.PASSENGER.toString())) {
             kafkaProducerSender.sendAverageRatingToPassenger(averageRatingResponseDto);
         }
     }
