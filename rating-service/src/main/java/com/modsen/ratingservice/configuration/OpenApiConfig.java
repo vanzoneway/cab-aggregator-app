@@ -1,4 +1,4 @@
-package com.modsen.cabaggregatorspringbootstarter.configuration;
+package com.modsen.ratingservice.configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Driver Service API",
+                title = "Rating Service API",
                 description = "One of the services from the cab aggregator app", version = "1.0.0",
                 contact = @Contact(
                         name = "Ivan Zinovich",
@@ -16,3 +16,4 @@ import io.swagger.v3.oas.annotations.info.Info;
 )
 public class OpenApiConfig {
 }
+
