@@ -57,7 +57,14 @@ dependencies {
 	implementation "org.keycloak:keycloak-admin-client:${keycloakClientVersion}"
 	implementation "org.keycloak:keycloak-authz-client:${keycloakClientVersion}"
 
-	implementation("com.modsen:cab-aggregator-spring-boot-starter:${cabAggregatorStarterVersion}") {
+	implementation("com.modsen:cab-aggregator-exception-spring-boot-starter:${cabAggregatorStarterVersion}") {
+		exclude group: "org.springframework.boot"
+		exclude group: "org.springframework.security"
+		exclude group: "org.springdoc"
+		exclude group: "org.projectlombok"
+	}
+
+	implementation("com.modsen:cab-aggregator-security-spring-boot-starter:${cabAggregatorStarterVersion}") {
 		exclude group: "org.springframework.boot"
 		exclude group: "org.springdoc"
 		exclude group: "org.projectlombok"

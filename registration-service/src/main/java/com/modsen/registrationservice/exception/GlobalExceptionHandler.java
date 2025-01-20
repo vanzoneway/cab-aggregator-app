@@ -1,6 +1,6 @@
 package com.modsen.registrationservice.exception;
 
-import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.registrationservice.client.CustomFeignClientException;
 import com.modsen.registrationservice.exception.keycloak.KeycloakCreateUserException;
 import com.modsen.registrationservice.exception.keycloak.KeycloakException;

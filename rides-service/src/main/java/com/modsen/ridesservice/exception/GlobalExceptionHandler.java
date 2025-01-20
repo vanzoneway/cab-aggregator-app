@@ -1,6 +1,6 @@
 package com.modsen.ridesservice.exception;
 
-import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.ridesservice.client.CustomFeignClientException;
 import com.modsen.ridesservice.exception.ride.InvalidInputStatusException;
 import com.modsen.ridesservice.exception.ride.RideNotFoundException;

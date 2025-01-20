@@ -1,0 +1,2 @@
+com.modsen.cabaggregatorsecurityspringbootstarter.configuration.CommonConfiguration
+com.modsen.cabaggregatorsecurityspringbootstarter.configuration.security.BasicKeycloakSecurityConfiguration

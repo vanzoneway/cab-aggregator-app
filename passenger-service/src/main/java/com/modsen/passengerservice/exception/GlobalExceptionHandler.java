@@ -1,6 +1,6 @@
 package com.modsen.passengerservice.exception;
 
-import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.passengerservice.exception.passenger.DuplicatePassengerPhoneOrEmailException;
 import com.modsen.passengerservice.exception.passenger.PassengerNotFoundException;
 

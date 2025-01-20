@@ -1,4 +1,0 @@
-com.modsen.cabaggregatorspringbootstarter.configuration.security.BasicKeycloakSecurityConfiguration
-com.modsen.cabaggregatorspringbootstarter.configuration.OpenApiConfig
-com.modsen.cabaggregatorspringbootstarter.configuration.CommonConfiguration
-com.modsen.cabaggregatorspringbootstarter.exception.BasicGlobalExceptionHandler

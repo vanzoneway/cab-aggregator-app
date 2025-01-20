@@ -1,7 +1,7 @@
 package com.modsen.ratingservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.ratingservice.TestData;
 import com.modsen.ratingservice.client.RideFeignClientException;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;

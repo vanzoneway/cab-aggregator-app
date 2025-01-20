@@ -1,6 +1,6 @@
 package com.modsen.ratingservice.exception;
 
-import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.ratingservice.client.RideFeignClientException;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.exception.rating.DuplicateRideIdException;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-
 
 @Slf4j
 @RestControllerAdvice
@@ -37,6 +36,5 @@ public class GlobalExceptionHandler {
         ApiExceptionDto exceptionDto = e.getApiExceptionDto();
         return ResponseEntity.status(exceptionDto.getStatus()).body(e.getApiExceptionDto());
     }
-
 
 }

@@ -1,6 +1,6 @@
 package com.modsen.driverservice.exception;
 
-import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.driverservice.exception.car.CarNotFoundException;
 import com.modsen.driverservice.exception.car.DuplicateCarNumbersException;
 import com.modsen.driverservice.exception.driver.DriverNotFoundException;

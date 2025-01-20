@@ -1,7 +1,7 @@
 package com.modsen.registrationservice.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.registrationservice.client.driver.DriverFeignClient;
 import com.modsen.registrationservice.client.passenger.PassengerFeignClient;
 import com.modsen.registrationservice.configuration.KeycloakProperties;
