@@ -3,7 +3,7 @@ package com.modsen.registrationservice.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import com.modsen.registrationservice.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.registrationservice.exception.keycloak.KeycloakCreateUserException;
 import feign.Response;
 import feign.codec.ErrorDecoder;

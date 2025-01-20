@@ -25,6 +25,7 @@ java {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 ext {
@@ -41,7 +42,7 @@ ext {
     testContainersVersion = '1.19.7'
     cucumberVersion = '7.16.1'
     lokiVersion = '1.4.2'
-
+    cabAggregatorStarterVersion = '0.0.1'
 }
 
 dependencyManagement {
@@ -66,6 +67,13 @@ dependencies {
     implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
     implementation "org.codehaus.janino:janino"
+
+    implementation("com.modsen:cab-aggregator-spring-boot-starter:${cabAggregatorStarterVersion}") {
+        exclude group: "org.springframework.boot"
+        exclude group: "org.springframework.security"
+        exclude group: "org.springdoc"
+        exclude group: "org.projectlombok"
+    }
 
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-tracing-bridge-otel"

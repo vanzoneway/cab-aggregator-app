@@ -2,7 +2,7 @@ package com.modsen.ridesservice.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.modsen.ridesservice.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorspringbootstarter.exception.ApiExceptionDto;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.Cleanup;
