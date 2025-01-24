@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: cab-aggregator-exception-spring-boot-starter

@@ -1,6 +1,19 @@
-FROM gradle:8.10.2-jdk21 AS build
+FROM gradle:8.10.2-jdk21 AS exception-starter-build
 WORKDIR /app
-COPY --chown=gradle:gradle . /app
+COPY --chown=gradle:gradle /cab-aggregator-exception-spring-boot-starter/ /app
+RUN gradle publishToMavenLocal -x test --no-daemon
+
+FROM gradle:8.10.2-jdk21 AS security-starter-build
+WORKDIR /app
+COPY --chown=gradle:gradle /cab-aggregator-security-spring-boot-starter/ /app
+
+RUN gradle publishToMavenLocal -x test --no-daemon
+FROM gradle:8.10.2-jdk21 AS build
+ARG SERVICE_NAME
+WORKDIR /app
+COPY --from=exception-starter-build /root/.m2 /root/.m2
+COPY --from=security-starter-build /root/.m2 /root/.m2
+COPY --chown=gradle:gradle /${SERVICE_NAME} /app
 RUN gradle clean build -x test --no-daemon
 
 FROM openjdk:21-slim AS builder
@@ -17,4 +30,3 @@ COPY --from=builder app/spring-boot-loader/ ./
 COPY --from=builder app/snapshot-dependencies/ ./
 COPY --from=builder app/application/ ./
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
-

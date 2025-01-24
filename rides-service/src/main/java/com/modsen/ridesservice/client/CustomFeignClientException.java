@@ -1,6 +1,6 @@
 package com.modsen.ridesservice.client;
 
-import com.modsen.ridesservice.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import lombok.Getter;
 
 @Getter

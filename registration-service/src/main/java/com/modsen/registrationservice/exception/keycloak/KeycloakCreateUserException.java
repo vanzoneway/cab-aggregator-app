@@ -1,6 +1,6 @@
 package com.modsen.registrationservice.exception.keycloak;
 
-import com.modsen.registrationservice.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import lombok.Getter;
 
 @Getter

@@ -14,8 +14,8 @@ services:
 
   discovery-service:
     build:
-      context: ../discovery-service
-      dockerfile: ../docker/Dockerfile
+      context: ..
+      dockerfile: ./docker/Dockerfile
       args:
         SERVICE_NAME: discovery-service
     container_name: discovery-service
@@ -34,8 +34,8 @@ services:
 
   gateway-service:
     build:
-      context: ../gateway-service
-      dockerfile: ../docker/Dockerfile
+      context: ..
+      dockerfile: ./docker/Dockerfile
       args:
         SERVICE_NAME: gateway-service
     container_name: gateway-service
@@ -58,8 +58,8 @@ services:
 
   passenger-service:
     build:
-      context: ../passenger-service
-      dockerfile: ../docker/Dockerfile
+      context: ..
+      dockerfile: ./docker/Dockerfile
       args:
         SERVICE_NAME: passenger-service
     container_name: passenger-service
@@ -97,8 +97,8 @@ services:
 
   driver-service:
     build:
-      context: ../driver-service
-      dockerfile: ../docker/Dockerfile
+      context: ..
+      dockerfile: ./docker/Dockerfile
       args:
         SERVICE_NAME: driver-service
     container_name: driver-service
@@ -136,8 +136,8 @@ services:
 
   rating-service:
     build:
-      context: ../rating-service
-      dockerfile: ../docker/Dockerfile
+      context: ..
+      dockerfile: ./docker/Dockerfile
       args:
         SERVICE_NAME: rating-service
     container_name: rating-service
@@ -175,8 +175,8 @@ services:
 
   rides-service:
     build:
-      context: ../rides-service
-      dockerfile: ../docker/Dockerfile
+      context: ..
+      dockerfile: ./docker/Dockerfile
       args:
         SERVICE_NAME: rides-service
     container_name: rides-service
@@ -207,8 +207,8 @@ services:
 
   registration-service:
     build:
-      context: ../registration-service
-      dockerfile: ../docker/Dockerfile
+      context: ..
+      dockerfile: ./docker/Dockerfile
       args:
         SERVICE_NAME: registration-service
     container_name: registration-service

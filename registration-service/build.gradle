@@ -15,6 +15,7 @@ java {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 ext {
@@ -29,7 +30,7 @@ ext {
 	testContainersVersion = '1.19.7'
 	lokiVersion = '1.4.2'
 	keycloakClientVersion = '26.0.3'
-
+	cabAggregatorStarterVersion = '0.0.1'
 }
 
 dependencyManagement {
@@ -55,6 +56,19 @@ dependencies {
 
 	implementation "org.keycloak:keycloak-admin-client:${keycloakClientVersion}"
 	implementation "org.keycloak:keycloak-authz-client:${keycloakClientVersion}"
+
+	implementation("com.modsen:cab-aggregator-exception-spring-boot-starter:${cabAggregatorStarterVersion}") {
+		exclude group: "org.springframework.boot"
+		exclude group: "org.springframework.security"
+		exclude group: "org.springdoc"
+		exclude group: "org.projectlombok"
+	}
+
+	implementation("com.modsen:cab-aggregator-security-spring-boot-starter:${cabAggregatorStarterVersion}") {
+		exclude group: "org.springframework.boot"
+		exclude group: "org.springdoc"
+		exclude group: "org.projectlombok"
+	}
 
 	implementation "io.micrometer:micrometer-tracing"
 	implementation "io.micrometer:micrometer-tracing-bridge-otel"
