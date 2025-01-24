@@ -1,11 +1,11 @@
 package com.modsen.ratingservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.ratingservice.TestData;
 import com.modsen.ratingservice.client.RideFeignClientException;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
-import com.modsen.ratingservice.exception.ApiExceptionDto;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.service.impl.DriverRatingService;
 import org.junit.jupiter.api.Test;

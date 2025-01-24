@@ -1,6 +1,6 @@
 package com.modsen.ratingservice.client;
 
-import com.modsen.ratingservice.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import lombok.Getter;
 
 @Getter

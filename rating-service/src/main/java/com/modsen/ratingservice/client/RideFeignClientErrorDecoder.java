@@ -2,7 +2,7 @@ package com.modsen.ratingservice.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.modsen.ratingservice.exception.ApiExceptionDto;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.Cleanup;

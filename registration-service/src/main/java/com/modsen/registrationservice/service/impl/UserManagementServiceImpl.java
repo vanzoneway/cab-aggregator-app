@@ -1,6 +1,7 @@
 package com.modsen.registrationservice.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.ApiExceptionDto;
 import com.modsen.registrationservice.client.driver.DriverFeignClient;
 import com.modsen.registrationservice.client.passenger.PassengerFeignClient;
 import com.modsen.registrationservice.configuration.KeycloakProperties;
@@ -9,7 +10,6 @@ import com.modsen.registrationservice.dto.SignInAdminDto;
 import com.modsen.registrationservice.dto.SignInDto;
 import com.modsen.registrationservice.dto.SignUpDto;
 import com.modsen.registrationservice.dto.UserKeycloakTokenResponseDto;
-import com.modsen.registrationservice.exception.ApiExceptionDto;
 import com.modsen.registrationservice.exception.keycloak.KeycloakCreateUserException;
 import com.modsen.registrationservice.exception.keycloak.KeycloakException;
 import com.modsen.registrationservice.service.UserManagementService;

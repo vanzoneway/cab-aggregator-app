@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'maven-publish'
+}
+
+group = 'com.modsen'
+version = '0.0.1'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+publishing {
+    publications {
+        mavenJava(org.gradle.api.publish.maven.MavenPublication) {
+            from components.java
+            artifactId = 'cab-aggregator-security-spring-boot-starter'
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
+
+ext {
+    springBootVersion = '3.3.4'
+    springDocVersion = '2.0.2'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    }
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+
+    implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation "org.springframework.security:spring-security-oauth2-resource-server"
+    implementation "org.springframework.security:spring-security-oauth2-jose"
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}"
+
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
