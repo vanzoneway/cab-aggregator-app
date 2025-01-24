@@ -11,9 +11,9 @@ RUN gradle publishToMavenLocal -x test --no-daemon
 FROM gradle:8.10.2-jdk21 AS build
 ARG SERVICE_NAME
 WORKDIR /app
-COPY --chown=gradle:gradle /${SERVICE_NAME} /app
 COPY --from=exception-starter-build /root/.m2 /root/.m2
 COPY --from=security-starter-build /root/.m2 /root/.m2
+COPY --chown=gradle:gradle /${SERVICE_NAME} /app
 RUN gradle clean build -x test --no-daemon
 
 FROM openjdk:21-slim AS builder
