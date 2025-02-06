@@ -240,6 +240,29 @@ services:
       retries: 30
       start_period: 40s
 
+  redis:
+    image: redis:latest
+    container_name: redis_cache
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   passengers-db:
     image: postgres:latest
     container_name: passengers_db
@@ -366,7 +389,6 @@ services:
       timeout: 60s
       retries: 60
       start_period: 5s
-
 
   kafka-1:
     image: bitnami/kafka:2.8.1
@@ -557,6 +579,7 @@ volumes:
   ratings_data:
   keycloak_data:
   zookeeper_data:
+  redis_data:
     driver: local
     name: zookeeper_data
   kafka_0_data:

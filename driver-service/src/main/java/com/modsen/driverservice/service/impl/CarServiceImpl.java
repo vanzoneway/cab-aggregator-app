@@ -12,6 +12,9 @@ import com.modsen.driverservice.repository.CarRepository;
 import com.modsen.driverservice.repository.DriverRepository;
 import com.modsen.driverservice.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.CAR_CACHE_VALUE, key = "#result.id()")
     public CarDto createCar(Long driverId, CarDto carDto) {
         checkCarRestoreOption(carDto);
         checkCarExistsByNumber(carDto);
@@ -47,6 +51,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.CAR_CACHE_VALUE, key = "#carId")
     public CarDto updateCarByCarIdAndDriverId(Long carId, Long driverId, CarDto carDto) {
         checkCarRestoreOption(carDto);
         checkCarExistsByNumber(carDto);
@@ -64,6 +69,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     @Transactional
+    @CacheEvict(value = AppConstants.CAR_CACHE_VALUE, key = "#carId")
     public void safeDeleteCarByCarId(Long carId) {
         Car carEntity = getCarByIdAndDeletedIsFalse(carId);
         carEntity.setDeleted(true);
@@ -71,6 +77,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Cacheable(value = AppConstants.CAR_CACHE_VALUE, key = "#carId")
     public CarDto getCarById(Long carId) {
         return carMapper.toDto(getCarByIdAndDeletedIsFalse(carId));
     }

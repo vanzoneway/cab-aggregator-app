@@ -12,6 +12,10 @@ import com.modsen.driverservice.model.Driver;
 import com.modsen.driverservice.repository.DriverRepository;
 import com.modsen.driverservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -32,6 +36,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.DRIVER_CACHE_VALUE, key = "#result.id()")
     public DriverDto createDriver(DriverDto driverDto) {
         checkDriverRestoreOption(driverDto);
         checkCarExistsByPhoneOrEmail(driverDto);
@@ -51,6 +56,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    @CacheEvict(value = AppConstants.DRIVER_CACHE_VALUE, key = "#driverId")
     public void safeDeleteDriverByDriverId(Long driverId) {
         Driver driverEntity = getDriverByIdAndDeletedIsFalse(driverId);
         driverEntity.setDeleted(true);
@@ -59,6 +65,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.DRIVER_CACHE_VALUE, key = "#driverId")
     public DriverDto updateDriverById(Long driverId, DriverDto driverDto) {
         checkDriverRestoreOption(driverDto);
         checkCarExistsByPhoneOrEmail(driverDto);
@@ -69,6 +76,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
+    @Cacheable(value = AppConstants.DRIVER_CACHE_VALUE, key = "#driverId")
     public DriverDto getDriverById(Long driverId) {
         return driverMapper.toDto(getDriverByIdAndDeletedIsFalse(driverId));
     }

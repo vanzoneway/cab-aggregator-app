@@ -15,4 +15,10 @@ public class AppConstants {
     //Application exception messages
     public static final String INTERNAL_SERVER_ERROR = "An unexpected error occurred. Please try again later.";
 
+    //Cache names
+    public static final String CAR_CACHE_VALUE = "carCache";
+    public static final String DRIVER_CACHE_VALUE = "driverCache";
+    public static final String DRIVER_WITH_CARS_CACHE_VALUE = "driverWithCarsCache";
+
+
 }
