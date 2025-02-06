@@ -13,7 +13,7 @@ spring:
   data:
     redis:
       host: ${REDIS_CACHE_URL:localhost}
-      port: 6380
+      port: ${REDIS_CACHE_PORT:6380}
 
   datasource:
     driver-class-name: org.postgresql.Driver

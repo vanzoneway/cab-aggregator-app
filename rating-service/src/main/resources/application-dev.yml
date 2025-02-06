@@ -13,6 +13,13 @@ spring:
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
 
+  cache:
+    type: redis
+  data:
+    redis:
+      host: ${REDIS_CACHE_URL:localhost}
+      port: ${REDIS_CACHE_PORT:6380}
+
   liquibase:
     change-log: db/changelog/main-changelog.xml
 
