@@ -3,6 +3,7 @@ package com.modsen.cabaggregatorexceptionspringbootstarter.exception;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "Data Transfer Object for API exceptions")
 public class ApiExceptionDto implements Serializable {
 

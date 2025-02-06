@@ -77,8 +77,8 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Cacheable(value = AppConstants.RIDE_CACHE_VALUE,
-            condition = "#result.rideStatus() == 'CANCELED' || #result.rideStatus() == 'COMPLETED'",
-            key = "#result.id()")
+            unless = "#result.rideStatus() != 'CANCELED' && #result.rideStatus() != 'COMPLETED'",
+            key = "#rideId")
     public RideResponseDto getRideById(Long rideId) {
         Ride ride = getRide(rideId);
         return rideMapper.toDto(ride);
