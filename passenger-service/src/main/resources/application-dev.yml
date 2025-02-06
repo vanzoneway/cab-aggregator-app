@@ -1,11 +1,19 @@
 spring:
   application:
     name: passenger-service
+
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${JWT_ISSUER_URL:http://localhost:8090/realms/cab-aggregator-app}
+
+  cache:
+    type: redis
+  data:
+    redis:
+      host: ${REDIS_CACHE_URL:localhost}
+      port: 6380
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -40,8 +48,6 @@ management:
   metrics:
     tags:
       application: passenger-service
-
-
 
 server:
   port: 8086
