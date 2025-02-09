@@ -71,6 +71,10 @@ services:
       JWT_ISSUER_URL: ${JWT_ISSUER_URL}
       REDIS_CACHE_URL: ${REDIS_CACHE_URL}
       REDIS_CACHE_PORT: ${REDIS_CACHE_PORT}
+      MINIO_URL: ${MINIO_URL}
+      MINIO_ACCESS_NAME: ${MINIO_ACCESS_NAME}
+      MINIO_ACCESS_SECRET: ${MINIO_ACCESS_SECRET}
+      PASSENGER_SERVICE_MINIO_BUCKET: ${PASSENGER_SERVICE_MINIO_BUCKET}
     ports:
       - "8086:8086"
     depends_on:
@@ -112,6 +116,10 @@ services:
       JWT_ISSUER_URL: ${JWT_ISSUER_URL}
       REDIS_CACHE_URL: ${REDIS_CACHE_URL}
       REDIS_CACHE_PORT: ${REDIS_CACHE_PORT}
+      MINIO_URL: ${MINIO_URL}
+      MINIO_ACCESS_NAME: ${MINIO_ACCESS_NAME}
+      MINIO_ACCESS_SECRET: ${MINIO_ACCESS_SECRET}
+      DRIVER_SERVICE_MINIO_BUCKET: ${DRIVER_SERVICE_MINIO_BUCKET}
     ports:
       - "8085:8085"
     depends_on:
@@ -510,7 +518,7 @@ services:
 
   tempo:
     container_name: tempo
-    image: grafana/tempo:latest
+    image: grafana/tempo:2.6.0
     command: [ "-config.file=/etc/tempo.yml" ]
     volumes:
       - ./tempo/tempo.yml:/etc/tempo.yml
@@ -575,6 +583,19 @@ services:
       retries: 5
       start_period: 5s
 
+  minio:
+    image: docker.io/bitnami/minio:2022
+    container_name: minio_avatars
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - cab-app-network
+    volumes:
+      - minio_data:/bitnami/minio/data
+    environment:
+      - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
+
 networks:
   cab-app-network:
     name: cab-app-network
@@ -586,8 +607,8 @@ volumes:
   rides_data:
   ratings_data:
   keycloak_data:
-  zookeeper_data:
   redis_data:
+  zookeeper_data:
     driver: local
     name: zookeeper_data
   kafka_0_data:
@@ -599,3 +620,6 @@ volumes:
   kafka_2_data:
     driver: local
     name: kafka_2_data
+  minio_data:
+    driver: local
+    name: minio_data
