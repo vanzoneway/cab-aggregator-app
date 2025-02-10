@@ -589,8 +589,7 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-    networks:
-      - cab-app-network
+    network_mode: host
     volumes:
       - minio_data:/bitnami/minio/data
     environment:

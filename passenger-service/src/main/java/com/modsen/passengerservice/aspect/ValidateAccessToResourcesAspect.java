@@ -1,5 +1,6 @@
 package com.modsen.passengerservice.aspect;
 
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.AccessToResourcesDeniedException;
 import com.modsen.passengerservice.service.PassengerService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;

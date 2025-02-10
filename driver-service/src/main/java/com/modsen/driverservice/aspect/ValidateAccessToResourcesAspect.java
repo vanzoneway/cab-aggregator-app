@@ -1,5 +1,6 @@
 package com.modsen.driverservice.aspect;
 
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.AccessToResourcesDeniedException;
 import com.modsen.driverservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
