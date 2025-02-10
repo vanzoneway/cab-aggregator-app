@@ -42,6 +42,7 @@ ext {
     cucumberVersion = '7.16.1'
     lokiVersion = '1.4.2'
     cabAggregatorStarterVersion = '0.0.1'
+    minioVersion = '8.5.2'
 }
 
 dependencyManagement {
@@ -93,6 +94,8 @@ dependencies {
 
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
+
+    implementation "io.minio:minio:${minioVersion}"
 
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
