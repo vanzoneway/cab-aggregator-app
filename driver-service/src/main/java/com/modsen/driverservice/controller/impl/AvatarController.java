@@ -1,11 +1,15 @@
 package com.modsen.driverservice.controller.impl;
 
 import com.modsen.driverservice.aspect.ValidateAccessToResources;
+import com.modsen.driverservice.constants.AvatarServiceLiteralConstants;
 import com.modsen.driverservice.controller.AvatarOperations;
-import com.modsen.driverservice.dto.AvatarImageDto;
+import com.modsen.driverservice.dto.MinioFileInformation;
 import com.modsen.driverservice.service.AvatarService;
+import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,18 +31,26 @@ public class AvatarController implements AvatarOperations {
 
     @Override
     @PostMapping("/{id}/avatars/upload")
-    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
     @ValidateAccessToResources
-    public AvatarImageDto uploadAvatar(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file,
+    public ResponseEntity<InputStreamResource> uploadAvatar(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file,
                                        JwtAuthenticationToken jwtAuthenticationToken) {
-        return avatarService.uploadAvatar(id, file);
+
+        MinioFileInformation minioFileInformation = avatarService.uploadAvatar(id, file);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_DISPOSITION, AvatarServiceLiteralConstants.CONTENT_DISPOSITION_VALUE)
+                .contentType(minioFileInformation.mediaType())
+                .body(new InputStreamResource(minioFileInformation.is()));
     }
 
     @Override
     @GetMapping("/{id}/avatars")
-    public AvatarImageDto getAvatar(@PathVariable("id") Long id) {
-        return avatarService.getAvatar(id);
+    public ResponseEntity<InputStreamResource> getAvatar(@PathVariable("id") Long id) {
+        MinioFileInformation minioFileInformation = avatarService.getAvatar(id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, AvatarServiceLiteralConstants.CONTENT_DISPOSITION_VALUE)
+                .contentType(minioFileInformation.mediaType())
+                .body(new InputStreamResource(minioFileInformation.is()));
     }
 
     @Override
