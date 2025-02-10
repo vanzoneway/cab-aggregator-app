@@ -1,8 +1,14 @@
 package com.modsen.driverservice.service;
 
+import com.modsen.driverservice.dto.AvatarImageDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface AvatarService {
 
-    String uploadFile(Long id, MultipartFile file);
+    AvatarImageDto uploadAvatar(Long id, MultipartFile file);
+
+    AvatarImageDto getAvatar(Long id);
+
+    void deleteAvatar(Long id);
+
 }

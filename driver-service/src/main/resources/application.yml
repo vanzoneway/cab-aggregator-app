@@ -1,3 +1,6 @@
+server:
+  port: 8085
+
 spring:
   application:
     name: driver-service
@@ -6,6 +9,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${JWT_ISSUER_URL:http://localhost:8090/realms/cab-aggregator-app}
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
 
   cache:
     type: redis
@@ -51,8 +58,14 @@ management:
     tags:
       application: driver-service
 
-server:
-  port: 8085
+logbook:
+  format:
+    style: http
+  filter:
+    enabled: true
+logging:
+  level:
+    org.zalando.logbook: TRACE
 
 eureka:
   instance:
@@ -64,7 +77,7 @@ eureka:
     service-url:
       defaultZone:
         ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
-
+    enabled: true
 minio:
   url: ${MINIO_URL:http://localhost:9000}
   access:
@@ -72,3 +85,5 @@ minio:
     secret: ${MINIO_ACCESS_SECRET:miniosecret}
   bucket:
     name: ${DRIVER_SERVICE_MINIO_BUCKET:driver-avatars}
+  file:
+    types: image/jpeg, image/png

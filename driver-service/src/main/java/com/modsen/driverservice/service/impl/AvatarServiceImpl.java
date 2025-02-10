@@ -1,18 +1,30 @@
 package com.modsen.driverservice.service.impl;
 
 import com.modsen.driverservice.constants.AppConstants;
+import com.modsen.driverservice.constants.AvatarServiceLiteralConstants;
+import com.modsen.driverservice.dto.AvatarImageDto;
+import com.modsen.driverservice.exception.avatar.NoSuchAvatarException;
+import com.modsen.driverservice.exception.avatar.UnsupportedFileTypeException;
+import com.modsen.driverservice.exception.driver.DriverNotFoundException;
+import com.modsen.driverservice.repository.DriverRepository;
 import com.modsen.driverservice.service.AvatarService;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
+import io.minio.RemoveObjectArgs;
+import io.minio.StatObjectArgs;
+import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
+import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import io.minio.PutObjectArgs;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -20,70 +32,113 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AvatarServiceImpl implements AvatarService {
 
-    //TODO 1) Создать следующие Exception: большой размер файла, неподдерживаемый формат, ошибка загрузки файла в целом
-    //TODO 2) Подготовить все ошибки для MessageSource
-    //TODO 3) Все литералы переместить в константы
-    //TODO 4) Сделать ImageDto которая имеет url, filename, contentType
-    //TODO 5) Сделать методы для получения ссылки на изображение с MinIO для конкретного водителя
-    //TODO 6) Сделать ендпоинт для удаления определенной картинки
-    //TODO 7) Настроить Security под это все дело.
     private final MinioClient minioClient;
+
+    private final MessageSource messageSource;
+
+    private final DriverRepository driverRepository;
 
     @Value("${minio.bucket.name}")
     private String bucketName;
 
-    public String uploadFile(Long id, MultipartFile file) {
-        String presignedUrl = "";
+    @Value("${minio.file.types}")
+    private List<String> allowedTypes;
 
-        // Ограничения
-        final long MAX_SIZE = 10 * 1024 * 1024; // 10 MB
-        final List<String> ALLOWED_TYPES = Arrays.asList("image/jpeg", "image/png");
+    @Override
+    @SneakyThrows
+    public AvatarImageDto uploadAvatar(Long id, MultipartFile file) {
+        String presignedUrl;
+        validateDriverExistence(id);
+        validateFileType(file);
+        InputStream inputStream = file.getInputStream();
+        String newFileName = AvatarServiceLiteralConstants.BASE_DRIVER_AVATAR_NAME + id;
+        minioClient.putObject(
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(newFileName)
+                        .contentType(file.getContentType())
+                        .stream(inputStream, inputStream.available(), -1)
+                        .headers(Map.of(HttpHeaders.CONTENT_DISPOSITION,
+                                AvatarServiceLiteralConstants.CONTENT_DISPOSITION_VALUE))
+                        .build());
+        presignedUrl = getPresignedUrl(newFileName);
+        return AvatarImageDto.builder()
+                .withUrl(presignedUrl)
+                .withBucketObjectName(newFileName)
+                .build();
+    }
 
-        // Проверка размера файла
-        if (file.getSize() > MAX_SIZE) {
-            throw new RuntimeException("Файл превышает максимальный размер в 10 MB");
-        }
+    @Override
+    public AvatarImageDto getAvatar(Long id) {
+        validateDriverExistence(id);
+        String presignedUrl = getPresignedUrl(AvatarServiceLiteralConstants.BASE_DRIVER_AVATAR_NAME + id);
+        return AvatarImageDto.builder()
+                .withUrl(presignedUrl)
+                .withBucketObjectName(AvatarServiceLiteralConstants.BASE_DRIVER_AVATAR_NAME + id)
+                .build();
+    }
 
-        // Проверка формата файла
-        if (!ALLOWED_TYPES.contains(file.getContentType())) {
-            throw new RuntimeException("Недопустимый формат файла. Допустимые форматы: JPEG, PNG");
-        }
-
+    @Override
+    @SneakyThrows
+    public void deleteAvatar(Long id) {
+        validateDriverExistence(id);
+        String objectName = AvatarServiceLiteralConstants.BASE_DRIVER_AVATAR_NAME + id;
         try {
-            InputStream inputStream = file.getInputStream();
+            minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .build());
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .build());
+        } catch (ErrorResponseException e) {
+            throw new NoSuchAvatarException(messageSource.getMessage(
+                    AppConstants.NO_SUCH_AVATAR_MESSAGE_KEY,
+                    new Object[]{objectName},
+                    LocaleContextHolder.getLocale()));
+        }
+    }
 
-            // Извлечение расширения файла
-            String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename != null && originalFilename.contains(".")
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : ""; // Получаем расширение файла
+    private void validateFileType(MultipartFile file) {
+        if (!allowedTypes.contains(file.getContentType())) {
+            throw new UnsupportedFileTypeException(messageSource.getMessage(
+                    AppConstants.UNSUPPORTED_FILE_TYPE_MESSAGE_KEY,
+                    new Object[]{file.getOriginalFilename()},
+                    LocaleContextHolder.getLocale()));
+        }
+    }
 
-            // Формируем новое имя файла
-            String newFileName = "driver-avatar-" + id + extension;
-
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(newFileName) // Используем новое имя файла
-                            .contentType(file.getContentType()) // Используем тип контента файла
-                            .stream(inputStream, inputStream.available(), -1)
-                            .headers(Map.of("Content-Disposition", "inline"))
-                            .build());
-
-            presignedUrl = minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
+    @SneakyThrows
+    private String getPresignedUrl(String bucketObjectName) {
+        String persignedUrl;
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(bucketObjectName)
+                    .build());
+            persignedUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                             .bucket(bucketName)
                             .method(Method.GET)
-                            .object(newFileName) // Используем новое имя файла
-                            .expiry(60 * 60 * 24)
-                            .build()
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(AppConstants.INTERNAL_SERVER_ERROR);
+                            .object(bucketObjectName)
+                            .expiry(AvatarServiceLiteralConstants.PRESIGNED_URL_EXPIRATION_TIME)
+                            .build());
+        } catch (ErrorResponseException e) {
+            throw new NoSuchAvatarException(messageSource.getMessage(
+                    AppConstants.NO_SUCH_AVATAR_MESSAGE_KEY,
+                    new Object[]{bucketObjectName},
+                    LocaleContextHolder.getLocale()));
         }
+        return persignedUrl;
+    }
 
-        return presignedUrl;
+    private void validateDriverExistence(Long driverId) {
+        if (!driverRepository.existsById(driverId)) {
+            throw new DriverNotFoundException(messageSource.getMessage(
+                    AppConstants.DRIVER_NOT_FOUND_MESSAGE_KEY,
+                    new Object[]{driverId},
+                    LocaleContextHolder.getLocale()));
+        }
     }
 
 }
