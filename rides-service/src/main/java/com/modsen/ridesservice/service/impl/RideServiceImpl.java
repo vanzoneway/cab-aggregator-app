@@ -15,6 +15,8 @@ import com.modsen.ridesservice.service.RideService;
 import com.modsen.ridesservice.service.component.RideServicePriceGenerator;
 import com.modsen.ridesservice.service.component.RideServiceValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -49,6 +51,9 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.RIDE_CACHE_VALUE,
+            condition = "#result.rideStatus() == 'CANCELED' || #result.rideStatus() == 'COMPLETED'",
+            key = "#result.id()")
     public RideResponseDto changeRideStatus(Long rideId, RideStatusRequestDto rideStatusRequestDto) {
         Ride ride = getRide(rideId);
         rideServiceValidation.validateChangingRideStatus(ride, rideStatusRequestDto);
@@ -59,6 +64,9 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.RIDE_CACHE_VALUE,
+            condition = "#result.rideStatus() == 'CANCELED' || #result.rideStatus() == 'COMPLETED'",
+            key = "#result.id()")
     public RideResponseDto updateRide(Long rideId, RideRequestDto rideRequestDto) {
         rideServiceValidation.checkExistingPassengerOrDriver(rideRequestDto);
         Ride ride = getRide(rideId);
@@ -68,6 +76,9 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    @Cacheable(value = AppConstants.RIDE_CACHE_VALUE,
+            unless = "#result.rideStatus() != 'CANCELED' && #result.rideStatus() != 'COMPLETED'",
+            key = "#rideId")
     public RideResponseDto getRideById(Long rideId) {
         Ride ride = getRide(rideId);
         return rideMapper.toDto(ride);
@@ -86,7 +97,7 @@ public class RideServiceImpl implements RideService {
                                                                             Integer offset,
                                                                             Integer limit) {
         Page<RideResponseDto> rideResponsePageDto = rideRepository
-                .findAllByDriverId(driverId ,PageRequest.of(offset, limit))
+                .findAllByDriverId(driverId, PageRequest.of(offset, limit))
                 .map(rideMapper::toDto);
         return listContainerMapper.toDto(rideResponsePageDto);
     }
@@ -96,7 +107,7 @@ public class RideServiceImpl implements RideService {
                                                                                Integer offset,
                                                                                Integer limit) {
         Page<RideResponseDto> rideResponsePageDto = rideRepository
-                .findAllByPassengerId(passengerId ,PageRequest.of(offset, limit))
+                .findAllByPassengerId(passengerId, PageRequest.of(offset, limit))
                 .map(rideMapper::toDto);
         return listContainerMapper.toDto(rideResponsePageDto);
     }

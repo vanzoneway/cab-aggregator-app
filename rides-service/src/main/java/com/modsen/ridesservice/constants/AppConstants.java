@@ -11,4 +11,7 @@ public class AppConstants {
     //Application exception messages
     public static final String INTERNAL_SERVER_ERROR = "An unexpected error occurred. Please try again later.";
 
+    //Cache values
+    public static final String RIDE_CACHE_VALUE = "rideCache";
+
 }

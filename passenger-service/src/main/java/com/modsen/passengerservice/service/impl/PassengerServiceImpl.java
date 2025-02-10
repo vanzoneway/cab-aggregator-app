@@ -11,6 +11,9 @@ import com.modsen.passengerservice.model.Passenger;
 import com.modsen.passengerservice.repository.PassengerRepository;
 import com.modsen.passengerservice.service.PassengerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -31,6 +34,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.PASSENGER_CACHE_VALUE, key = "#result.id()")
     public PassengerDto createPassenger(PassengerDto passengerDto) {
         checkPassengerExistsByPhoneOrEmail(passengerDto);
         checkPassengerRestoreOption(passengerDto);
@@ -50,6 +54,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
+    @CacheEvict(value = AppConstants.PASSENGER_CACHE_VALUE, key = "#passengerId")
     public void safeDeletePassengerById(Long passengerId) {
         Passenger passenger = getPassengerByIdAndDeletedIsFalse(passengerId);
         passenger.setDeleted(true);
@@ -58,6 +63,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.PASSENGER_CACHE_VALUE, key = "result.id()")
     public PassengerDto updatePassengerById(Long passengerId, PassengerDto passengerDto) {
         checkPassengerRestoreOption(passengerDto);
         checkPassengerExistsByPhoneOrEmail(passengerDto);
@@ -69,6 +75,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
+    @Cacheable(value = AppConstants.PASSENGER_CACHE_VALUE, key = "#passengerId")
     public PassengerDto getPassengerById(Long passengerId) {
         return passengerMapper.toDto(getPassengerByIdAndDeletedIsFalse(passengerId));
     }

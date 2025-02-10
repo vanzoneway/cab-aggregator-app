@@ -12,4 +12,7 @@ public class AppConstants {
     //Application exception messages
     public static final String INTERNAL_SERVER_ERROR = "An unexpected error occurred. Please try again later.";
 
+    //Cache value
+    public static final String PASSENGER_CACHE_VALUE = "passengerCache";
+
 }

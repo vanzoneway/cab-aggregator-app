@@ -65,6 +65,9 @@ dependencies {
     implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
     implementation "org.codehaus.janino:janino"
 
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+
     implementation("com.modsen:cab-aggregator-exception-spring-boot-starter:${cabAggregatorStarterVersion}") {
         exclude group: "org.springframework.boot"
         exclude group: "org.springframework.security"

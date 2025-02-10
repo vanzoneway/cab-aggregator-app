@@ -69,6 +69,8 @@ services:
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
       JWT_ISSUER_URL: ${JWT_ISSUER_URL}
+      REDIS_CACHE_URL: ${REDIS_CACHE_URL}
+      REDIS_CACHE_PORT: ${REDIS_CACHE_PORT}
     ports:
       - "8086:8086"
     depends_on:
@@ -108,6 +110,8 @@ services:
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
       JWT_ISSUER_URL: ${JWT_ISSUER_URL}
+      REDIS_CACHE_URL: ${REDIS_CACHE_URL}
+      REDIS_CACHE_PORT: ${REDIS_CACHE_PORT}
     ports:
       - "8085:8085"
     depends_on:
@@ -147,6 +151,8 @@ services:
       DB_USERNAME: ${BASE_DB_USERNAME}
       DB_PASSWORD: ${BASE_DB_PASSWORD}
       JWT_ISSUER_URL: ${JWT_ISSUER_URL}
+      REDIS_CACHE_URL: ${REDIS_CACHE_URL}
+      REDIS_CACHE_PORT: ${REDIS_CACHE_PORT}
     ports:
       - "8088:8088"
     depends_on:
@@ -187,6 +193,8 @@ services:
       DB_PASSWORD: ${BASE_DB_PASSWORD}
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
       JWT_ISSUER_URL: ${JWT_ISSUER_URL}
+      REDIS_CACHE_URL: ${REDIS_CACHE_URL}
+      REDIS_CACHE_PORT: ${REDIS_CACHE_PORT}
     ports:
       - "8087:8087"
     depends_on:
@@ -239,6 +247,29 @@ services:
       timeout: 10s
       retries: 30
       start_period: 40s
+
+  redis-cache:
+    image: redis:7.4.2
+    container_name: redis-cache
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   passengers-db:
     image: postgres:latest
@@ -366,7 +397,6 @@ services:
       timeout: 60s
       retries: 60
       start_period: 5s
-
 
   kafka-1:
     image: bitnami/kafka:2.8.1
@@ -557,6 +587,7 @@ volumes:
   ratings_data:
   keycloak_data:
   zookeeper_data:
+  redis_data:
     driver: local
     name: zookeeper_data
   kafka_0_data:
