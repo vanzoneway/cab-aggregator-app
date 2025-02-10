@@ -1,3 +1,6 @@
+server:
+  port: 8086
+
 spring:
   application:
     name: passenger-service
@@ -51,8 +54,14 @@ management:
     tags:
       application: passenger-service
 
-server:
-  port: 8086
+logbook:
+  format:
+    style: http
+  filter:
+    enabled: true
+logging:
+  level:
+    org.zalando.logbook: TRACE
 
 eureka:
   instance:
@@ -64,3 +73,13 @@ eureka:
     service-url:
       defaultZone:
         ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+    enabled: true
+minio:
+  url: ${MINIO_URL:http://localhost:9000}
+  access:
+    name: ${MINIO_ACCESS_NAME:minio}
+    secret: ${MINIO_ACCESS_SECRET:miniosecret}
+  bucket:
+    name: ${DRIVER_SERVICE_MINIO_BUCKET:passenger-avatars}
+  file:
+    types: image/jpeg, image/png
