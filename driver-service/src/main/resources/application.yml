@@ -36,8 +36,6 @@ spring:
   kafka:
     consumer:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092, localhost:29093, localhost:29094}
-      client-id: "driver-average-rating-consumer"
-      auto-offset-reset: earliest
 
 management:
   endpoints:
