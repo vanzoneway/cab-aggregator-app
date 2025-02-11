@@ -42,6 +42,8 @@ ext {
     cucumberVersion = '7.16.1'
     lokiVersion = '1.4.2'
     cabAggregatorStarterVersion = '0.0.1'
+    minioVersion = '8.5.2'
+    logbookVersion = '3.10.0'
 }
 
 dependencyManagement {
@@ -64,6 +66,7 @@ dependencies {
     implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
     implementation "org.codehaus.janino:janino"
+    implementation "org.zalando:logbook-spring-boot-starter:${logbookVersion}"
 
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
@@ -89,6 +92,8 @@ dependencies {
     implementation "io.micrometer:micrometer-tracing-bridge-otel"
     implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
     implementation "io.github.openfeign:feign-micrometer"
+
+    implementation "io.minio:minio:${minioVersion}"
 
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
