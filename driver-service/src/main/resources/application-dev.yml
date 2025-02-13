@@ -61,6 +61,11 @@ logbook:
     style: http
   filter:
     enabled: true
+  predicate:
+    exclude:
+      - path: "/actuator/prometheus"
+      - path: "/actuator/health"
+
 logging:
   level:
     org.zalando.logbook: TRACE
