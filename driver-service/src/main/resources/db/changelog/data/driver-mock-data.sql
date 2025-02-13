@@ -4,7 +4,7 @@ VALUES
     ('Jane Smith', 'janesmith@example.com', '+1234567891', 'Female', false),
     ('Bob Johnson', 'bobjohnson@example.com', '+1234567892', 'Male', false),
     ('Alice Williams', 'alicewilliams@example.com', '+1234567893', 'Female', false),
-    ('Michael Brown', 'michaelbrown@example.com', '+1234567894', 'Male', false),
+    ('Ivan Zinovich', 'vanz.evergarden0@gmail.com', '+1234567894', 'Male', false),
     ('Emily Davis', 'emilydavis@example.com', '+1234567895', 'Female', false),
     ('Chris Wilson', 'chriswilson@example.com', '+1234567896', 'Male', false),
     ('Sarah Miller', 'sarahmiller@example.com', '+1234567897', 'Female', false),

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,5 +25,10 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     boolean existsByPhoneAndDeletedIsTrue(String phone);
 
     Page<Driver> findAllByDeletedIsFalse(Pageable pageable);
+
+    List<Driver> findAllByDeletedIsFalse();
+
+    long countByDeletedIsFalse();
+
 
 }

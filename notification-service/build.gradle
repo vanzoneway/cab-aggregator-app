@@ -32,6 +32,7 @@ ext {
     testContainersVersion = '1.19.7'
     lokiVersion = '1.4.2'
     cabAggregatorStarterVersion = '0.0.1'
+    flyingSaurcerVersion = '9.5.1'
 }
 
 dependencyManagement {
@@ -48,7 +49,6 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-mail"
     implementation "org.springframework.boot:spring-boot-starter-aop"
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
-    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
     implementation "org.springframework.kafka:spring-kafka"
     implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
@@ -56,28 +56,10 @@ dependencies {
     implementation "com.github.loki4j:loki-logback-appender:${lokiVersion}"
     implementation "org.codehaus.janino:janino"
 
-    implementation("com.modsen:cab-aggregator-exception-spring-boot-starter:${cabAggregatorStarterVersion}") {
-        exclude group: "org.springframework.boot"
-        exclude group: "org.springframework.security"
-        exclude group: "org.springdoc"
-        exclude group: "org.projectlombok"
-    }
-
-    implementation("com.modsen:cab-aggregator-security-spring-boot-starter:${cabAggregatorStarterVersion}") {
-        exclude group: "org.springframework.boot"
-        exclude group: "org.springframework.security"
-        exclude group: "org.springdoc"
-        exclude group: "org.projectlombok"
-    }
-
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-tracing-bridge-otel"
     implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
     implementation "io.github.openfeign:feign-micrometer"
-
-    implementation "org.springframework.security:spring-security-oauth2-resource-server"
-    implementation "org.springframework.security:spring-security-oauth2-jose"
-    implementation "org.springframework.boot:spring-boot-starter-security"
 
     implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
 
@@ -88,6 +70,9 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    implementation "org.xhtmlrenderer:flying-saucer-pdf:${flyingSaurcerVersion}"
+    implementation "org.xhtmlrenderer:flying-saucer-core:${flyingSaurcerVersion}"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.boot:spring-boot-testcontainers"

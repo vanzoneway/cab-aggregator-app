@@ -3,6 +3,7 @@ package com.modsen.driverservice.mapper;
 import com.modsen.driverservice.dto.AverageRatingResponseDto;
 import com.modsen.driverservice.dto.DriverCarDto;
 import com.modsen.driverservice.dto.DriverDto;
+import com.modsen.driverservice.kafka.producer.dto.UserDto;
 import com.modsen.driverservice.model.Driver;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -22,6 +23,8 @@ public interface DriverMapper {
     DriverDto toDto(Driver driver);
 
     DriverCarDto toDriverCarDto(Driver driver);
+
+    UserDto toUserDto(Driver driver);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void partialUpdate(DriverDto driverDto, @MappingTarget Driver driver);

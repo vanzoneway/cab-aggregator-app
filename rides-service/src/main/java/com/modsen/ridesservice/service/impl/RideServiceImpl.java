@@ -5,6 +5,7 @@ import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
+import com.modsen.ridesservice.dto.response.RideStatisticResponseDto;
 import com.modsen.ridesservice.exception.ride.RideNotFoundException;
 import com.modsen.ridesservice.mapper.ListContainerMapper;
 import com.modsen.ridesservice.mapper.RideMapper;
@@ -24,7 +25,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -110,6 +114,42 @@ public class RideServiceImpl implements RideService {
                 .findAllByPassengerId(passengerId, PageRequest.of(offset, limit))
                 .map(rideMapper::toDto);
         return listContainerMapper.toDto(rideResponsePageDto);
+    }
+
+    @Override
+    public RideStatisticResponseDto getRideStatisticForDriver(Long driverId) {
+        List<Ride> rides = rideRepository.findAllRidesForReportByDriverId(driverId);
+        return getRideStatistic(rides, driverId);
+    }
+
+    @Override
+    public RideStatisticResponseDto getRideStatisticForPassenger(Long passengerId) {
+        List<Ride> rides = rideRepository.findAllRidesForReportByPassengerId(passengerId);
+        return getRideStatistic(rides, passengerId);
+    }
+
+    private RideStatisticResponseDto getRideStatistic(List<Ride> rides, Long refUserId) {
+        List<RideResponseDto> ridesResponseDto = rides
+                .stream()
+                .map(rideMapper::toDto)
+                .toList();
+        if (ridesResponseDto.isEmpty()) {
+            return RideStatisticResponseDto.builder()
+                    .withRides(ridesResponseDto)
+                    .withUserRefId(refUserId)
+                    .withAverageCost(BigDecimal.ZERO)
+                    .build();
+        }
+        BigDecimal averageCost = ridesResponseDto
+                .stream()
+                .map(RideResponseDto::cost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(ridesResponseDto.size()), RoundingMode.HALF_UP);
+        return RideStatisticResponseDto.builder()
+                .withRides(ridesResponseDto)
+                .withUserRefId(refUserId)
+                .withAverageCost(averageCost)
+                .build();
     }
 
     private Ride getRide(Long rideId) {

@@ -1,11 +1,6 @@
 spring:
   application:
     name: notification-service
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${JWT_ISSUER_URL:http://localhost:8090/realms/cab-aggregator-app}
 
   kafka:
     producer:
@@ -17,12 +12,13 @@ spring:
       auto-offset-reset: earliest
 
   mail:
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:aggregatortaxi1@gmail.com}
+    password: ${MAIL_PASSWORD:pdgfzgpssxbpoaur}
     host: smtp.gmail.com
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+    port: 587
 
 management:
   endpoints:

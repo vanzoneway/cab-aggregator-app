@@ -18,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class BasicKeycloakSecurityConfiguration {
 
     private static final String ACTUATOR_ENDPOINT = "/actuator/**";
+    private static final String PASSENGER_STATISTICS_ENDPOINT = "api/v1/rides/passengers/*/statistics";
+    private static final String DRIVER_STATISTICS_ENDPOINT = "api/v1/rides/drivers/*/statistics";
 
     @Bean
     @ConditionalOnMissingBean(SecurityFilterChain.class)
@@ -25,6 +27,8 @@ public class BasicKeycloakSecurityConfiguration {
         return http
                 .authorizeHttpRequests(c -> c
                         .requestMatchers(ACTUATOR_ENDPOINT).permitAll()
+                        .requestMatchers(PASSENGER_STATISTICS_ENDPOINT).permitAll()
+                        .requestMatchers(DRIVER_STATISTICS_ENDPOINT).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(configurer ->
                         configurer
@@ -42,5 +46,4 @@ public class BasicKeycloakSecurityConfiguration {
         converter.setJwtGrantedAuthoritiesConverter(new KeycloakJwtTokenConverter());
         return converter;
     }
-
 }
