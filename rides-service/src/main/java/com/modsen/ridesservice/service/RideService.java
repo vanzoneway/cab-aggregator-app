@@ -4,6 +4,7 @@ import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
+import com.modsen.ridesservice.dto.response.RideStatisticResponseDto;
 
 public interface RideService {
 
@@ -21,4 +22,7 @@ public interface RideService {
 
     ListContainerResponseDto<RideResponseDto> getPageRidesByPassengerId(Long passengerId, Integer offset, Integer limit);
 
+    RideStatisticResponseDto getRideStatisticForPassenger(Long passengerId);
+
+    RideStatisticResponseDto getRideStatisticForDriver(Long driverId);
 }

@@ -22,4 +22,6 @@ public final  class AppConstants {
     public static final String CAR_CACHE_VALUE = "carCache";
     public static final String DRIVER_CACHE_VALUE = "driverCache";
 
+    //Other
+    public static final String USER_TYPE = "DRIVER";
 }

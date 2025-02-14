@@ -221,6 +221,34 @@ services:
       retries: 30
       start_period: 40s
 
+  notification-service:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      args:
+        SERVICE_NAME: notification-service
+    container_name: notification-service
+    environment:
+      << : *kafka-monitoring-in-app-common
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+    ports:
+      - "8091:8091"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+      gateway-service:
+        condition: service_healthy
+    networks:
+      - cab-app-network
+    healthcheck:
+      test: curl -f http://rides-service:8087/actuator/health
+      interval: 60s
+      timeout: 10s
+      retries: 30
+      start_period: 40s
+
   registration-service:
     build:
       context: ..

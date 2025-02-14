@@ -1,6 +1,7 @@
-package com.modsen.ratingservice.kafka;
+package com.modsen.ratingservice.kafka.producer;
 
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
+import com.modsen.ratingservice.kafka.KafkaConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -10,18 +11,18 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class KafkaProducerSender {
+public class AverageRatingSender {
 
     private final KafkaTemplate<String, AverageRatingResponseDto> kafkaAverageRatingTemplate;
 
     public void sendAverageRatingToDriver(AverageRatingResponseDto averageRatingResponseDto) {
         kafkaAverageRatingTemplate.send(KafkaConstants.DRIVER_TOPIC_NAME, averageRatingResponseDto)
-                .whenComplete(KafkaProducerSender::logResult);
+                .whenComplete(AverageRatingSender::logResult);
     }
 
     public void sendAverageRatingToPassenger(AverageRatingResponseDto averageRatingResponseDto) {
         kafkaAverageRatingTemplate.send(KafkaConstants.PASSENGER_TOPIC_NAME, averageRatingResponseDto)
-                .whenComplete(KafkaProducerSender::logResult);
+                .whenComplete(AverageRatingSender::logResult);
     }
 
     private static void logResult(SendResult<String, AverageRatingResponseDto> result, Throwable exception) {

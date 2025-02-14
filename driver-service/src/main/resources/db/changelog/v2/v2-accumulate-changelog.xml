@@ -11,4 +11,11 @@
     <changeSet id="12" author="vanz.evergarden0@gmail.com">
         <tagDatabase tag="v2.0.0_added_average_rating_column"/>
     </changeSet>
+
+    <include file="v2-change-one-mock-driver-changelog.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="14" author="vanz.evergarden0@gmail.com">
+        <tagDatabase tag="v2.0.1_change-one-mock-driver"/>
+    </changeSet>
+
 </databaseChangeLog>

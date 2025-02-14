@@ -1,8 +1,9 @@
-package com.modsen.driverservice.kafka;
+package com.modsen.driverservice.kafka.consumer.averagerating;
 
 import com.modsen.driverservice.constants.AppConstants;
 import com.modsen.driverservice.dto.AverageRatingResponseDto;
 import com.modsen.driverservice.exception.driver.DriverNotFoundException;
+import com.modsen.driverservice.kafka.KafkaConstants;
 import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.model.Driver;
 import com.modsen.driverservice.repository.DriverRepository;
@@ -16,14 +17,17 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class KafkaConsumerListener {
+public class AverageRatingListener {
 
     private final DriverRepository driverRepository;
     private final DriverMapper driverMapper;
     private final MessageSource messageSource;
 
-    @KafkaListener(topics = KafkaConstants.TOPIC_NAME_AVERAGE_RATING_FROM_RATING_SERVICE, groupId = "driver-consumer",
-            containerFactory = "kafkaAverageRatingListenerContainerFactory")
+    @KafkaListener(
+            topics = KafkaConstants.TOPIC_NAME_AVERAGE_RATING_FROM_RATING_SERVICE,
+            groupId = KafkaConstants.GROUP_ID_AVERAGE_RATING_FROM_RATING_SERVICE,
+            containerFactory = KafkaConstants.BASE_KAFKA_LISTENER_CONTAINER_FACTORY,
+            properties = {KafkaConstants.TARGET_DTO_FOR_DESERIALIZATION_PROPERTY})
     public void listenToDriverAverageRating(AverageRatingResponseDto averageRatingResponseDto) {
         Driver driver = driverRepository.findByIdAndDeletedIsFalse(averageRatingResponseDto.refUserId())
                 .orElseThrow(() -> new DriverNotFoundException(messageSource.getMessage(

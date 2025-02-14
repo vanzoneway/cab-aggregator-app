@@ -6,7 +6,7 @@ import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
-import com.modsen.ratingservice.kafka.KafkaProducerSender;
+import com.modsen.ratingservice.kafka.producer.AverageRatingSender;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.mapper.impl.DriverRatingMapper;
 import com.modsen.ratingservice.model.DriverRating;
@@ -48,7 +48,7 @@ class DriverRatingServiceTest {
     private RideFeignClient rideFeignClient;
 
     @Mock
-    private KafkaProducerSender kafkaProducerSender;
+    private AverageRatingSender averageRatingSender;
 
     @InjectMocks
     private DriverRatingService driverRatingService;
@@ -171,7 +171,7 @@ class DriverRatingServiceTest {
         // Arrange
         when(repository.getAverageRatingByRefUserId(anyLong()))
                 .thenReturn(Optional.of(4.5));
-        doNothing().when(kafkaProducerSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
+        doNothing().when(averageRatingSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
 
         // Act
         AverageRatingResponseDto result = driverRatingService.getAverageRating(1L);
@@ -179,7 +179,7 @@ class DriverRatingServiceTest {
         // Assert
         assertThat(result.averageRating()).isEqualTo(TestData.AVERAGE_RATING_RESPONSE_DTO.averageRating());
         verify(repository).getAverageRatingByRefUserId(anyLong());
-        verify(kafkaProducerSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
+        verify(averageRatingSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
     }
 
 }

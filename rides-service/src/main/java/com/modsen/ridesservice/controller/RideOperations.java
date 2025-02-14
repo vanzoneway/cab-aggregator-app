@@ -5,6 +5,7 @@ import com.modsen.ridesservice.dto.Marker;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
+import com.modsen.ridesservice.dto.response.RideStatisticResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -135,5 +136,9 @@ public interface RideOperations {
             @RequestParam(defaultValue = "10")
             @Min(1) @Max(100)
             Integer limit);
+
+    RideStatisticResponseDto getRideStatisticForPassenger (@PathVariable Long passengerId);
+
+    RideStatisticResponseDto getRideStatisticForDriver (@PathVariable Long driverId);
 
 }

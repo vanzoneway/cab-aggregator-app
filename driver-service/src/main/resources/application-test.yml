@@ -1,0 +1,7 @@
+server:
+  port: 0
+
+rides-service:
+  wire-mock:
+    url: ${RIDES_SERVICE_URI:http://localhost:9091/}
+

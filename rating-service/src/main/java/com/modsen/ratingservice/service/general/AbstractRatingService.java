@@ -11,7 +11,7 @@ import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import com.modsen.ratingservice.exception.rating.RatingNotFoundException;
 import com.modsen.ratingservice.exception.rating.DuplicateRideIdException;
 import com.modsen.ratingservice.exception.rating.RefUserIdNotFoundException;
-import com.modsen.ratingservice.kafka.KafkaProducerSender;
+import com.modsen.ratingservice.kafka.producer.AverageRatingSender;
 import com.modsen.ratingservice.mapper.general.BaseRatingMapper;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.model.general.Rating;
@@ -37,7 +37,7 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
     protected final ListContainerMapper listContainerMapper;
     protected final MessageSource messageSource;
     protected final RideFeignClient rideFeignClient;
-    protected final KafkaProducerSender kafkaProducerSender;
+    protected final AverageRatingSender averageRatingSender;
     private String userType;
 
     @Override
@@ -107,10 +107,10 @@ public class AbstractRatingService<T extends Rating, R extends CommonRatingRepos
 
     private void sendAverageRatingToConsumers(AverageRatingResponseDto averageRatingResponseDto) {
         if (userType.equals(UserType.DRIVER.toString())) {
-            kafkaProducerSender.sendAverageRatingToDriver(averageRatingResponseDto);
+            averageRatingSender.sendAverageRatingToDriver(averageRatingResponseDto);
         }
         if (userType.equals(UserType.PASSENGER.toString())) {
-            kafkaProducerSender.sendAverageRatingToPassenger(averageRatingResponseDto);
+            averageRatingSender.sendAverageRatingToPassenger(averageRatingResponseDto);
         }
     }
 

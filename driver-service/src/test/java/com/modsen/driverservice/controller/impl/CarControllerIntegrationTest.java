@@ -2,7 +2,7 @@ package com.modsen.driverservice.controller.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modsen.driverservice.TestData;
-import com.modsen.driverservice.kafka.KafkaConsumerListener;
+import com.modsen.driverservice.kafka.consumer.averagerating.AverageRatingListener;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@MockBean({KafkaConsumerListener.class})
+@MockBean({AverageRatingListener.class})
 @Sql(statements = {
         SQL_DELETE_ALL_DATA,
         SQL_RESTART_SEQUENCES,

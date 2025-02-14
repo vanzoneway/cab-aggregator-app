@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.modsen.ratingservice.TestData;
 import com.modsen.ratingservice.kafka.KafkaProducerConfig;
-import com.modsen.ratingservice.kafka.KafkaProducerSender;
+import com.modsen.ratingservice.kafka.producer.AverageRatingSender;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@MockBean({KafkaProducerSender.class, KafkaProducerConfig.class})
+@MockBean({AverageRatingSender.class, KafkaProducerConfig.class})
 @ActiveProfiles("test")
 @AutoConfigureWireMock(port = 9090)
 @Sql(statements = {

@@ -23,8 +23,7 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     private static final int AMOUNT_OF_REPLICAS = 3;
-    private static final int AMOUNT_OF_PARTITIONS = 2;
-
+    private static final int AMOUNT_OF_PARTITIONS = 3;
 
     @Value(KafkaConstants.BOOTSTRAP_ADDRESS_FROM_YAML)
     private List<String> bootstrapAddress;
@@ -32,15 +31,10 @@ public class KafkaProducerConfig {
     @Bean
     public ProducerFactory<String, AverageRatingResponseDto> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapAddress);
-        configProps.put(
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
-        configProps.put(
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                JsonSerializer.class);
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configProps.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

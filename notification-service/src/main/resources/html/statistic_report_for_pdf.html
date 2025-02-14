@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"></meta>
+    <title>User Statistics Report</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            font-size: 12px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            animation: fadeIn 0.5s;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            transition: background-color 0.3s;
+            word-wrap: break-word;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #d1e7dd;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>User Statistics Report</h1>
+    <p><strong>Name:</strong> {{firstName}} {{lastName}}</p>
+    <p><strong>User Type:</strong> {{userType}}</p>
+    <p><strong>Average Rating:</strong> {{averageRating}}</p>
+    <p><strong>Average Ride Cost:</strong> {{averageRideCost}}</p>
+
+    <h2>Ride Statistics</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Driver ID</th>
+            <th>Passenger ID</th>
+            <th>Departure</th>
+            <th>Destination</th>
+            <th>Status</th>
+            <th>Order Date</th>
+            <th>Cost</th>
+        </tr>
+        {{rides}}
+    </table>
+    <div class="footer">
+        &copy; 2025 Your cab-aggregator-app. All rights reserved.
+    </div>
+</div>
+</body>
+</html>
