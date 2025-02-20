@@ -15,12 +15,14 @@ java {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 ext {
     springBootVersion = '3.3.4'
     springCloudVersion = '2023.0.3'
     lokiVersion = '1.4.2'
+    cabAggregatorStarterVersion = '0.0.1'
 }
 
 dependencyManagement {
@@ -45,6 +47,10 @@ dependencies {
     implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
     implementation "io.github.openfeign:feign-micrometer"
 
+    implementation("com.modsen:cab-aggregator-request-response-logger-spring-boot-starter:${cabAggregatorStarterVersion}") {
+        exclude group: "org.springframework.boot"
+        exclude group: "org.projectlombok"
+    }
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
