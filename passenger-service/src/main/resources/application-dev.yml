@@ -65,7 +65,7 @@ logbook:
     - path: "/actuator/health"
 logging:
   level:
-    org.zalando.logbook: TRACE
+    org.zalando.logbook: OFF
 
 eureka:
   instance:

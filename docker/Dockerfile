@@ -3,6 +3,11 @@ WORKDIR /app
 COPY --chown=gradle:gradle /cab-aggregator-exception-spring-boot-starter/ /app
 RUN gradle publishToMavenLocal -x test --no-daemon
 
+FROM gradle:8.10.2-jdk21 AS request-response-starter-build
+WORKDIR /app
+COPY --chown=gradle:gradle /cab-aggregator-request-response-logger-spring-boot-starter/ /app
+RUN gradle publishToMavenLocal -x test --no-daemon
+
 FROM gradle:8.10.2-jdk21 AS security-starter-build
 WORKDIR /app
 COPY --chown=gradle:gradle /cab-aggregator-security-spring-boot-starter/ /app
@@ -13,6 +18,7 @@ ARG SERVICE_NAME
 WORKDIR /app
 COPY --from=exception-starter-build /root/.m2 /root/.m2
 COPY --from=security-starter-build /root/.m2 /root/.m2
+COPY --from=request-response-starter-build /root/.m2 /root/.m2
 COPY --chown=gradle:gradle /${SERVICE_NAME} /app
 RUN gradle clean build -x test --no-daemon
 
