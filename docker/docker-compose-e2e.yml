@@ -1,128 +1,316 @@
 version: '3.8'
 
 services:
+
+  redis-cache-e2e:
+    image: redis:7.4.2
+    container_name: redis-cache
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   passengers-db-e2e:
     image: postgres:latest
-    container_name: passengers_db_e2e
+    container_name: passengers_db
     environment:
       POSTGRES_DB: passengers
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5433:5432"
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   drivers-db-e2e:
     image: postgres:latest
-    container_name: drivers_db_e2e
+    container_name: drivers_db
     environment:
       POSTGRES_DB: drivers
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5434:5432"
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   rides-db-e2e:
     image: postgres:latest
-    container_name: rides_db_e2e
+    container_name: rides_db
     environment:
       POSTGRES_DB: rides
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5435:5432"
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   rating-db-e2e:
     image: postgres:latest
-    container_name: rating_db_e2e
+    container_name: rating_db
     environment:
       POSTGRES_DB: ratings
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5436:5432"
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   zookeeper-e2e:
     image: bitnami/zookeeper:3.5
-    container_name: zookeeper_e2e
+    container_name: zookeeper
     ports:
       - "2181"
-    networks:
-      - kafkanet-e2e
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   kafka-0-e2e:
     image: bitnami/kafka:2.8.1
-    container_name: kafka_0_e2e
+    container_name: kafka-0
     expose:
       - 9092
     ports:
       - "29092:29092"
-    networks:
-      - kafkanet-e2e
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper_e2e:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_CFG_BROKER_ID=0
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:29092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-0-e2e:9092,EXTERNAL://localhost:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-0:9092,EXTERNAL://localhost:29092
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
     depends_on:
-      - zookeeper-e2e
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+      start_period: 5s
 
   kafka-1-e2e:
     image: bitnami/kafka:2.8.1
-    container_name: kafka_1_e2e
+    container_name: kafka-1
     expose:
       - 9092
     ports:
       - "29093:29093"
-    networks:
-      - kafkanet-e2e
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper_e2e:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:29093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-1-e2e:9092,EXTERNAL://localhost:29093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-1:9092,EXTERNAL://localhost:29093
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
     depends_on:
-      - zookeeper-e2e
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+      start_period: 5s
 
   kafka-2-e2e:
     image: bitnami/kafka:2.8.1
-    container_name: kafka_2_e2e
+    container_name: kafka-2
     expose:
       - 9092
     ports:
       - "29094:29094"
-    networks:
-      - kafkanet-e2e
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper_e2e:2181
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_CFG_BROKER_ID=2
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       - KAFKA_CFG_LISTENERS=INTERNAL://:9092,EXTERNAL://:29094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-2-e2e:9092,EXTERNAL://localhost:29094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka-2:9092,EXTERNAL://localhost:29094
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
     depends_on:
-      - zookeeper-e2e
-
-  kafka-ui-e2e:
-    image: provectuslabs/kafka-ui:master
-    container_name: kafka_ui_e2e
-    ports:
-      - "8079:8080"
+      zookeeper:
+        condition: service_healthy
     networks:
-      - kafkanet-e2e
+      - cab-app-network-e2e
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+      start_period: 5s
+
+  loki-e2e:
+    image: grafana/loki:2.9.2
+    container_name: loki
+    volumes:
+      - ./loki:/etc/loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - cab-app-network-e2e
+
+  grafana-e2e:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/config.ini:/etc/grafana/config.ini
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
     environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-0:9092,kafka-1:9092,kafka-2:9092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper_e2e:2181
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    networks:
+      - cab-app-network-e2e
+
+  victoria-metrics-e2e:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: victoria-metrics
+    ports:
+      - "8428:8428"
+    volumes:
+      - ./victoria-metrics/promscrape.yml:/victoria-metrics/promscrape.yml
+    networks:
+      - cab-app-network-e2e
+    command:
+      - '--promscrape.config=/victoria-metrics/promscrape.yml'
+      - '--promscrape.config.strictParse=false'
+
+  tempo-e2e:
+    container_name: tempo
+    image: grafana/tempo:2.6.0
+    command: [ "-config.file=/etc/tempo.yml" ]
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo.yml
+    ports:
+      - "14268:14268" # jaeger ingest
+      - "3200:3200" # tempo
+      - "55680:55680" # otlp grpc
+      - "55681:55681" # otlp http
+      - "9411:9411" # zipkin
+      - "4318:4318" # new http
+      - "4317:4317" # new grpc
+    networks:
+      - cab-app-network-e2e
+
+  keycloak-e2e:
+    image: bitnami/keycloak
+    container_name: keycloak
+    ports:
+      - "8090:8090"
+      - "8443:8443"
+    environment:
+      KEYCLOAK_HTTPS_PORT: 8443
+      KEYCLOAK_HTTP_PORT: 8090
+      KEYCLOAK_ADMIN_USER: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_DATABASE_HOST: keycloak-db
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: ${KEYCLOAK_DATABASE_NAME}
+      KEYCLOAK_DATABASE_USER: ${KEYCLOAK_DATABASE_USER}
+      KEYCLOAK_DATABASE_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+      KEYCLOAK_EXTRA_ARGS: --import-realm --verbose --health-enabled=true
+    volumes:
+      - ./keycloak/realms:/opt/bitnami/keycloak/data/import
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: curl -f http://localhost:9000/health/live
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  keycloak-db-e2e:
+    image: postgres:latest
+    container_name: keycloak_db
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DATABASE_NAME}
+      POSTGRES_USER: ${KEYCLOAK_DATABASE_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DATABASE_PASSWORD}
+    ports:
+      - "5440:5432"
+    networks:
+      - cab-app-network-e2e
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  minio-e2e:
+    image: docker.io/bitnami/minio:2022
+    container_name: minio_avatars
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - cab-app-network-e2e
+    environment:
+      - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
 
 networks:
-  kafkanet-e2e:
-    name: kafka_network_e2e
+  cab-app-network-e2e:
+    name: cab-app-network
+    driver: bridge

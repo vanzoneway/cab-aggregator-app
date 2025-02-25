@@ -1,32 +1,36 @@
 package com.modsen.driverservice.controller.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.BasicGlobalExceptionHandler;
+import com.modsen.driverservice.TestData;
+import com.modsen.driverservice.dto.DriverDto;
+import com.modsen.driverservice.exception.driver.DriverNotFoundException;
+import com.modsen.driverservice.service.DriverService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.driverservice.TestData;
-import com.modsen.driverservice.dto.DriverDto;
-import com.modsen.driverservice.exception.driver.DriverNotFoundException;
-import com.modsen.driverservice.service.DriverService;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 @WebMvcTest(DriverController.class)
+@Import({BasicGlobalExceptionHandler.class})
 class DriverControllerTest {
 
     @Autowired
@@ -47,7 +51,8 @@ class DriverControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(TestData.DRIVER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.DRIVER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.DRIVER_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -65,7 +70,8 @@ class DriverControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(TestData.DRIVER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.INVALID_DRIVER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_DRIVER_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -82,7 +88,8 @@ class DriverControllerTest {
         // Act and Assert
         mockMvc.perform(get(TestData.DRIVER_ENDPOINT)
                         .param("limit", String.valueOf(1))
-                        .param("offset", String.valueOf(1)))
+                        .param("offset", String.valueOf(1))
+                        .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(objectMapper.writeValueAsString(TestData.PAGE_DRIVER_RESPONSE_DTO)));
@@ -97,7 +104,8 @@ class DriverControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(TestData.DRIVER_UPDATE_ENDPOINT, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.DRIVER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.DRIVER_REQUEST_UPDATE_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -115,7 +123,8 @@ class DriverControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(TestData.DRIVER_UPDATE_ENDPOINT, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.INVALID_DRIVER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_DRIVER_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -129,7 +138,8 @@ class DriverControllerTest {
         doNothing().when(driverService).safeDeleteDriverByDriverId(anyLong());
 
         // Act and Assert
-        mockMvc.perform(delete(TestData.DRIVER_DELETE_ENDPOINT, TestData.DRIVER_ID))
+        mockMvc.perform(delete(TestData.DRIVER_DELETE_ENDPOINT, TestData.DRIVER_ID)
+                        .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE))))
                 .andExpect(status().isNoContent());
     }
 
@@ -140,7 +150,8 @@ class DriverControllerTest {
                 .when(driverService).safeDeleteDriverByDriverId(anyLong());
 
         //Act and Assert
-        mockMvc.perform(delete(TestData.DRIVER_DELETE_ENDPOINT, TestData.DRIVER_ID))
+        mockMvc.perform(delete(TestData.DRIVER_DELETE_ENDPOINT, TestData.DRIVER_ID)
+                        .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE))))
                 .andExpect(status().isNotFound());
     }
 
@@ -151,7 +162,8 @@ class DriverControllerTest {
                 .thenReturn(TestData.DRIVER_RESPONSE_DTO);
 
         // Act and Assert
-        mockMvc.perform(get(TestData.DRIVER_GET_ENDPOINT, TestData.DRIVER_ID))
+        mockMvc.perform(get(TestData.DRIVER_GET_ENDPOINT, TestData.DRIVER_ID)
+                        .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(objectMapper.writeValueAsString(TestData.DRIVER_RESPONSE_DTO)));
@@ -163,7 +175,8 @@ class DriverControllerTest {
         doThrow(new DriverNotFoundException("")).when(driverService).getDriverById(anyLong());
 
         //Act and Assert
-        mockMvc.perform(get(TestData.DRIVER_GET_ENDPOINT, TestData.DRIVER_ID))
+        mockMvc.perform(get(TestData.DRIVER_GET_ENDPOINT, TestData.DRIVER_ID)
+                        .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE))))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -174,7 +187,8 @@ class DriverControllerTest {
         when(driverService.getDriverWithCars(anyLong())).thenReturn(TestData.DRIVER_CAR_RESPONSE_DTO);
 
         // Act and Assert
-        mockMvc.perform(get(TestData.DRIVER_CARS_ENDPOINT, TestData.DRIVER_ID))
+        mockMvc.perform(get(TestData.DRIVER_CARS_ENDPOINT, TestData.DRIVER_ID)
+                        .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(objectMapper.writeValueAsString(TestData.DRIVER_CAR_RESPONSE_DTO)));
@@ -187,7 +201,8 @@ class DriverControllerTest {
                 .when(driverService).getDriverWithCars(anyLong());
 
         // Act and Assert
-        mockMvc.perform(get(TestData.DRIVER_CARS_ENDPOINT, TestData.DRIVER_ID))
+        mockMvc.perform(get(TestData.DRIVER_CARS_ENDPOINT, TestData.DRIVER_ID)
+                        .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE))))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }

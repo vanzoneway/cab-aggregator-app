@@ -1,13 +1,5 @@
 package com.modsen.driverservice.service.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.modsen.driverservice.TestData;
 import com.modsen.driverservice.dto.CarDto;
 import com.modsen.driverservice.exception.car.CarNotFoundException;
@@ -17,9 +9,6 @@ import com.modsen.driverservice.model.Car;
 import com.modsen.driverservice.model.Driver;
 import com.modsen.driverservice.repository.CarRepository;
 import com.modsen.driverservice.repository.DriverRepository;
-
-import java.util.Locale;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +16,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+
+import java.util.Locale;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CarServiceImplTest {
@@ -57,7 +57,7 @@ class CarServiceImplTest {
         // Act and Assert
         assertThatThrownBy(() -> carServiceImpl.createCar(1L, TestData.CAR_DTO))
                 .isInstanceOf(DuplicateCarNumbersException.class);
-        verify(carRepository).existsByNumberAndDeletedIsTrue("42");
+        verify(carRepository).existsByNumberAndDeletedIsTrue(TestData.CAR_DTO.number());
     }
 
     @Test
@@ -73,7 +73,7 @@ class CarServiceImplTest {
         // Act and Assert
         assertThatThrownBy(() -> carServiceImpl.createCar(1L, TestData.CAR_DTO))
                 .isInstanceOf(DuplicateCarNumbersException.class);
-        verify(carRepository).existsByNumberAndDeletedIsFalse("42");
+        verify(carRepository).existsByNumberAndDeletedIsFalse(TestData.CAR_DTO.number());
     }
 
     @Test

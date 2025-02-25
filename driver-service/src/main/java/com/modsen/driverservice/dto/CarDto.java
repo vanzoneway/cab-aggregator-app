@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * DTO for {@link com.modsen.driverservice.model.Car Car}
  */
 @Schema(description = "Data Transfer Object for Car")
+@Builder(setterPrefix = "with")
 public record CarDto(
         @NotNull(groups = Marker.OnGet.class)
         @Schema(description = "Unique identifier for the car", example = "1")

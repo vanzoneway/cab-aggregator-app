@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * DTO for {@link com.modsen.driverservice.model.Driver Driver}
  */
 @Schema(description = "Data Transfer Object for Driver")
+@Builder(setterPrefix = "with")
 public record DriverDto(
         @NotNull(groups = Marker.OnGet.class)
         @Schema(description = "Unique identifier for the driver", example = "1")
