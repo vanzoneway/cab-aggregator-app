@@ -85,6 +85,11 @@ dependencies {
         exclude group: "org.projectlombok"
     }
 
+    implementation("com.modsen:cab-aggregator-request-response-logger-spring-boot-starter:${cabAggregatorStarterVersion}") {
+        exclude group: "org.springframework.boot"
+        exclude group: "org.projectlombok"
+    }
+
     implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
     implementation "org.postgresql:postgresql"
 
