@@ -133,9 +133,9 @@ public class RequestResponseLogger {
         if (object == null)
             return "";
         try {
-            if (object instanceof @SuppressWarnings("rawtypes") ResponseEntity re
+            if (object instanceof ResponseEntity<?> re
                     && re.getBody() instanceof InputStreamResource) {
-                return "";
+                return "[Input stream]";
             }
             String result = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
             return result.substring(0, result.length() - 1);
