@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@EnableMethodSecurity
+@EnableMethodSecurity(proxyTargetClass = true)
 @EnableCaching
 public class RidesServiceApplication {
 
