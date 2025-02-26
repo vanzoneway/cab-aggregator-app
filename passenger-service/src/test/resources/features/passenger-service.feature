@@ -1,5 +1,8 @@
 Feature: Passenger Service API
 
+  Scenario: Get auth admin token
+    When Get auth admin token
+
   Scenario: Create a new passenger
     Given There is the following passenger details
     """
@@ -88,9 +91,7 @@ Feature: Passenger Service API
     Given There is the following passenger details
     """
       {
-        "firstName": "Ivan",
-        "lastName": "Mishyn",
-        "email": "ivan12@example.com"
+        "phone": "+34911111111"
       }
     """
     When Update passenger with id 9
@@ -99,14 +100,15 @@ Feature: Passenger Service API
       """
         {
           "id": 9,
-          "firstName": "Ivan",
-          "lastName": "Mishyn",
-          "email": "ivan12@example.com",
-          "phone": "+34911234568",
+          "firstName": "Pavel",
+          "lastName": "Nikolaev",
+          "email": "pavel9@example.com",
+          "phone": "+34911111111",
           "averageRating": null,
           "deleted": false
         }
       """
+
 
   Scenario: Delete passenger:
     When Delete passenger with id 1

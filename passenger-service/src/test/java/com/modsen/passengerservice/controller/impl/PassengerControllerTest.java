@@ -1,30 +1,34 @@
 package com.modsen.passengerservice.controller.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.BasicGlobalExceptionHandler;
+import com.modsen.passengerservice.TestData;
+import com.modsen.passengerservice.dto.PassengerDto;
+import com.modsen.passengerservice.exception.passenger.PassengerNotFoundException;
+import com.modsen.passengerservice.service.PassengerService;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modsen.passengerservice.TestData;
-import com.modsen.passengerservice.dto.PassengerDto;
-import com.modsen.passengerservice.exception.passenger.PassengerNotFoundException;
-import com.modsen.passengerservice.service.PassengerService;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
 @WebMvcTest(PassengerController.class)
+@Import({BasicGlobalExceptionHandler.class})
 class PassengerControllerTest {
 
     @Autowired
@@ -43,7 +47,8 @@ class PassengerControllerTest {
                 .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(TestData.PASSENGER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.PASSENGER_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -60,7 +65,8 @@ class PassengerControllerTest {
                 .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(TestData.PASSENGER_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.INVALID_PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_PASSENGER_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -76,8 +82,8 @@ class PassengerControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(TestData.PASSENGER_ENDPOINT)
                 .param("limit", String.valueOf(1))
-                .param("offset", String.valueOf(1));
-
+                .param("offset", String.valueOf(1))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
         // Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -94,7 +100,8 @@ class PassengerControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.PASSENGER_UPDATE_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -112,7 +119,8 @@ class PassengerControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.INVALID_PASSENGER_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_PASSENGER_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(request)
@@ -125,7 +133,8 @@ class PassengerControllerTest {
         // Arrange
         doNothing().when(passengerService).safeDeletePassengerById(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -138,7 +147,8 @@ class PassengerControllerTest {
         doThrow(PassengerNotFoundException.class)
                 .when(passengerService).safeDeletePassengerById(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -151,7 +161,8 @@ class PassengerControllerTest {
         when(passengerService.getPassengerById(anyLong()))
                 .thenReturn(TestData.PASSENGER_RESPONSE_DTO);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -168,7 +179,8 @@ class PassengerControllerTest {
         when(passengerService.getPassengerById(anyLong()))
                 .thenThrow(new PassengerNotFoundException(""));
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L);
+                .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, 1L)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)

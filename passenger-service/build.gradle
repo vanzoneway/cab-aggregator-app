@@ -44,6 +44,7 @@ ext {
     cabAggregatorStarterVersion = '0.0.1'
     minioVersion = '8.5.2'
     logbookVersion = '3.10.0'
+    testContainerKeycloakVersion = '3.4.0'
 }
 
 dependencyManagement {
@@ -113,6 +114,8 @@ dependencies {
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "com.github.dasniko:testcontainers-keycloak:${testContainerKeycloakVersion}"
     testImplementation "org.testcontainers:postgresql"
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "io.rest-assured:rest-assured"
