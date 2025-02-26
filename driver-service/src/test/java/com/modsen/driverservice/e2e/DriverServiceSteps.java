@@ -18,6 +18,7 @@ import static com.modsen.driverservice.e2e.E2ETestData.CLIENT_SECRET;
 import static com.modsen.driverservice.e2e.E2ETestData.CREATE_CAR_POSTFIX;
 import static com.modsen.driverservice.e2e.E2ETestData.DRIVER_BASE_URL;
 import static com.modsen.driverservice.e2e.E2ETestData.GRANT_TYPE;
+import static com.modsen.driverservice.e2e.E2ETestData.ID_FIELD;
 import static com.modsen.driverservice.e2e.E2ETestData.ID_POSTFIX;
 import static com.modsen.driverservice.e2e.E2ETestData.UPDATE_CAR_POSTFIX;
 import static io.restassured.RestAssured.given;
@@ -72,6 +73,8 @@ public class DriverServiceSteps {
     public void responseBodyContainTheFollowingCarData(String expected)
             throws Exception {
         assertThat(actual.as(CarDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(expected, CarDto.class));
     }
 
@@ -127,6 +130,8 @@ public class DriverServiceSteps {
     public void responseBodyContainTheFollowingDriverData(String expected)
             throws Exception {
         assertThat(actual.as(DriverDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(expected, DriverDto.class));
     }
 

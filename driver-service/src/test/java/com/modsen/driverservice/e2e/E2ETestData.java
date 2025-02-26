@@ -17,4 +17,6 @@ public final class E2ETestData {
     public static final String CLIENT_ID = "admin-cli";
     public static final String CLIENT_SECRET = "VW0msamXP7l5NARSzDYwE22I8IF9s7Jo";
 
+    public static final String ID_FIELD = "id";
+
 }

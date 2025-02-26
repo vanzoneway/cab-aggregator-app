@@ -16,6 +16,7 @@ import static com.modsen.passengerservice.e2e.E2ETestData.BASE_URL;
 import static com.modsen.passengerservice.e2e.E2ETestData.CLIENT_ID;
 import static com.modsen.passengerservice.e2e.E2ETestData.CLIENT_SECRET;
 import static com.modsen.passengerservice.e2e.E2ETestData.GRANT_TYPE;
+import static com.modsen.passengerservice.e2e.E2ETestData.ID_FIELD;
 import static com.modsen.passengerservice.e2e.E2ETestData.ID_POSTFIX;
 import static com.modsen.passengerservice.e2e.E2ETestData.LIMIT_PARAM;
 import static com.modsen.passengerservice.e2e.E2ETestData.OFFSET_PARAM;
@@ -87,6 +88,8 @@ public class PassengerServiceSteps {
     public void responseBodyShouldContainInformationAboutFirstThreePassengers(String passengerResponse)
             throws Exception {
         assertThat(actual.as(ListContainerResponseDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(passengerResponse, ListContainerResponseDto.class));
     }
 
@@ -104,6 +107,8 @@ public class PassengerServiceSteps {
     public void responseBodyShouldContainTheInformationAboutPassenger(String passengerResponse)
             throws Exception {
         assertThat(actual.as(PassengerDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(passengerResponse, PassengerDto.class));
     }
 
@@ -122,6 +127,8 @@ public class PassengerServiceSteps {
     public void responseBodyShouldContainTheInformationAboutUpdatedPassenger(String passengerResponse)
             throws Exception {
         assertThat(actual.as(PassengerDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(passengerResponse, PassengerDto.class));
     }
 

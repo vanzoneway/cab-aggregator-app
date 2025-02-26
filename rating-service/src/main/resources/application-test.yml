@@ -1,6 +1,29 @@
+server:
+  port: 0
 spring:
   application:
     name: rating-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URL:http://localhost:8090/realms/cab-aggregator-app}
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5436/ratings}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: ${REDIS_CACHE_TTL:60m}
+      cache-null-values: false
+  data:
+    redis:
+      host: ${REDIS_CACHE_URL:localhost}
+      port: ${REDIS_CACHE_PORT:6380}
 
   liquibase:
     change-log: db/changelog/main-changelog.xml
@@ -10,8 +33,35 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092, localhost:29093, localhost:29094}
       client-id: "average-rating-producer"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  zipkin:
+    tracing:
+      endpoint: ${TEMPO_ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+  tracing:
+    sampling:
+      probability: 1.0
+  metrics:
+    tags:
+      application: rating-service
+
+eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8088"
+  client:
+    service-url:
+      defaultZone:
+        ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
 rides-service:
   wire-mock:
     url: ${RIDE_SERVICE_URI:http://localhost:9090/}
-server:
-  port: 0

@@ -12,5 +12,6 @@ public final class E2ETestData {
 
     public static final String ORDER_DATE_TIME_FIELD = "orderDateTime";
     public static final String COST_FIELD = "cost";
+    public static final String ID_FIELD = "id";
 
 }
