@@ -21,6 +21,9 @@ public class BasicKeycloakSecurityConfiguration {
     private static final String PASSENGER_STATISTICS_ENDPOINT = "api/v1/rides/passengers/*/statistics";
     private static final String DRIVER_STATISTICS_ENDPOINT = "api/v1/rides/drivers/*/statistics";
 
+    private static final String SWAGGER_UI_ENDPOINT = "/swagger-ui/**";
+    private static final String SWAGGER_API_DOCS_ENDPOINT = "/v3/api-docs/**";
+
     @Bean
     @ConditionalOnMissingBean(SecurityFilterChain.class)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,6 +32,8 @@ public class BasicKeycloakSecurityConfiguration {
                         .requestMatchers(ACTUATOR_ENDPOINT).permitAll()
                         .requestMatchers(PASSENGER_STATISTICS_ENDPOINT).permitAll()
                         .requestMatchers(DRIVER_STATISTICS_ENDPOINT).permitAll()
+                        .requestMatchers(SWAGGER_UI_ENDPOINT).permitAll()
+                        .requestMatchers(SWAGGER_API_DOCS_ENDPOINT).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(configurer ->
                         configurer
