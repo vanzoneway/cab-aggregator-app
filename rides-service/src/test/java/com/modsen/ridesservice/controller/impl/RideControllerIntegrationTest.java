@@ -55,6 +55,7 @@ import static com.modsen.ridesservice.WireMockStubs.stubForGettingDriverResponse
 import static com.modsen.ridesservice.WireMockStubs.stubForGettingPassengerResponseDto;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -129,11 +130,7 @@ class RideControllerIntegrationTest {
     @Test
     void getRideById_ReturnsRideDto_DatabaseContainsSuchRideId() {
         Response response = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.RIDE_GET_ENDPOINT)
                 .then()
@@ -155,11 +152,7 @@ class RideControllerIntegrationTest {
         Response response = given()
                     .contentType(ContentType.JSON)
                     .body(RIDE_REQUEST_CREATE_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .post(TestData.RIDE_PAGE_GET_POST_ENDPOINT)
                 .then()
@@ -181,11 +174,7 @@ class RideControllerIntegrationTest {
         Response response = given()
                     .contentType(ContentType.JSON)
                     .body(RIDE_REQUEST_UPDATE_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .put(TestData.RIDE_UPDATE_ENDPOINT, RIDE_ID)
                 .then()
@@ -204,11 +193,7 @@ class RideControllerIntegrationTest {
         Response response = given()
                     .contentType(ContentType.JSON)
                     .body(RIDE_STATUS_CHANGE_REQUEST_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .patch(TestData.RIDE_CHANGE_RIDE_STATUS_ENDPOINT, RIDE_ID)
                 .then()
@@ -225,11 +210,7 @@ class RideControllerIntegrationTest {
     @Test
     void getPageRides_ReturnsPageWithRideDto_DefaultOffsetAndLimit() throws Exception {
         Response response = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.RIDE_PAGE_GET_POST_ENDPOINT)
                 .then()
@@ -243,6 +224,13 @@ class RideControllerIntegrationTest {
                 .usingRecursiveComparison()
                 .ignoringFields(INNER_IGNORING_FIELD_ONE, INNER_IGNORING_FIELD_TWO)
                 .isEqualTo(PAGE_RIDE_RESPONSE_DTO);
+    }
+
+    private String prepareAuthorizationHeader() {
+        return IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
+                .tokenManager()
+                .getAccessToken()
+                .getToken();
     }
 
 }

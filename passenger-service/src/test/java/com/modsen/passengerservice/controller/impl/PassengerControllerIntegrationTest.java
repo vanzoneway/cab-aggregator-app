@@ -41,6 +41,7 @@ import static com.modsen.passengerservice.IntegrationTestData.SQL_INSERT_DATA;
 import static com.modsen.passengerservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -112,11 +113,7 @@ class PassengerControllerIntegrationTest {
     @Test
     void getPassengerById_ReturnsPassengerDto_DatabaseContainsSuchPassengerId() throws Exception {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
                 .then()
@@ -130,11 +127,7 @@ class PassengerControllerIntegrationTest {
         given()
                     .contentType(ContentType.JSON)
                     .body(PASSENGER_REQUEST_CREATE_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .post(TestData.PASSENGER_ENDPOINT)
                 .then()
@@ -146,11 +139,7 @@ class PassengerControllerIntegrationTest {
     @Test
     void getPagePassengers_ReturnsPageWithPassengerDto_DefaultOffsetAndLimit() throws Exception {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                   .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.PASSENGER_ENDPOINT)
                 .then()
@@ -164,11 +153,7 @@ class PassengerControllerIntegrationTest {
         given()
                     .contentType(ContentType.JSON)
                     .body(PASSENGER_REQUEST_UPDATE_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .put(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
                 .then()
@@ -180,15 +165,17 @@ class PassengerControllerIntegrationTest {
     @Test
     void safeDeletePassenger_ReturnsNoContentStatusCode_DatabaseContainsSuchPassengerId() {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .delete(TestData.PASSENGER_UPDATE_DELETE_ENDPOINT, PASSENGER_ID)
                 .then()
                     .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
+    private String prepareAuthorizationHeader() {
+        return IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
+                .tokenManager()
+                .getAccessToken()
+                .getToken();
+    }
 }

@@ -38,6 +38,7 @@ import static com.modsen.driverservice.IntegrationTestData.SQL_INSERT_CAR_DRIVER
 import static com.modsen.driverservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -102,12 +103,7 @@ class CarControllerIntegrationTest {
         given()
                         .contentType(ContentType.JSON)
                         .body(CAR_UPDATE_REQUEST_DTO)
-                        .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
-
+                        .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                         .put(TestData.CAR_UPDATE_ENDPOINT, ID, ID)
                 .then()
@@ -121,11 +117,7 @@ class CarControllerIntegrationTest {
         given()
                         .contentType(ContentType.JSON)
                         .body(CAR_CREATE_REQUEST_DTO)
-                        .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                        .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                         .post(TestData.CAR_ENDPOINT, ID)
                 .then()
@@ -137,11 +129,7 @@ class CarControllerIntegrationTest {
     @Test
     void safeDeleteCar_ReturnsNoContentStatusCode_DatabaseContainsSuchCarId() {
         given()
-                        .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                        .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                         .delete(TestData.CAR_DELETE_ENDPOINT, ID)
 
@@ -152,17 +140,20 @@ class CarControllerIntegrationTest {
     @Test
     void getCarById_ReturnsCarDto_DatabaseContainsSuchCarId() throws Exception {
         given()
-                        .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                        .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                         .get(TestData.CAR_GET_ENDPOINT, ID)
                 .then()
                         .statusCode(HttpStatus.OK.value())
                         .contentType(ContentType.JSON)
                         .body(equalTo(objectMapper.writeValueAsString(CAR_GET_RESPONSE_DTO)));
+    }
+
+    private String prepareAuthorizationHeader() {
+        return IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
+                .tokenManager()
+                .getAccessToken()
+                .getToken();
     }
 
 }

@@ -26,7 +26,6 @@ public final class IntegrationTestData {
     public static final String PASSENGER_FROM_ANOTHER_SERVICE_ENDPOINT = "/api/v1/passengers/" + PASSENGER_ID;
     public static final String DRIVER_FROM_ANOTHER_SERVICE_ENDPOINT = "/api/v1/drivers/" + DRIVER_ID;
 
-    public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
 
     private static final long ID_AFTER_CREATE = 2L;

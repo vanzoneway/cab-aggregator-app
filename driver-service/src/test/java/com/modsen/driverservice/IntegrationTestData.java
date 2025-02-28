@@ -69,7 +69,6 @@ public final class IntegrationTestData {
             VALUES ('Toyota', 'Red', 'ABC123', 'Toyota Camry', 2020, 1, false);
             """;
 
-    public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
 
     public static final CarDto CAR_UPDATE_REQUEST_DTO = CarDto.builder()

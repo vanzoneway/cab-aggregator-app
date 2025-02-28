@@ -47,6 +47,7 @@ import static com.modsen.ratingservice.IntegrationTestData.SQL_RESTART_SEQUENCES
 import static com.modsen.ratingservice.WireMockStubs.stubForGettingRideResponseDto;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -125,11 +126,7 @@ class DriverRatingControllerIntegrationTest {
         given()
                     .contentType(ContentType.JSON)
                     .body(RATING_REQUEST_CREATE_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                         .post(TestData.DRIVER_RATING_ENDPOINT)
                 .then()
@@ -141,11 +138,7 @@ class DriverRatingControllerIntegrationTest {
     @Test
     void getAverageRating_ReturnsAverageRatingResponseDto_SuchRefUserIdExistsInDatabase() throws Exception {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.DRIVER_RATING_AVERAGE_ENDPOINT, REF_USER_ID)
                 .then()
@@ -159,11 +152,7 @@ class DriverRatingControllerIntegrationTest {
         given()
                     .contentType(ContentType.JSON)
                     .body(RATING_REQUEST_UPDATE_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .put(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
                 .then()
@@ -175,11 +164,7 @@ class DriverRatingControllerIntegrationTest {
     @Test
     void safeDeleteDriverRating_ReturnsNoContentStatusCode_DatabaseContainsSuchRatingId() {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .delete(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
                 .then()
@@ -189,17 +174,20 @@ class DriverRatingControllerIntegrationTest {
     @Test
     void getDriverRating_ReturnsDriverRatingDto_DatabaseContainsSuchRatingId() throws Exception {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.DRIVER_RATING_UPDATE_DELETE_ENDPOINT, RATING_ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
                     .body(equalTo(objectMapper.writeValueAsString(RATING_RESPONSE_GET_DTO)));
+    }
+
+    private String prepareAuthorizationHeader() {
+        return IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
+                .tokenManager()
+                .getAccessToken()
+                .getToken();
     }
 
 }

@@ -34,7 +34,6 @@ public final class IntegrationTestData {
     private static final LocalDateTime RIDE_CREATION_TIME = LocalDateTime.parse("2023-10-31T14:30:00");
     private static final BigDecimal RIDE_COST = new BigDecimal(231);
 
-    public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
 
     public static final String SQL_DELETE_ALL_DATA = """

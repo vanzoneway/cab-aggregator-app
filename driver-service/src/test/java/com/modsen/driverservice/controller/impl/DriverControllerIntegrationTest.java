@@ -37,6 +37,7 @@ import static com.modsen.driverservice.IntegrationTestData.SQL_INSERT_CAR_DRIVER
 import static com.modsen.driverservice.IntegrationTestData.SQL_RESTART_SEQUENCES;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -102,11 +103,7 @@ class DriverControllerIntegrationTest {
         given()
                     .contentType(ContentType.JSON)
                     .body(DRIVER_CREATE_REQUEST_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .post(TestData.DRIVER_ENDPOINT)
                 .then()
@@ -118,11 +115,7 @@ class DriverControllerIntegrationTest {
     @Test
     void getPageDrivers_ReturnsPageWithDriverDto_DefaultOffsetAndLimit() throws Exception {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.DRIVER_ENDPOINT)
                 .then()
@@ -136,11 +129,7 @@ class DriverControllerIntegrationTest {
         given()
                     .contentType(ContentType.JSON)
                     .body(DRIVER_UPDATE_REQUEST_DTO)
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .put(TestData.DRIVER_UPDATE_ENDPOINT, TestData.DRIVER_ID)
                 .then()
@@ -152,11 +141,7 @@ class DriverControllerIntegrationTest {
     @Test
     void safeDeleteDriver_ReturnsNoContentStatusCode_DatabaseContainsSuchDriverId() {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .delete(TestData.DRIVER_DELETE_ENDPOINT, ID)
                 .then()
@@ -166,17 +151,20 @@ class DriverControllerIntegrationTest {
     @Test
     void getDriverWithCars_ReturnsDriverCarDto_DatabaseContainsSuchDriverId() throws Exception {
         given()
-                    .header(IntegrationTestData.AUTHORIZATION,
-                        IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
-                                .tokenManager()
-                                .getAccessToken()
-                                .getToken())
+                    .header(AUTHORIZATION, prepareAuthorizationHeader())
                 .when()
                     .get(TestData.DRIVER_CARS_ENDPOINT, ID)
                 .then()
                     .statusCode(HttpStatus.OK.value())
                     .contentType(ContentType.JSON)
                     .body(equalTo(objectMapper.writeValueAsString(DRIVER_CAR_RESPONSE_DTO)));
+    }
+
+    private String prepareAuthorizationHeader() {
+        return IntegrationTestData.BEARER + keycloakContainer.getKeycloakAdminClient()
+                .tokenManager()
+                .getAccessToken()
+                .getToken();
     }
 
 }
