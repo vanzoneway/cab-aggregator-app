@@ -63,7 +63,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
-    @CachePut(value = AppConstants.PASSENGER_CACHE_VALUE, key = "result.id()")
+    @CachePut(value = AppConstants.PASSENGER_CACHE_VALUE, key = "#result.id()")
     public PassengerDto updatePassengerById(Long passengerId, PassengerDto passengerDto) {
         checkPassengerRestoreOption(passengerDto);
         checkPassengerExistsByPhoneOrEmail(passengerDto);

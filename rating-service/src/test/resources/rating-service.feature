@@ -1,5 +1,8 @@
 Feature: Rating service API
 
+  Scenario: Get auth admin token
+    When Get auth admin token
+
   Scenario: Create driver rating
     Given the request body to create or update rating
       """

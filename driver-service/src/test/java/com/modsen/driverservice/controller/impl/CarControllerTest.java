@@ -1,12 +1,7 @@
 package com.modsen.driverservice.controller.impl;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.cabaggregatorexceptionspringbootstarter.exception.BasicGlobalExceptionHandler;
 import com.modsen.driverservice.TestData;
 import com.modsen.driverservice.dto.CarDto;
 import com.modsen.driverservice.exception.car.CarNotFoundException;
@@ -15,13 +10,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+
 @WebMvcTest(CarController.class)
+@Import({BasicGlobalExceptionHandler.class})
 class CarControllerTest {
 
     @Autowired
@@ -42,7 +47,8 @@ class CarControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(TestData.CAR_ENDPOINT, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.CAR_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -61,7 +67,8 @@ class CarControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(TestData.CAR_ENDPOINT, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.INVALID_CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_CAR_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -78,7 +85,8 @@ class CarControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(TestData.CAR_UPDATE_ENDPOINT, TestData.CAR_ID, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.CAR_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -98,7 +106,8 @@ class CarControllerTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(TestData.CAR_UPDATE_ENDPOINT, TestData.CAR_ID, TestData.DRIVER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(TestData.INVALID_CAR_REQUEST_DTO));
+                .content(objectMapper.writeValueAsString(TestData.INVALID_CAR_REQUEST_DTO))
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         //Act and Assert
         mockMvc.perform(requestBuilder)
@@ -112,7 +121,8 @@ class CarControllerTest {
         // Arrange
         doNothing().when(carService).safeDeleteCarByCarId(anyLong());
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(TestData.CAR_DELETE_ENDPOINT, TestData.CAR_ID);
+                .delete(TestData.CAR_DELETE_ENDPOINT, TestData.CAR_ID)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -126,7 +136,8 @@ class CarControllerTest {
                 .when(carService).safeDeleteCarByCarId(anyLong());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete(TestData.CAR_DELETE_ENDPOINT, TestData.CAR_ID);
+                .delete(TestData.CAR_DELETE_ENDPOINT, TestData.CAR_ID)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -140,7 +151,8 @@ class CarControllerTest {
                 .thenReturn(TestData.CAR_RESPONSE_DTO);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(TestData.CAR_GET_ENDPOINT, TestData.CAR_ID);
+                .get(TestData.CAR_GET_ENDPOINT, TestData.CAR_ID)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
 
         // Act and Assert
         mockMvc.perform(requestBuilder)
@@ -158,7 +170,9 @@ class CarControllerTest {
                 .when(carService).getCarById(anyLong());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get(TestData.CAR_GET_ENDPOINT, TestData.CAR_ID);
+                .get(TestData.CAR_GET_ENDPOINT, TestData.CAR_ID)
+                .with(jwt().authorities(new SimpleGrantedAuthority(TestData.SECURITY_ADMIN_ROLE)));
+
         //Act and Assert
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isNotFound());

@@ -43,6 +43,7 @@ ext {
     lokiVersion = '1.4.2'
     cabAggregatorStarterVersion = '0.0.1'
     minioVersion = '8.5.2'
+    testContainerKeycloakVersion = '3.4.0'
 }
 
 dependencyManagement {
@@ -111,7 +112,9 @@ dependencies {
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.security:spring-security-test"
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "com.github.dasniko:testcontainers-keycloak:${testContainerKeycloakVersion}"
     testImplementation "org.testcontainers:postgresql"
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "io.rest-assured:rest-assured"
