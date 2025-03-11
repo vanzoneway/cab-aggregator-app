@@ -1,10 +1,8 @@
 package com.modsen.registrationservice.configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -15,12 +13,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
                         email = "vanz.evergarden0@gmail.com"
                 )
         )
-)
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT"
 )
 public class OpenApiConfig {
 }
