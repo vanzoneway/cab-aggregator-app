@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @Validated
 @Tag(name = "passenger-rating-operations", description = """
         The endpoints contained here are intended for operations related to passenger ratings. For example: creating a rating,
