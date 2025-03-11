@@ -4,6 +4,12 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
         - id: driver-service
           uri: lb://driver-service
@@ -38,6 +44,7 @@ spring:
           predicates:
             - Path=${defaultApiPath}/cab-aggregator/**, /registration-service/v3/api-docs
           filters:
+            - AddResponseHeader=Access-Control-Allow-Origin, *
             - RewritePath=/registration-service/(?<segment>.*), /${segment}
 
 server:
