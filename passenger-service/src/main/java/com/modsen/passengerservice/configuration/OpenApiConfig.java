@@ -17,7 +17,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 )
         ),
         servers = {
-                @Server(url = "http://localhost:8086", description = "Local server")
+                @Server(url = "http://localhost:8086", description = "Local server"),
+                @Server(url = "http://cab-aggregator.ddns.net:8086", description = "Test server")
         }
 )
 @SecurityScheme(
