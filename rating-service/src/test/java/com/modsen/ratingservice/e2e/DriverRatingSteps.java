@@ -22,6 +22,7 @@ import static com.modsen.ratingservice.e2e.E2ETestData.ID_FIELD;
 import static com.modsen.ratingservice.e2e.E2ETestData.ID_POSTFIX;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class DriverRatingSteps {
 
@@ -54,7 +55,7 @@ public class DriverRatingSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(ratingRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                 .post(BASE_URL);
@@ -79,7 +80,7 @@ public class DriverRatingSteps {
     @When("Get driver rating with id {int}")
     public void getDriverRatingWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + ID_POSTFIX, id);
@@ -90,7 +91,7 @@ public class DriverRatingSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(ratingRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .put(BASE_URL + ID_POSTFIX, id);
@@ -99,7 +100,7 @@ public class DriverRatingSteps {
     @When("Delete driver rating with id {int}")
     public void deleteDriverRatingWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .delete(BASE_URL + ID_POSTFIX, id);
@@ -108,7 +109,7 @@ public class DriverRatingSteps {
     @When("Get average driver rating with driver id {int}")
     public void getAverageDriverRatingWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + AVERAGE_RATING_POSTFIX, id);

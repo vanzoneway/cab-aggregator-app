@@ -4,31 +4,48 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
         - id: driver-service
           uri: lb://driver-service
           predicates:
-            - Path=${defaultApiPath}/cars/**, ${defaultApiPath}/drivers/**
+            - Path=${defaultApiPath}/cars/**, ${defaultApiPath}/drivers/**, /driver-service/v3/api-docs
+          filters:
+            - RewritePath=/driver-service/(?<segment>.*), /${segment}
 
         - id: passenger-service
           uri: lb://passenger-service
           predicates:
-            - Path=${defaultApiPath}/passengers/**
+            - Path=${defaultApiPath}/passengers/**, /passenger-service/v3/api-docs
+          filters:
+            - RewritePath=/passenger-service/(?<segment>.*), /${segment}
 
         - id: rating-service
           uri: lb://rating-service
           predicates:
-            - Path=${defaultApiPath}/passengers-ratings/**, ${defaultApiPath}/drivers-ratings/**
+            - Path=${defaultApiPath}/passengers-ratings/**, ${defaultApiPath}/drivers-ratings/**, /rating-service/v3/api-docs
+          filters:
+            - RewritePath=/rating-service/(?<segment>.*), /${segment}
 
         - id: rides-service
-          uri:  lb://rides-service
+          uri: lb://rides-service
           predicates:
-            - Path=${defaultApiPath}/rides/**
+            - Path=${defaultApiPath}/rides/**, /rides-service/v3/api-docs
+          filters:
+            - RewritePath=/rides-service/(?<segment>.*), /${segment}
 
         - id: registration-service
           uri: lb://registration-service
           predicates:
-            - Path=${defaultApiPath}/cab-aggregator/**
+            - Path=${defaultApiPath}/cab-aggregator/**, /registration-service/v3/api-docs
+          filters:
+            - AddResponseHeader=Access-Control-Allow-Origin, *
+            - RewritePath=/registration-service/(?<segment>.*), /${segment}
 
 server:
   port: 8080
@@ -60,5 +77,26 @@ management:
   metrics:
     tags:
       application: gateway-service
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+    urls:
+      - url: /v3/api-docs
+        name: API cab-aggregator-app
+      - url: /driver-service/v3/api-docs
+        name: Driver Service
+      - url: /passenger-service/v3/api-docs
+        name: Passenger Service
+      - url: /rating-service/v3/api-docs
+        name: Rating Service
+      - url: /rides-service/v3/api-docs
+        name: Rides Service
+      - url: /registration-service/v3/api-docs
+        name: Registration Service
+
 
 defaultApiPath: /api/v1

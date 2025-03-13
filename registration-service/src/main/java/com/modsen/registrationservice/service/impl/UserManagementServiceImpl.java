@@ -12,8 +12,8 @@ import com.modsen.registrationservice.dto.SignUpDto;
 import com.modsen.registrationservice.dto.UserKeycloakTokenResponseDto;
 import com.modsen.registrationservice.exception.keycloak.KeycloakCreateUserException;
 import com.modsen.registrationservice.exception.keycloak.KeycloakException;
-import com.modsen.registrationservice.service.UserManagementService;
 import com.modsen.registrationservice.service.ServiceConstants;
+import com.modsen.registrationservice.service.UserManagementService;
 import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.core.Response;
 import lombok.Cleanup;
@@ -146,8 +146,8 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add(GRANT_TYPE_FIELD, GRANT_TYPE_CLIENT_CREDENTIALS_FIELD);
-        body.add(CLIENT_ID_FIELD, keycloakProperties.getUserManagement().getClientId());
-        body.add(CLIENT_SECRET_FIELD, keycloakProperties.getUserManagement().getClientSecret());
+        body.add(CLIENT_ID_FIELD, signInDto.clientId());
+        body.add(CLIENT_SECRET_FIELD, signInDto.clientSecret());
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 

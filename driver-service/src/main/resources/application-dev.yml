@@ -2,6 +2,11 @@ server:
   port: 8085
 
 spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   application:
     name: driver-service
   security:

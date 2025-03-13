@@ -6,9 +6,9 @@ import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -18,101 +18,207 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "Driver Ratings", description = """
-         This API provides endpoints for managing driver ratings, including creating, updating,\s
-         retrieving, deleting ratings, and calculating average ratings. For example, if passenger want to left a review
-         to the driver - he must use this controller
-        \s""")
 @Validated
+@Tag(name = "driver-rating-operations", description = """
+        The endpoints contained here are intended for operations related to driver ratings. For example: creating a rating,
+        updating a rating, retrieving a rating, deleting a rating, and calculating the average rating for a driver.
+
+        It is important to note that JWT authorization is used here: ROLE_ADMIN can perform all actions, while
+        ROLE_DRIVER can only perform actions related to themselves (they cannot modify ratings of other drivers).
+
+        Additionally, please be aware that when creating or updating a rating, the data is validated against
+        the ride service to ensure the ride exists and is associated with the correct driver.
+        """)
+@SecurityRequirement(name = "bearerAuth")
 public interface DriverRatingOperations {
 
-    @Operation(summary = "Create a new driver rating",
+    @Operation(summary = "Creates a new driver rating",
             description = """
-                    Required fields:\s
+                    Creates a new rating for a driver. Only accessible by ADMIN or the DRIVER themselves.
+
+                    Required fields:
                     - **comment**: Comment about the rating (non-empty string)
                     - **rating**: Rating score (integer from 1 to 5)
                     - **rideId**: ID of the ride associated with the rating
-                    Example:\s
+
+                    Validation rules:
+                    - `comment` must not be blank.
+                    - `rating` must be an integer between 1 and 5.
+                    - `rideId` must not be null and must correspond to an existing ride.
+
+                    Example for creating a rating:
                     {
-                      "comment": "Great driver!",
-                      "rating": 5,
-                      "refUserId": 1,
-                      "rideId": 1001
-                    }""")
+                        "comment": "Great driver!",
+                        "rating": 5,
+                        "rideId": 1001
+                    }
+
+                    Example of a rating object after creation:
+                    {
+                        "id": 1,
+                        "comment": "Great driver!",
+                        "rating": 5,
+                        "rideId": 1001,
+                        "refUserId": 1,
+                        "userType": "DRIVER"
+                    }
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Driver rating created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input provided")
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, only ADMIN or DRIVER can access this endpoint"),
+            @ApiResponse(responseCode = "404", description = "Ride not found"),
+            @ApiResponse(responseCode = "409", description = "Conflict, duplicate ride ID")
     })
     @Validated(Marker.OnCreate.class)
     RatingResponseDto createDriverRating(
-            @Parameter(description = "Driver rating details to be created", required = true)
             @RequestBody @Valid RatingRequestDto ratingRequestDto);
 
-    @Operation(summary = "Update an existing driver rating",
+    @Operation(summary = "Updates an existing driver rating",
             description = """
-                    Required fields:\s
+                    Updates an existing rating for a driver. Only accessible by ADMIN.
+
+                    Required fields:
                     - **comment**: Updated comment about the rating
                     - **rating**: Updated rating score (integer from 1 to 5)
-                    Example:\s
+
+                    Validation rules:
+                    - `comment` must not be blank.
+                    - `rating` must be an integer between 1 and 5.
+
+                    Example for updating a rating:
                     {
-                      "comment": "Updated comment",
-                      "rating": 4
-                    }""")
+                        "comment": "Updated comment",
+                        "rating": 4
+                    }
+
+                    Example of a rating object after update:
+                    {
+                        "id": 1,
+                        "comment": "Updated comment",
+                        "rating": 4,
+                        "rideId": 1001,
+                        "refUserId": 1,
+                        "userType": "DRIVER"
+                    }
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Driver rating updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Driver rating not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input provided")
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, only ADMIN can access this endpoint"),
+            @ApiResponse(responseCode = "404", description = "Rating not found"),
+            @ApiResponse(responseCode = "409", description = "Conflict, duplicate ride ID")
     })
     @Validated(Marker.OnUpdate.class)
     RatingResponseDto updateDriverRating(
-            @Parameter(description = "ID of the rating to update", required = true)
             @PathVariable Long id,
-            @Parameter(description = "Updated driver rating details", required = true)
             @RequestBody @Valid RatingRequestDto ratingRequestDto);
 
-    @Operation(summary = "Retrieve a driver rating by ID",
-            description = "Fetches the details of a specific driver rating.")
+    @Operation(summary = "Retrieves a driver rating by ID",
+            description = """
+                    Retrieves the details of a specific driver rating.
+
+                    Example request:
+                    GET /api/v1/drivers-ratings/1
+
+                    Example response:
+                    {
+                        "id": 1,
+                        "comment": "Great driver!",
+                        "rating": 5,
+                        "rideId": 1001,
+                        "refUserId": 1,
+                        "userType": "DRIVER"
+                    }
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Driver rating retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Driver rating not found")
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Rating not found")
     })
     RatingResponseDto getDriverRating(
-            @Parameter(description = "ID of the rating to retrieve", required = true)
             @PathVariable Long id);
 
-    @Operation(summary = "Get driver ratings by ride ID",
-            description = "Retrieves a paginated list of driver ratings for a specific ride.")
+    @Operation(summary = "Retrieves a paginated list of driver ratings by user ID",
+            description = """
+                    Retrieves a paginated list of driver ratings for a specific user. The response includes metadata such as:
+                    - **currentOffset**: The current offset in the list.
+                    - **currentLimit**: The number of items per page.
+                    - **totalPages**: The total number of pages.
+                    - **totalElements**: The total number of ratings.
+                    - **sort**: The sorting criteria (if any).
+                    - **values**: The list of ratings.
+
+                    Example response:
+                    {
+                        "currentOffset": 0,
+                        "currentLimit": 10,
+                        "totalPages": 5,
+                        "totalElements": 50,
+                        "sort": "id,asc",
+                        "values": [
+                            {
+                                "id": 1,
+                                "comment": "Great driver!",
+                                "rating": 5,
+                                "rideId": 1001,
+                                "refUserId": 1,
+                                "userType": "DRIVER"
+                            },
+                            ...
+                        ]
+                    }
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Driver ratings retrieved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters")
+            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     ListContainerResponseDto<RatingResponseDto> getDriverRatingsByRefUserId(
-            @Parameter(description = "ID of the user", required = true)
             @PathVariable Long refUserId,
-            @Parameter(description = "Pagination offset", example = "0")
             @RequestParam(defaultValue = "0") @Min(0) Integer offset,
-            @Parameter(description = "Pagination limit", example = "10")
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit);
 
-    @Operation(summary = "Delete a driver rating",
-            description = "Deletes the specified driver rating.")
+    @Operation(summary = "Deletes a driver rating by ID",
+            description = """
+                    Deletes a specific driver rating. Only accessible by ADMIN.
+
+                    Example request:
+                    DELETE /api/v1/drivers-ratings/1
+
+                    Example response:
+                    - Status Code: 204 (No Content)
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Driver rating deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Driver rating not found")
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, only ADMIN can access this endpoint"),
+            @ApiResponse(responseCode = "404", description = "Rating not found")
     })
     void deleteDriverRating(
-            @Parameter(description = "ID of the rating to delete", required = true)
             @PathVariable Long id);
 
-    @Operation(summary = "Get average driver rating",
-            description = "Calculates the average rating for a specific driver.")
+    @Operation(summary = "Retrieves the average rating for a driver",
+            description = """
+                    Calculates and retrieves the average rating for a specific driver.
+
+                    Example request:
+                    GET /api/v1/drivers-ratings/1/average
+
+                    Example response:
+                    {
+                        "refUserId": 1,
+                        "averageRating": 4.5
+                    }
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Average rating retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Driver not found")
     })
     AverageRatingResponseDto averageDriverRating(
-            @Parameter(description = "ID of the driver to retrieve average rating", required = true)
             @PathVariable Long refUserId);
 
 }
-

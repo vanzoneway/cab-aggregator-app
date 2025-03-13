@@ -23,6 +23,7 @@ import static com.modsen.driverservice.e2e.E2ETestData.ID_POSTFIX;
 import static com.modsen.driverservice.e2e.E2ETestData.UPDATE_CAR_POSTFIX;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 public class DriverServiceSteps {
@@ -56,7 +57,7 @@ public class DriverServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(carRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .post(CAR_BASE_URL + CREATE_CAR_POSTFIX, id);
@@ -83,7 +84,7 @@ public class DriverServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(carRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                    .put(CAR_BASE_URL + UPDATE_CAR_POSTFIX, carId, driverId);
@@ -94,7 +95,7 @@ public class DriverServiceSteps {
     @When("Get car with id {int}")
     public void getCarWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(CAR_BASE_URL + ID_POSTFIX, id);
@@ -103,7 +104,7 @@ public class DriverServiceSteps {
     @When("Delete car with id {int}")
     public void deleteCarWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .delete(CAR_BASE_URL + ID_POSTFIX, id);
@@ -120,7 +121,7 @@ public class DriverServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(driverRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .post(DRIVER_BASE_URL);
@@ -140,7 +141,7 @@ public class DriverServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(driverRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .put(DRIVER_BASE_URL + ID_POSTFIX, id);
@@ -149,7 +150,7 @@ public class DriverServiceSteps {
     @When("Delete driver with id {int}")
     public void deleteDriverWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .delete(DRIVER_BASE_URL + ID_POSTFIX, id);
@@ -158,7 +159,7 @@ public class DriverServiceSteps {
     @When("Get driver with id {int}")
     public void getDriverWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(DRIVER_BASE_URL + ID_POSTFIX, id);

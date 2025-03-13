@@ -24,6 +24,7 @@ import static com.modsen.ridesservice.e2e.E2ETestData.RIDE_ID_POSTFIX;
 import static com.modsen.ridesservice.e2e.E2ETestData.UPDATE_RIDE_STATUS_POSTFIX;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class RideServiceSteps {
 
@@ -58,7 +59,7 @@ public class RideServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(rideRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .post(BASE_URL);
@@ -91,7 +92,7 @@ public class RideServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(rideStatusRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .patch(BASE_URL + UPDATE_RIDE_STATUS_POSTFIX, id);
@@ -102,7 +103,7 @@ public class RideServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(rideRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .put(BASE_URL + RIDE_ID_POSTFIX, id);
@@ -111,7 +112,7 @@ public class RideServiceSteps {
     @When("Get ride with id {int}")
     public void getRideWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + RIDE_ID_POSTFIX, id);

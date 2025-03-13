@@ -22,6 +22,7 @@ import static com.modsen.passengerservice.e2e.E2ETestData.LIMIT_PARAM;
 import static com.modsen.passengerservice.e2e.E2ETestData.OFFSET_PARAM;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class PassengerServiceSteps {
 
@@ -53,7 +54,7 @@ public class PassengerServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(passengerRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .post(BASE_URL);
@@ -76,7 +77,7 @@ public class PassengerServiceSteps {
     @When("Get a page with passengers with current offset {int} and limit {int}")
     public void getPageWithPassengersWithCurrentOffsetAndLimit(int offset, int limit) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + OFFSET_PARAM + offset + LIMIT_PARAM + limit);
@@ -96,7 +97,7 @@ public class PassengerServiceSteps {
     @When("Get passenger with id {int}")
     public void getPassengerWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + ID_POSTFIX, id);
@@ -117,7 +118,7 @@ public class PassengerServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(passengerRequestDto)
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .put(BASE_URL + ID_POSTFIX, id);
@@ -135,7 +136,7 @@ public class PassengerServiceSteps {
     @When("Delete passenger with id {int}")
     public void deletePassengerWithId(int id) {
         actual = given()
-                    .header(IntegrationTestData.AUTHORIZATION,
+                    .header(AUTHORIZATION,
                         IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .delete(BASE_URL + ID_POSTFIX, id);
