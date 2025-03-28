@@ -5,6 +5,7 @@ import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
+import com.modsen.ridesservice.dto.response.RideStatisticResponseDto;
 import com.modsen.ridesservice.service.RideService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -81,6 +82,18 @@ public class RideController implements RideOperations {
     public RideResponseDto updateRide(@PathVariable Long rideId,
                                       @RequestBody @Valid RideRequestDto rideRequestDto) {
         return rideService.updateRide(rideId, rideRequestDto);
+    }
+
+    @Override
+    @GetMapping("/passengers/{passengerId}/statistics")
+    public RideStatisticResponseDto getRideStatisticForPassenger(@PathVariable("passengerId") Long passengerId) {
+        return rideService.getRideStatisticForPassenger(passengerId);
+    }
+
+    @Override
+    @GetMapping("/drivers/{driverId}/statistics")
+    public RideStatisticResponseDto getRideStatisticForDriver(@PathVariable("driverId") Long driverId) {
+        return rideService.getRideStatisticForDriver(driverId);
     }
 
 }

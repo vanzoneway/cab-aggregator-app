@@ -1,6 +1,10 @@
 package com.modsen.driverservice.constants;
 
-public class AppConstants {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final  class AppConstants {
 
     // Application exception messages keys
     public static final String CAR_NUMBER_DUPLICATE_MESSAGE_KEY = "car.number.duplicate";
@@ -11,8 +15,13 @@ public class AppConstants {
     public static final String DRIVER_PHONE_DUPLICATE_MESSAGE_KEY = "driver.phone.duplicate";
     public static final String RESTORE_DRIVER_BY_PHONE_MESSAGE_KEY = "restore.driver.by.phone.offer";
     public static final String RESTORE_DRIVER_BY_EMAIL_MESSAGE_KEY = "restore.driver.by.email.offer";
+    public static final String UNSUPPORTED_FILE_TYPE_MESSAGE_KEY = "unsupported.file.type";
+    public static final String NO_SUCH_AVATAR_MESSAGE_KEY = "no.such.avatar.exception";
 
-    //Application exception messages
-    public static final String INTERNAL_SERVER_ERROR = "An unexpected error occurred. Please try again later.";
+    //Cache names
+    public static final String CAR_CACHE_VALUE = "carCache";
+    public static final String DRIVER_CACHE_VALUE = "driverCache";
 
+    //Other
+    public static final String USER_TYPE = "DRIVER";
 }

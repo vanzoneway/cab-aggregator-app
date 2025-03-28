@@ -42,6 +42,8 @@ ext {
     cucumberVersion = '7.16.1'
     lokiVersion = '1.4.2'
     cabAggregatorStarterVersion = '0.0.1'
+    minioVersion = '8.5.2'
+    testContainerKeycloakVersion = '3.4.0'
 }
 
 dependencyManagement {
@@ -58,6 +60,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
     implementation "org.springframework.kafka:spring-kafka"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
@@ -79,6 +82,11 @@ dependencies {
         exclude group: "org.projectlombok"
     }
 
+    implementation("com.modsen:cab-aggregator-request-response-logger-spring-boot-starter:${cabAggregatorStarterVersion}") {
+        exclude group: "org.springframework.boot"
+        exclude group: "org.projectlombok"
+    }
+
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-tracing-bridge-otel"
     implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
@@ -91,6 +99,11 @@ dependencies {
     implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
     implementation "org.postgresql:postgresql"
 
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+
+    implementation "io.minio:minio:${minioVersion}"
+
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
 
@@ -99,7 +112,9 @@ dependencies {
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.security:spring-security-test"
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "com.github.dasniko:testcontainers-keycloak:${testContainerKeycloakVersion}"
     testImplementation "org.testcontainers:postgresql"
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "io.rest-assured:rest-assured"

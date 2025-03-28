@@ -4,9 +4,9 @@ import com.modsen.passengerservice.dto.ListContainerResponseDto;
 import com.modsen.passengerservice.dto.Marker;
 import com.modsen.passengerservice.dto.PassengerDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -18,87 +18,182 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Validated
-@Tag(name = "Driver controller", description = """
-         This controller contains endpoints for creating a passenger, updating passenger information,\s
-         performing a soft delete of a passenger, and retrieving information\s
-         about all passengers.
-        \s""")
+@Tag(name = "passenger-operations", description = """
+        The endpoints contained here are intended for operations related to passengers. For example: creating a passenger,
+        retrieving a list of passengers, deleting passengers, updating a passenger by ID, and retrieving a specific passenger
+        by ID.
+
+        It is important to note that JWT authorization is used here: ROLE_ADMIN can perform all actions, while
+        ROLE_PASSENGER can only perform actions related to themselves (they cannot modify information of other passengers).
+
+        Additionally, please be aware that when deleting or updating a passenger, the data is not synchronized
+        with the registration service database (THIS HAS NOT BEEN FIXED YET). This should be taken into account.
+        """)
+@SecurityRequirement(name = "bearerAuth")
 public interface PassengerOperations {
 
-    @Operation(summary = "Create a new passenger",
+    @Operation(summary = "Creates a new passenger",
             description = """
-                    Required fields:\s
-                    - **firstName**: Name of the driver (non-empty string)
-                    - **lastName**: lastName of the driver (non-empty string)
-                    - **email**: Valid email address
-                    - **phone**: Phone number in valid format
-                    Example:\s
+                    The passenger details to be created. Please note that the data is not yet synchronized
+                    with the registration service database. Required fields:
+                    - **firstName**: First name of the passenger (non-empty string)
+                    - **lastName**: Last name of the passenger (non-empty string)
+                    - **email**: Email address of the passenger (valid format)
+                    - **phone**: Phone number of the passenger (valid format)
+
+                    Validation rules:
+                    - `firstName` and `lastName` must not be blank.
+                    - `email` must be a valid email format and not empty.
+                    - `phone` must match the pattern: +[country code][number] (7-15 digits total).
+
+                    Example for creating a passenger:
                     {
-                      "firstName": "Jane",
-                      "lastName": "Doe",
-                      "email": "janedoe@example.com",
-                      "phone": "+1234567890",
-                    }""")
+                        "firstName": "John",
+                        "lastName": "Doe",
+                        "email": "john.doe@example.com",
+                        "phone": "+1234567890"
+                    }
+
+                    Example of a passenger object after creation:
+                    {
+                        "id": 1,
+                        "firstName": "John",
+                        "lastName": "Doe",
+                        "email": "john.doe@example.com",
+                        "phone": "+1234567890",
+                        "averageRating": null,
+                        "deleted": false
+                    }
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Passenger created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input provided"),
-            @ApiResponse(responseCode = "409", description = "A conflict occurred. This happens when such a passenger" +
-                    " email or phone already exists")
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, only ADMIN can access this endpoint"),
+            @ApiResponse(responseCode = "409", description = "Conflict, duplicate email or phone")
     })
     @Validated(Marker.OnCreate.class)
-    PassengerDto createPassenger(
-            @Parameter(description = "Passenger details to be created", required = true)
-            @RequestBody @Valid PassengerDto passengerDto);
+    PassengerDto createPassenger(@RequestBody @Valid PassengerDto passengerDto);
 
-    @Operation(summary = "Get paginated list of passengers",
-            description = "Retrieves a paginated list of passengers.")
+    @Operation(summary = "Retrieves a paginated list of passengers",
+            description = """
+                    Retrieves a paginated list of passengers. The response includes metadata such as:
+                    - **currentOffset**: The current offset in the list.
+                    - **currentLimit**: The number of items per page.
+                    - **totalPages**: The total number of pages.
+                    - **totalElements**: The total number of passengers.
+                    - **sort**: The sorting criteria (if any).
+                    - **values**: The list of passengers.
+
+                    Example response:
+                    {
+                        "currentOffset": 0,
+                        "currentLimit": 10,
+                        "totalPages": 5,
+                        "totalElements": 50,
+                        "sort": "id,asc",
+                        "values": [
+                            {
+                                "id": 1,
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "email": "john.doe@example.com",
+                                "phone": "+1234567890",
+                                "averageRating": 4.5,
+                                "deleted": false
+                            },
+                            ...
+                        ]
+                    }
+                    """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Passengers retrieved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters")
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of passengers"),
+            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     ListContainerResponseDto<PassengerDto> getPagePassengers(
-            @Parameter(description = "Offset for pagination", example = "0")
             @RequestParam(defaultValue = "0") @Min(0) Integer offset,
-            @Parameter(description = "Limit for pagination", example = "10")
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) Integer limit);
 
-    @Operation(summary = "Soft delete a passenger",
-            description = "Marks the specified passenger as deleted.")
+    @Operation(summary = "Deletes a passenger by ID",
+            description = """
+                    Deletes a passenger by their ID. Only accessible by ADMIN or the passenger themselves.
+                    Please note that the data is not synchronized with the registration service database.
+
+                    Example request:
+                    DELETE /api/v1/passengers/1
+
+                    Example response:
+                    - Status Code: 204 (No Content)
+                    """)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Passenger deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, only ADMIN or the passenger themselves can access this endpoint"),
             @ApiResponse(responseCode = "404", description = "Passenger not found")
     })
     void safeDeletePassenger(
-            @Parameter(description = "ID of the passenger to be deleted", required = true)
             @PathVariable Long passengerId,
             JwtAuthenticationToken token);
 
-    @Operation(summary = "Update passenger information",
-            description = "Updates the details of the specified passenger.")
+    @Operation(summary = "Updates a passenger by ID",
+            description = """
+                    Updates a passenger's details by their ID. Only accessible by ADMIN or the passenger themselves.
+                    Please note that the data is not synchronized with the registration service database.
+
+                    Example request:
+                    PUT /api/v1/passengers/1
+                    {
+                        "phone": "+9876543210"
+                    }
+
+                    Example response:
+                    {
+                        "id": 1,
+                        "firstName": "John",
+                        "lastName": "Doe",
+                        "email": "john.doe@example.com",
+                        "phone": "+9876543210",
+                        "averageRating": null,
+                        "deleted": false
+                    }
+                    """)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Driver updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Driver not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input provided"),
-            @ApiResponse(responseCode = "409", description = "A conflict occurred. This happens when such a passenger" +
-                    " email or phone already exists")
+            @ApiResponse(responseCode = "200", description = "Passenger updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, only ADMIN or the passenger themselves can access this endpoint"),
+            @ApiResponse(responseCode = "404", description = "Passenger not found"),
+            @ApiResponse(responseCode = "409", description = "Conflict, duplicate email or phone")
     })
     @Validated(Marker.OnUpdate.class)
     PassengerDto updatePassengerById(
-            @Parameter(description = "ID of the passenger to be updated", required = true)
             @PathVariable Long passengerId,
-            @Parameter(description = "Updated passenger details. It is not necessary to specify all parameters." +
-                    " It is sufficient to provide just a subset of them.",
-                    required = true)
             @RequestBody @Valid PassengerDto passengerDto,
             JwtAuthenticationToken token);
 
-    @Operation(summary = "Get passenger by id",
-            description = "Getting information about passenger in JSON format")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Passenger got successfully"),
-            @ApiResponse(responseCode = "404", description = "Passenger not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid input provided"),
+    @Operation(summary = "Retrieves a passenger by ID",
+            description = """
+                    Retrieves a passenger's details by their ID.
 
+                    Example request:
+                    GET /api/v1/passengers/1
+
+                    Example response:
+                    {
+                        "id": 1,
+                        "firstName": "John",
+                        "lastName": "Doe",
+                        "email": "john.doe@example.com",
+                        "phone": "+1234567890",
+                        "averageRating": null,
+                        "deleted": false
+                    }
+                    """)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved passenger details"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Passenger not found")
     })
     PassengerDto getPassengerById(@PathVariable Long passengerId);
 

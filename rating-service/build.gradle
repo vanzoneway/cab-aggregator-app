@@ -43,6 +43,7 @@ ext {
     cucumberVersion = '7.16.1'
     lokiVersion = '1.4.2'
     cabAggregatorStarterVersion = '0.0.1'
+    testContainerKeycloakVersion = '3.4.0'
 }
 
 dependencyManagement {
@@ -82,10 +83,18 @@ dependencies {
         exclude group: "org.projectlombok"
     }
 
+    implementation("com.modsen:cab-aggregator-request-response-logger-spring-boot-starter:${cabAggregatorStarterVersion}") {
+        exclude group: "org.springframework.boot"
+        exclude group: "org.projectlombok"
+    }
+
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-tracing-bridge-otel"
     implementation "io.opentelemetry:opentelemetry-exporter-zipkin"
     implementation "io.github.openfeign:feign-micrometer"
+
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
 
     implementation "org.springframework.security:spring-security-oauth2-resource-server"
     implementation "org.springframework.security:spring-security-oauth2-jose"
@@ -104,6 +113,8 @@ dependencies {
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "com.github.dasniko:testcontainers-keycloak:${testContainerKeycloakVersion}"
     testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-stub-runner'
     testImplementation "org.testcontainers:postgresql"
     testImplementation "org.testcontainers:junit-jupiter"

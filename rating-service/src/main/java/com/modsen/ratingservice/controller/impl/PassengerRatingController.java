@@ -1,5 +1,6 @@
 package com.modsen.ratingservice.controller.impl;
 
+import com.modsen.ratingservice.constants.AppConstants;
 import com.modsen.ratingservice.controller.general.PassengerRatingOperations;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
@@ -10,6 +11,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +38,7 @@ public class PassengerRatingController implements PassengerRatingOperations {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN') or hasRole('PASSENGER')")
+    @CachePut(value = AppConstants.PASSENGER_RATING_CACHE_VALUE, key = "#result.id()")
     public RatingResponseDto createPassengerRating(@Valid @RequestBody RatingRequestDto ratingRequestDto) {
         return passengerRatingService.createRating(ratingRequestDto);
     }
@@ -41,6 +46,7 @@ public class PassengerRatingController implements PassengerRatingOperations {
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @CachePut(value = AppConstants.PASSENGER_RATING_CACHE_VALUE, key = "#result.id()")
     public RatingResponseDto updatePassengerRating(@PathVariable Long id,
                                                    @Valid @RequestBody RatingRequestDto ratingRequestDto) {
         return passengerRatingService.updateRatingById(id, ratingRequestDto);
@@ -48,6 +54,7 @@ public class PassengerRatingController implements PassengerRatingOperations {
 
     @Override
     @GetMapping("/{id}")
+    @Cacheable(value = AppConstants.PASSENGER_RATING_CACHE_VALUE, key = "#id")
     public RatingResponseDto getPassengerRating(@PathVariable Long id) {
         return passengerRatingService.getRating(id);
     }
@@ -66,12 +73,14 @@ public class PassengerRatingController implements PassengerRatingOperations {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = AppConstants.PASSENGER_RATING_CACHE_VALUE, key = "#id")
     public void deletePassengerRating(@PathVariable Long id) {
         passengerRatingService.safeDeleteRating(id);
     }
 
     @Override
     @GetMapping("/{refUserId}/average")
+    @Cacheable(value = AppConstants.AVERAGE_PASSENGER_RATING_CACHE_VALUE, key = "#refUserId")
     public AverageRatingResponseDto averagePassengerRating(@PathVariable Long refUserId) {
         return passengerRatingService.getAverageRating(refUserId);
     }

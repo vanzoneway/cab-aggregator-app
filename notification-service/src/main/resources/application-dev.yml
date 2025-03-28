@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: notification-service
+
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092, localhost:29093, localhost:29094}
+      client-id: "notification-producer"
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092, localhost:29093, localhost:29094}
+      client-id: "notification-consumer"
+      auto-offset-reset: earliest
+
+  mail:
+    username: ${MAIL_USERNAME:aggregatortaxi1@gmail.com}
+    password: ${MAIL_PASSWORD:pdgfzgpssxbpoaur}
+    host: smtp.gmail.com
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+    port: 587
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  zipkin:
+    tracing:
+      endpoint: ${TEMPO_ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+  tracing:
+    sampling:
+      probability: 1.0
+  metrics:
+    tags:
+      application: notification-service
+
+server:
+  port: 8091
+
+eureka:
+  instance:
+    metadataMap:
+      "prometheus.scrape": "true"
+      "prometheus.path": "/actuator/prometheus"
+      "prometheus.port": "8091"
+  client:
+    service-url:
+      defaultZone:
+        ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}

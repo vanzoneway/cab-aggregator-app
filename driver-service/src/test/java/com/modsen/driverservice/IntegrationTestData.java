@@ -33,18 +33,21 @@ public final class IntegrationTestData {
     private static final String CAR_GET_MODEL = "Toyota Camry";
     private static final int CAR_GET_YEAR = 2020;
 
-    private static final String DRIVER_GET_NAME = "John Doe";
+    private static final String DRIVER_GET_FIRST_NAME = "John";
+    private static final String DRIVER_GET_LAST_NAME = "Doe";
     private static final String DRIVER_GET_EMAIL = "johndoe@example.com";
     private static final String DRIVER_GET_PHONE = "+1234567890";
     private static final String DRIVER_GET_GENDER = "Male";
 
-    private static final String DRIVER_CREATE_NAME = "John Lock";
+    private static final String DRIVER_CREATE_FIRST_NAME = "John";
+    private static final String DRIVER_CREATE_LAST_NAME = "Lock";
     private static final String DRIVER_CREATE_EMAIL = "john.lock@gmail.com";
     private static final String DRIVER_CREATE_PHONE = "+1231231231";
 
-    private static final String DRIVER_UPDATE_NAME = "Jack Shepherd";
+    private static final String DRIVER_UPDATE_FIRST_NAME = "John";
+    private static final String DRIVER_UPDATE_LAST_NAME = "Doe";
     private static final String DRIVER_UPDATE_EMAIL = "johndoe@example.com";
-    private static final String DRIVER_UPDATE_PHONE = "+1234567890";
+    private static final String DRIVER_UPDATE_PHONE = "+1234567899";
 
     private static final String TYPE_OF_SORT = "UNSORTED";
 
@@ -59,101 +62,119 @@ public final class IntegrationTestData {
             """;
 
     public static final String SQL_INSERT_CAR_DRIVER = """
-            INSERT INTO driver (name, email, phone, gender, deleted)
-            VALUES ('John Doe', 'johndoe@example.com', '+1234567890', 'Male', false);
-            
+            INSERT INTO driver (first_name, last_name, email, phone, gender, deleted)
+            VALUES ('John', 'Doe', 'johndoe@example.com', '+1234567890', 'Male', false);
+   
             INSERT INTO car (brand, color, number, model, year, driver_id, deleted)
             VALUES ('Toyota', 'Red', 'ABC123', 'Toyota Camry', 2020, 1, false);
             """;
 
-    public static final CarDto CAR_UPDATE_REQUEST_DTO = new CarDto(
-            null,
-            null,
-            CAR_UPDATE_COLOR,
-            null,
-            null,
-            null,
-            null);
+    public static final String BEARER = "Bearer ";
 
-    public static final CarDto CAR_UPDATE_RESPONSE_DTO = new CarDto(
-            ID,
-            CAR_UPDATE_BRAND,
-            CAR_UPDATE_COLOR,
-            CAR_UPDATE_NUMBER,
-            CAR_UPDATE_MODEL,
-            CAR_UPDATE_YEAR,
-            false);
+    public static final CarDto CAR_UPDATE_REQUEST_DTO = CarDto.builder()
+            .withId(null)
+            .withBrand(null)
+            .withColor(CAR_UPDATE_COLOR)
+            .withNumber(null)
+            .withModel(null)
+            .withYear(null)
+            .withDeleted(null)
+            .build();
 
-    public static final CarDto CAR_CREATE_REQUEST_DTO = new CarDto(
-            null,
-            CAR_CREATE_BRAND,
-            CAR_CREATE_COLOR,
-            CAR_CREATE_NUMBER,
-            CAR_CREATE_MODEL,
-            CAR_CREATE_YEAR,
-            null);
-    public static final CarDto CAR_CREATE_RESPONSE_DTO = new CarDto(
-            ID_AFTER_CREATE,
-            CAR_CREATE_BRAND,
-            CAR_CREATE_COLOR,
-            CAR_CREATE_NUMBER,
-            CAR_CREATE_MODEL,
-            CAR_CREATE_YEAR,
-            false);
+    public static final CarDto CAR_UPDATE_RESPONSE_DTO = CarDto.builder()
+            .withId(ID)
+            .withBrand(CAR_UPDATE_BRAND)
+            .withColor(CAR_UPDATE_COLOR)
+            .withNumber(CAR_UPDATE_NUMBER)
+            .withModel(CAR_UPDATE_MODEL)
+            .withYear(CAR_UPDATE_YEAR)
+            .withDeleted(false)
+            .build();
 
-    public static final CarDto CAR_GET_RESPONSE_DTO = new CarDto(
-            ID,
-            CAR_GET_BRAND,
-            CAR_GET_COLOR,
-            CAR_GET_NUMBER,
-            CAR_GET_MODEL,
-            CAR_GET_YEAR,
-            false);
+    public static final CarDto CAR_CREATE_REQUEST_DTO = CarDto.builder()
+            .withId(null)
+            .withBrand(CAR_CREATE_BRAND)
+            .withColor(CAR_CREATE_COLOR)
+            .withNumber(CAR_CREATE_NUMBER)
+            .withModel(CAR_CREATE_MODEL)
+            .withYear(CAR_CREATE_YEAR)
+            .withDeleted(null)
+            .build();
 
-    public static final DriverDto DRIVER_CREATE_REQUEST_DTO = new DriverDto(
-            null,
-            DRIVER_CREATE_NAME,
-            DRIVER_CREATE_EMAIL,
-            DRIVER_CREATE_PHONE,
-            DRIVER_GET_GENDER,
-            null,
-            null);
+    public static final CarDto CAR_CREATE_RESPONSE_DTO = CarDto.builder()
+            .withId(ID_AFTER_CREATE)
+            .withBrand(CAR_CREATE_BRAND)
+            .withColor(CAR_CREATE_COLOR)
+            .withNumber(CAR_CREATE_NUMBER)
+            .withModel(CAR_CREATE_MODEL)
+            .withYear(CAR_CREATE_YEAR)
+            .withDeleted(false)
+            .build();
 
-    public static final DriverDto DRIVER_CREATE_RESPONSE_DTO = new DriverDto(
-            ID_AFTER_CREATE,
-            DRIVER_CREATE_NAME,
-            DRIVER_CREATE_EMAIL,
-            DRIVER_CREATE_PHONE,
-            DRIVER_GET_GENDER,
-            null,
-            false);
+    public static final CarDto CAR_GET_RESPONSE_DTO = CarDto.builder()
+            .withId(ID)
+            .withBrand(CAR_GET_BRAND)
+            .withColor(CAR_GET_COLOR)
+            .withNumber(CAR_GET_NUMBER)
+            .withModel(CAR_GET_MODEL)
+            .withYear(CAR_GET_YEAR)
+            .withDeleted(false)
+            .build();
 
-    public static final DriverDto DRIVER_UPDATE_REQUEST_DTO = new DriverDto(
-            null,
-            DRIVER_UPDATE_NAME,
-            null,
-            null,
-            null,
-            null,
-            null);
+    public static final DriverDto DRIVER_CREATE_REQUEST_DTO = DriverDto.builder()
+            .withId(null)
+            .withFirstName(DRIVER_CREATE_FIRST_NAME)
+            .withLastName(DRIVER_CREATE_LAST_NAME)
+            .withEmail(DRIVER_CREATE_EMAIL)
+            .withPhone(DRIVER_CREATE_PHONE)
+            .withGender(DRIVER_GET_GENDER)
+            .withAverageRating(null)
+            .withDeleted(null)
+            .build();
 
-    public static final DriverDto DRIVER_UPDATE_RESPONSE_DTO = new DriverDto(
-            ID,
-            DRIVER_UPDATE_NAME,
-            DRIVER_UPDATE_EMAIL,
-            DRIVER_UPDATE_PHONE,
-            DRIVER_GET_GENDER,
-            null,
-            false);
+    public static final DriverDto DRIVER_CREATE_RESPONSE_DTO = DriverDto.builder()
+            .withId(ID_AFTER_CREATE)
+            .withFirstName(DRIVER_CREATE_FIRST_NAME)
+            .withLastName(DRIVER_CREATE_LAST_NAME)
+            .withEmail(DRIVER_CREATE_EMAIL)
+            .withPhone(DRIVER_CREATE_PHONE)
+            .withGender(DRIVER_GET_GENDER)
+            .withAverageRating(null)
+            .withDeleted(false)
+            .build();
 
-    public static final DriverDto DRIVER_GET_RESPONSE_DTO = new DriverDto(
-            ID,
-            DRIVER_GET_NAME,
-            DRIVER_GET_EMAIL,
-            DRIVER_GET_PHONE,
-            DRIVER_GET_GENDER,
-            null,
-            false);
+    public static final DriverDto DRIVER_UPDATE_REQUEST_DTO = DriverDto.builder()
+            .withId(null)
+            .withFirstName(null)
+            .withLastName(null)
+            .withEmail(null)
+            .withPhone(DRIVER_UPDATE_PHONE)
+            .withGender(null)
+            .withAverageRating(null)
+            .withDeleted(null)
+            .build();
+
+    public static final DriverDto DRIVER_UPDATE_RESPONSE_DTO = DriverDto.builder()
+            .withId(ID)
+            .withFirstName(DRIVER_UPDATE_FIRST_NAME)
+            .withLastName(DRIVER_UPDATE_LAST_NAME)
+            .withEmail(DRIVER_UPDATE_EMAIL)
+            .withPhone(DRIVER_UPDATE_PHONE)
+            .withGender(DRIVER_GET_GENDER)
+            .withAverageRating(null)
+            .withDeleted(false)
+            .build();
+
+    public static final DriverDto DRIVER_GET_RESPONSE_DTO = DriverDto.builder()
+            .withId(ID)
+            .withFirstName(DRIVER_GET_FIRST_NAME)
+            .withLastName(DRIVER_GET_LAST_NAME)
+            .withEmail(DRIVER_GET_EMAIL)
+            .withPhone(DRIVER_GET_PHONE)
+            .withGender(DRIVER_GET_GENDER)
+            .withAverageRating(null)
+            .withDeleted(false)
+            .build();
 
     public static final ListContainerResponseDto<DriverDto> DRIVER_PAGE_GET_RESPONSE_DTO =
             ListContainerResponseDto.<DriverDto>builder()
@@ -165,13 +186,15 @@ public final class IntegrationTestData {
                     .withValues(List.of(DRIVER_GET_RESPONSE_DTO))
                     .build();
 
-    public static final DriverCarDto DRIVER_CAR_RESPONSE_DTO = new DriverCarDto(
-            DRIVER_GET_RESPONSE_DTO.id(),
-            DRIVER_GET_RESPONSE_DTO.name(),
-            DRIVER_GET_RESPONSE_DTO.email(),
-            DRIVER_GET_RESPONSE_DTO.phone(),
-            DRIVER_GET_RESPONSE_DTO.gender(),
-            DRIVER_GET_RESPONSE_DTO.averageRating(),
-            List.of(CAR_GET_RESPONSE_DTO));
+    public static final DriverCarDto DRIVER_CAR_RESPONSE_DTO = DriverCarDto.builder()
+            .withId(DRIVER_GET_RESPONSE_DTO.id())
+            .withFirstName(DRIVER_GET_RESPONSE_DTO.firstName())
+            .withLastName(DRIVER_GET_RESPONSE_DTO.lastName())
+            .withEmail(DRIVER_GET_RESPONSE_DTO.email())
+            .withPhone(DRIVER_GET_RESPONSE_DTO.phone())
+            .withGender(DRIVER_GET_RESPONSE_DTO.gender())
+            .withAverageRating(DRIVER_GET_RESPONSE_DTO.averageRating())
+            .withCars(List.of(CAR_GET_RESPONSE_DTO))
+            .build();
 
 }

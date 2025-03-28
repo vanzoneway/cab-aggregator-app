@@ -1,5 +1,8 @@
 Feature: Driver service API
 
+  Scenario: Get auth admin token
+    When Get auth admin token
+
   Scenario: Create car to driver
     Given the request body to create or update car
       """
@@ -74,7 +77,8 @@ Feature: Driver service API
     Given the request body to create or update driver
       """
         {
-          "name": "John Doe",
+          "firstName": "John",
+          "lastName": "Doe",
           "email": "johnddoe@eоxample.com",
           "phone": "+1234567503",
           "gender": "Male"
@@ -86,7 +90,8 @@ Feature: Driver service API
       """
         {
           "id": 21,
-          "name": "John Doe",
+          "firstName": "John",
+          "lastName": "Doe",
           "email": "johnddoe@eоxample.com",
           "phone": "+1234567503",
           "gender": "Male",
@@ -99,8 +104,7 @@ Feature: Driver service API
     Given the request body to create or update driver
       """
         {
-          "name": "John Lock",
-          "gender": "Male"
+          "phone": "+123456789"
         }
       """
     When Update driver with id 3
@@ -109,9 +113,10 @@ Feature: Driver service API
       """
         {
           "id": 3,
-          "name": "John Lock",
+          "firstName": "Bob",
+          "lastName": "Johnson",
           "email": "bobjohnson@example.com",
-          "phone": "+1234567892",
+          "phone": "+123456789",
           "gender": "Male",
           "averageRating": null,
           "deleted": false
@@ -129,7 +134,8 @@ Feature: Driver service API
       """
         {
           "id": 2,
-          "name": "Jane Smith",
+          "firstName": "Jane",
+          "lastName": "Smith",
           "email": "janesmith@example.com",
           "phone": "+1234567891",
           "gender": "Female",
@@ -137,7 +143,3 @@ Feature: Driver service API
           "deleted": false
         }
       """
-
-
-
-

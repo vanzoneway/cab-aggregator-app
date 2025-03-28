@@ -23,6 +23,8 @@ public final class TestData {
     public static final String RIDE_UPDATE_ENDPOINT = "/api/v1/rides/{rideId}";
     public static final String RIDE_CHANGE_RIDE_STATUS_ENDPOINT = "/api/v1/rides/{rideId}/status";
 
+    public static final String SECURITY_ADMIN_ROLE = "ROLE_ADMIN";
+
     public static final RideRequestDto RIDE_REQUEST_DTO = new RideRequestDto(
             1L,
             1L,

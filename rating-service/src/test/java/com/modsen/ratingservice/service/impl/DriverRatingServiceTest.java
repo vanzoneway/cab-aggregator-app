@@ -6,7 +6,7 @@ import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
 import com.modsen.ratingservice.dto.response.AverageRatingResponseDto;
 import com.modsen.ratingservice.dto.response.RatingResponseDto;
-import com.modsen.ratingservice.kafka.KafkaProducerSender;
+import com.modsen.ratingservice.kafka.producer.AverageRatingSender;
 import com.modsen.ratingservice.mapper.ListContainerMapper;
 import com.modsen.ratingservice.mapper.impl.DriverRatingMapper;
 import com.modsen.ratingservice.model.DriverRating;
@@ -48,36 +48,10 @@ class DriverRatingServiceTest {
     private RideFeignClient rideFeignClient;
 
     @Mock
-    private KafkaProducerSender kafkaProducerSender;
+    private AverageRatingSender averageRatingSender;
 
     @InjectMocks
     private DriverRatingService driverRatingService;
-
-//    @Test
-//    void createRating_ReturnsRatingDto_ValidInputArgument() {
-//        when(rideFeignClient.findRideById(anyLong(), anyString()))
-//                .thenReturn(TestData.RIDE_RESPONSE_DTO);
-//        when(repository.existsByRideIdAndDeletedIsFalse(anyLong()))
-//                .thenReturn(false);
-//        when(repository.existsByRideIdAndDeletedIsTrue(anyLong()))
-//                .thenReturn(false);
-//        when(ratingMapper.toRating(any(RatingRequestDto.class)))
-//                .thenReturn(TestData.DRIVER_RATING);
-//        when(repository.save(any(DriverRating.class)))
-//                .thenReturn(TestData.DRIVER_RATING);
-//        when(ratingMapper.toDto(any(DriverRating.class), anyString()))
-//                .thenReturn(TestData.RATING_RESPONSE_IN_SERVICE_DTO);
-//
-//        // Act
-//        RatingResponseDto actual = driverRatingService.createRating(TestData.RATING_REQUEST_DTO);
-//
-//        // Assert
-//        assertThat(actual).isEqualTo(TestData.RATING_RESPONSE_IN_SERVICE_DTO);
-//        verify(repository).save(any(DriverRating.class));
-//        verify(repository).existsByRideIdAndDeletedIsFalse(anyLong());
-//        verify(repository).existsByRideIdAndDeletedIsTrue(anyLong());
-//        verify(ratingMapper).toDto(any(DriverRating.class), anyString());
-//    }
 
     @Test
     void updateRatingById_ReturnsUpdatedRatingDto_ValidInputArguments() {
@@ -171,7 +145,7 @@ class DriverRatingServiceTest {
         // Arrange
         when(repository.getAverageRatingByRefUserId(anyLong()))
                 .thenReturn(Optional.of(4.5));
-        doNothing().when(kafkaProducerSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
+        doNothing().when(averageRatingSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
 
         // Act
         AverageRatingResponseDto result = driverRatingService.getAverageRating(1L);
@@ -179,7 +153,7 @@ class DriverRatingServiceTest {
         // Assert
         assertThat(result.averageRating()).isEqualTo(TestData.AVERAGE_RATING_RESPONSE_DTO.averageRating());
         verify(repository).getAverageRatingByRefUserId(anyLong());
-        verify(kafkaProducerSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
+        verify(averageRatingSender).sendAverageRatingToDriver(any(AverageRatingResponseDto.class));
     }
 
 }

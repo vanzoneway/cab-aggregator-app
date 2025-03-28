@@ -1,5 +1,6 @@
 package com.modsen.ratingservice.controller.impl;
 
+import com.modsen.ratingservice.constants.AppConstants;
 import com.modsen.ratingservice.controller.general.DriverRatingOperations;
 import com.modsen.ratingservice.dto.ListContainerResponseDto;
 import com.modsen.ratingservice.dto.request.RatingRequestDto;
@@ -10,6 +11,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,6 +38,7 @@ public class DriverRatingController implements DriverRatingOperations {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN') or hasRole('DRIVER')")
+    @CachePut(value = AppConstants.DRIVER_RATING_CACHE_VALUE, key = "#result.id()")
     public RatingResponseDto createDriverRating(@Valid @RequestBody RatingRequestDto ratingRequestDto) {
         return driverRatingService.createRating(ratingRequestDto);
     }
@@ -41,6 +46,7 @@ public class DriverRatingController implements DriverRatingOperations {
     @Override
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @CachePut(value = AppConstants.DRIVER_RATING_CACHE_VALUE, key ="#result.id()")
     public RatingResponseDto updateDriverRating(@PathVariable Long id,
                                                 @Valid @RequestBody RatingRequestDto ratingRequestDto) {
         return driverRatingService.updateRatingById(id, ratingRequestDto);
@@ -48,6 +54,7 @@ public class DriverRatingController implements DriverRatingOperations {
 
     @Override
     @GetMapping("/{id}")
+    @Cacheable(value = AppConstants.DRIVER_RATING_CACHE_VALUE, key = "#id")
     public RatingResponseDto getDriverRating(@PathVariable Long id) {
         return driverRatingService.getRating(id);
     }
@@ -66,12 +73,14 @@ public class DriverRatingController implements DriverRatingOperations {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = AppConstants.DRIVER_RATING_CACHE_VALUE, key = "#id")
     public void deleteDriverRating(@PathVariable Long id) {
         driverRatingService.safeDeleteRating(id);
     }
 
     @Override
     @GetMapping("/{refUserId}/average")
+    @Cacheable(value = AppConstants.AVERAGE_DRIVER_RATING_CACHE_VALUE, key = "#refUserId")
     public AverageRatingResponseDto averageDriverRating(@PathVariable Long refUserId) {
         return driverRatingService.getAverageRating(refUserId);
     }

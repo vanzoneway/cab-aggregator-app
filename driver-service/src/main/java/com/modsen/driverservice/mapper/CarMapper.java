@@ -3,6 +3,7 @@ package com.modsen.driverservice.mapper;
 import com.modsen.driverservice.dto.CarDto;
 import com.modsen.driverservice.model.Car;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -11,7 +12,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        componentModel = MappingConstants.ComponentModel.SPRING)
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        builder = @Builder(disableBuilder = true))
 public interface CarMapper {
 
     @Mapping(target = "id", ignore = true)

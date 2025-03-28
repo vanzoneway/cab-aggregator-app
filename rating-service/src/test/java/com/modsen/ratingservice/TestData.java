@@ -18,6 +18,8 @@ public final class TestData {
     public static final String DRIVER_RATING_UPDATE_DELETE_ENDPOINT = "/api/v1/drivers-ratings/{id}";
     public static final String DRIVER_RATING_AVERAGE_ENDPOINT = "/api/v1/drivers-ratings/{refUserId}/average";
 
+    public static final String SECURITY_ADMIN_ROLE = "ROLE_ADMIN";
+
     public static final RatingResponseDto RATING_RESPONSE_DTO = new RatingResponseDto(
             1L,
             "Great ride!",

@@ -1,5 +1,8 @@
 Feature: Rides Service API
 
+  Scenario: Get auth admin token
+    When Get auth admin token
+
   Scenario: Create ride
     Given the request body contain the following data
       """

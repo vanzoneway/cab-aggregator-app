@@ -1,0 +1,26 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="13"
+               author="vanz.evergarden0@gmail.com">
+        <update tableName="driver">
+            <column name="first_name" value="Ivan"/>
+            <column name="last_name" value="Zinovich"/>
+            <column name="email" value="vanz.evergarden0@gmail.com"/>
+            <where>id = 5</where>
+        </update>
+        <rollback>
+            <update tableName="driver">
+                <column name="first_name" value="Michael"/>
+                <column name="last_name" value="Brown"/>
+                <column name="email" value="michaelbrown@example.com"/>
+                <where>id = 5</where>
+            </update>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

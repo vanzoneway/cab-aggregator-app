@@ -1,6 +1,7 @@
 package com.modsen.ridesservice.e2e;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.ridesservice.IntegrationTestData;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
@@ -11,13 +12,19 @@ import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
+import static com.modsen.ridesservice.e2e.E2ETestData.ADMIN_AUTH_TOKEN_URL;
 import static com.modsen.ridesservice.e2e.E2ETestData.BASE_URL;
+import static com.modsen.ridesservice.e2e.E2ETestData.CLIENT_ID;
+import static com.modsen.ridesservice.e2e.E2ETestData.CLIENT_SECRET;
 import static com.modsen.ridesservice.e2e.E2ETestData.COST_FIELD;
+import static com.modsen.ridesservice.e2e.E2ETestData.GRANT_TYPE;
+import static com.modsen.ridesservice.e2e.E2ETestData.ID_FIELD;
 import static com.modsen.ridesservice.e2e.E2ETestData.ORDER_DATE_TIME_FIELD;
 import static com.modsen.ridesservice.e2e.E2ETestData.RIDE_ID_POSTFIX;
 import static com.modsen.ridesservice.e2e.E2ETestData.UPDATE_RIDE_STATUS_POSTFIX;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class RideServiceSteps {
 
@@ -28,6 +35,18 @@ public class RideServiceSteps {
     private RideRequestDto rideRequestDto;
 
     private Response actual;
+
+    private static AdminKeycloakTokenResponseDto adminKeycloakTokenResponseDto;
+
+    @When("Get auth admin token")
+    public void getAuthAdminToken() {
+        actual = given()
+                    .contentType(ContentType.JSON)
+                    .body(new SignInAdminDto(GRANT_TYPE, CLIENT_ID, CLIENT_SECRET))
+                .when()
+                    .post(ADMIN_AUTH_TOKEN_URL);
+        adminKeycloakTokenResponseDto = actual.as(AdminKeycloakTokenResponseDto.class);
+    }
 
     @Given("the request body contain the following data")
     public void requestBodyContainTheFollowingData(String requestBody)
@@ -40,6 +59,8 @@ public class RideServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(rideRequestDto)
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .post(BASE_URL);
     }
@@ -56,7 +77,7 @@ public class RideServiceSteps {
             throws Exception {
         assertThat(actual.as(RideResponseDto.class))
                 .usingRecursiveComparison()
-                .ignoringFields(ORDER_DATE_TIME_FIELD, COST_FIELD)
+                .ignoringFields(ORDER_DATE_TIME_FIELD, COST_FIELD, ID_FIELD)
                 .isEqualTo(objectMapper.readValue(expected, RideResponseDto.class));
     }
 
@@ -71,6 +92,8 @@ public class RideServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(rideStatusRequestDto)
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .patch(BASE_URL + UPDATE_RIDE_STATUS_POSTFIX, id);
     }
@@ -80,6 +103,8 @@ public class RideServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(rideRequestDto)
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .put(BASE_URL + RIDE_ID_POSTFIX, id);
     }
@@ -87,6 +112,8 @@ public class RideServiceSteps {
     @When("Get ride with id {int}")
     public void getRideWithId(int id) {
         actual = given()
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + RIDE_ID_POSTFIX, id);
     }

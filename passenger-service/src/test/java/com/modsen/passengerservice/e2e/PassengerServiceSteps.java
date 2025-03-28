@@ -1,22 +1,28 @@
 package com.modsen.passengerservice.e2e;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.passengerservice.IntegrationTestData;
 import com.modsen.passengerservice.dto.ListContainerResponseDto;
 import com.modsen.passengerservice.dto.PassengerDto;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
-
+import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
+import static com.modsen.passengerservice.e2e.E2ETestData.ADMIN_AUTH_TOKEN_URL;
 import static com.modsen.passengerservice.e2e.E2ETestData.BASE_URL;
+import static com.modsen.passengerservice.e2e.E2ETestData.CLIENT_ID;
+import static com.modsen.passengerservice.e2e.E2ETestData.CLIENT_SECRET;
+import static com.modsen.passengerservice.e2e.E2ETestData.GRANT_TYPE;
+import static com.modsen.passengerservice.e2e.E2ETestData.ID_FIELD;
 import static com.modsen.passengerservice.e2e.E2ETestData.ID_POSTFIX;
 import static com.modsen.passengerservice.e2e.E2ETestData.LIMIT_PARAM;
 import static com.modsen.passengerservice.e2e.E2ETestData.OFFSET_PARAM;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class PassengerServiceSteps {
 
@@ -25,6 +31,18 @@ public class PassengerServiceSteps {
     private Response actual;
 
     private PassengerDto passengerRequestDto;
+
+    private static AdminKeycloakTokenResponseDto adminKeycloakTokenResponseDto;
+
+    @When("Get auth admin token")
+    public void getAuthAdminToken() {
+        actual = given()
+                    .contentType(ContentType.JSON)
+                    .body(new SignInAdminDto(GRANT_TYPE, CLIENT_ID, CLIENT_SECRET))
+                .when()
+                    .post(ADMIN_AUTH_TOKEN_URL);
+        adminKeycloakTokenResponseDto = actual.as(AdminKeycloakTokenResponseDto.class);
+    }
 
     @Given("There is the following passenger details")
     public void preparePassengerDetails(String passengerRequest) throws Exception {
@@ -36,6 +54,8 @@ public class PassengerServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(passengerRequestDto)
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .post(BASE_URL);
     }
@@ -57,6 +77,8 @@ public class PassengerServiceSteps {
     @When("Get a page with passengers with current offset {int} and limit {int}")
     public void getPageWithPassengersWithCurrentOffsetAndLimit(int offset, int limit) {
         actual = given()
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + OFFSET_PARAM + offset + LIMIT_PARAM + limit);
 
@@ -67,12 +89,16 @@ public class PassengerServiceSteps {
     public void responseBodyShouldContainInformationAboutFirstThreePassengers(String passengerResponse)
             throws Exception {
         assertThat(actual.as(ListContainerResponseDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(passengerResponse, ListContainerResponseDto.class));
     }
 
     @When("Get passenger with id {int}")
     public void getPassengerWithId(int id) {
         actual = given()
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .get(BASE_URL + ID_POSTFIX, id);
     }
@@ -82,6 +108,8 @@ public class PassengerServiceSteps {
     public void responseBodyShouldContainTheInformationAboutPassenger(String passengerResponse)
             throws Exception {
         assertThat(actual.as(PassengerDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(passengerResponse, PassengerDto.class));
     }
 
@@ -90,6 +118,8 @@ public class PassengerServiceSteps {
         actual = given()
                     .contentType(ContentType.JSON)
                     .body(passengerRequestDto)
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .put(BASE_URL + ID_POSTFIX, id);
     }
@@ -98,12 +128,16 @@ public class PassengerServiceSteps {
     public void responseBodyShouldContainTheInformationAboutUpdatedPassenger(String passengerResponse)
             throws Exception {
         assertThat(actual.as(PassengerDto.class))
+                .usingRecursiveComparison()
+                .ignoringFields(ID_FIELD)
                 .isEqualTo(objectMapper.readValue(passengerResponse, PassengerDto.class));
     }
 
     @When("Delete passenger with id {int}")
     public void deletePassengerWithId(int id) {
         actual = given()
+                    .header(AUTHORIZATION,
+                        IntegrationTestData.BEARER + adminKeycloakTokenResponseDto.accessToken())
                 .when()
                     .delete(BASE_URL + ID_POSTFIX, id);
     }

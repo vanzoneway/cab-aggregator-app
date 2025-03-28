@@ -14,11 +14,22 @@ public final class TestData {
     public static final String PASSENGER_ENDPOINT = "/api/v1/passengers";
     public static final String PASSENGER_UPDATE_DELETE_ENDPOINT = "/api/v1/passengers/{passengerId}";
 
+    public static final String SECURITY_ADMIN_ROLE = "ROLE_ADMIN";
+
     public static final PassengerDto PASSENGER_REQUEST_DTO = new PassengerDto(
             null,
             "Jane",
             "Doe",
             "jane.doe@example.org",
+            "6625550144",
+            null,
+            null);
+
+    public static final PassengerDto PASSENGER_UPDATE_REQUEST_DTO = new PassengerDto(
+            null,
+            null,
+            null,
+            null,
             "6625550144",
             null,
             null);

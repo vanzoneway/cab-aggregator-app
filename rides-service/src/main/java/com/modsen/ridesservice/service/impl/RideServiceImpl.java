@@ -5,6 +5,7 @@ import com.modsen.ridesservice.dto.ListContainerResponseDto;
 import com.modsen.ridesservice.dto.request.RideRequestDto;
 import com.modsen.ridesservice.dto.request.RideStatusRequestDto;
 import com.modsen.ridesservice.dto.response.RideResponseDto;
+import com.modsen.ridesservice.dto.response.RideStatisticResponseDto;
 import com.modsen.ridesservice.exception.ride.RideNotFoundException;
 import com.modsen.ridesservice.mapper.ListContainerMapper;
 import com.modsen.ridesservice.mapper.RideMapper;
@@ -15,6 +16,8 @@ import com.modsen.ridesservice.service.RideService;
 import com.modsen.ridesservice.service.component.RideServicePriceGenerator;
 import com.modsen.ridesservice.service.component.RideServiceValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -22,7 +25,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +55,9 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.RIDE_CACHE_VALUE,
+            condition = "#result.rideStatus() == 'CANCELED' || #result.rideStatus() == 'COMPLETED'",
+            key = "#result.id()")
     public RideResponseDto changeRideStatus(Long rideId, RideStatusRequestDto rideStatusRequestDto) {
         Ride ride = getRide(rideId);
         rideServiceValidation.validateChangingRideStatus(ride, rideStatusRequestDto);
@@ -59,6 +68,9 @@ public class RideServiceImpl implements RideService {
 
     @Override
     @Transactional
+    @CachePut(value = AppConstants.RIDE_CACHE_VALUE,
+            condition = "#result.rideStatus() == 'CANCELED' || #result.rideStatus() == 'COMPLETED'",
+            key = "#result.id()")
     public RideResponseDto updateRide(Long rideId, RideRequestDto rideRequestDto) {
         rideServiceValidation.checkExistingPassengerOrDriver(rideRequestDto);
         Ride ride = getRide(rideId);
@@ -68,6 +80,9 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
+    @Cacheable(value = AppConstants.RIDE_CACHE_VALUE,
+            unless = "#result.rideStatus() != 'CANCELED' && #result.rideStatus() != 'COMPLETED'",
+            key = "#rideId")
     public RideResponseDto getRideById(Long rideId) {
         Ride ride = getRide(rideId);
         return rideMapper.toDto(ride);
@@ -86,7 +101,7 @@ public class RideServiceImpl implements RideService {
                                                                             Integer offset,
                                                                             Integer limit) {
         Page<RideResponseDto> rideResponsePageDto = rideRepository
-                .findAllByDriverId(driverId ,PageRequest.of(offset, limit))
+                .findAllByDriverId(driverId, PageRequest.of(offset, limit))
                 .map(rideMapper::toDto);
         return listContainerMapper.toDto(rideResponsePageDto);
     }
@@ -96,9 +111,45 @@ public class RideServiceImpl implements RideService {
                                                                                Integer offset,
                                                                                Integer limit) {
         Page<RideResponseDto> rideResponsePageDto = rideRepository
-                .findAllByPassengerId(passengerId ,PageRequest.of(offset, limit))
+                .findAllByPassengerId(passengerId, PageRequest.of(offset, limit))
                 .map(rideMapper::toDto);
         return listContainerMapper.toDto(rideResponsePageDto);
+    }
+
+    @Override
+    public RideStatisticResponseDto getRideStatisticForDriver(Long driverId) {
+        List<Ride> rides = rideRepository.findAllRidesForReportByDriverId(driverId);
+        return getRideStatistic(rides, driverId);
+    }
+
+    @Override
+    public RideStatisticResponseDto getRideStatisticForPassenger(Long passengerId) {
+        List<Ride> rides = rideRepository.findAllRidesForReportByPassengerId(passengerId);
+        return getRideStatistic(rides, passengerId);
+    }
+
+    private RideStatisticResponseDto getRideStatistic(List<Ride> rides, Long refUserId) {
+        List<RideResponseDto> ridesResponseDto = rides
+                .stream()
+                .map(rideMapper::toDto)
+                .toList();
+        if (ridesResponseDto.isEmpty()) {
+            return RideStatisticResponseDto.builder()
+                    .withRides(ridesResponseDto)
+                    .withUserRefId(refUserId)
+                    .withAverageCost(BigDecimal.ZERO)
+                    .build();
+        }
+        BigDecimal averageCost = ridesResponseDto
+                .stream()
+                .map(RideResponseDto::cost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(ridesResponseDto.size()), RoundingMode.HALF_UP);
+        return RideStatisticResponseDto.builder()
+                .withRides(ridesResponseDto)
+                .withUserRefId(refUserId)
+                .withAverageCost(averageCost)
+                .build();
     }
 
     private Ride getRide(Long rideId) {

@@ -31,6 +31,8 @@ public final class IntegrationTestData {
     private static final int CURRENT_OFFSET = 0;
     private static final int TOTAL_ELEMENTS = 1;
 
+    public static final String BEARER = "Bearer ";
+
     public static final String SQL_DELETE_ALL_DATA = """
             DELETE FROM passenger;
             """;
